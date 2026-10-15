@@ -2,6 +2,73 @@
 
 Kaynak: kurulu CSP **0.2.11 (build 3465)**, `extension/internal/lua-sdk/ac_apps/lib.lua` (17.475 satır). Bu dosya SDK'dan otomatik çıkarıldı; açıklamalar SDK'daki İngilizce metinlerdir. Hiçbir çağrı oyunda tek tek denenmedi.
 
+> **Bu doküman ne sağlar?** CSP Lua ile neleri okuyabileceğini, ekranda gösterebileceğini ve yalnızca izinli koşullarda neleri değiştirebileceğini anlatır. Önce bu bölümü oku; aşağıdaki uzun fonksiyon listelerini ise bir fonksiyon adı veya alan ararken referans olarak kullan.
+
+## Başlamadan önce: API'yi doğru okumak
+
+Bu API tek bir şey değildir. Aynı uygulamada dört farklı katmanla çalışırsın:
+
+| Katman | Temel soru | Ana API'ler | Araç fiziğini değiştirir mi? |
+|---|---|---|---|
+| **Durum okuma** | Oyunda şu anda ne oluyor? | `ac.getCar()`, `ac.getCarPhysics()`, `ac.getSim()` | Hayır |
+| **Sunum** | Bunu oyuncuya nasıl gösteririm? | `ui.*`, `render.*`, kamera API'leri | Hayır |
+| **Veri / entegrasyon** | Kaydeder veya başka bir uygulamaya yollar mıyım? | `io.*`, `web.*`, `os.*` | Hayır |
+| **Oyun müdahalesi** | Aracı, AI'ı veya kuralı değiştirmeli miyim? | `physics.*`, bazı `ac.set*` çağrıları | Evet, izin ve tur etkisi olabilir |
+
+Bu ayrım önemlidir: Bir hız göstergesi için `physics.*` gerekmez; yalnızca `ac.getCar(0)` okuyup `ui.*` ile çizmek yeterlidir. Araç konumunu değiştirmek için ise sadece doğru fonksiyonu bilmek yetmez, fizik erişiminin açık olması ve bu davranışın bulunduğun oturum için doğru olması gerekir.
+
+### 60 saniyelik başlangıç seçimi
+
+| Şunu yapmak istiyorum… | İlk bakılacak yer | Neden? |
+|---|---|---|
+| Hız, vites, gaz, fren veya tur süresi göstermek | `ac.getCar(0)` | Oyuncu aracının anlık telemetrisini tek nesnede verir. |
+| Yağmur, oturum süresi, bayrak veya pist sıcaklığına göre davranmak | `ac.getSim()` | Araçtan bağımsız global oturum ve hava verisini taşır. |
+| Lastik, fren veya süspansiyon analizi yapmak | `car.wheels[i]`, gerekirse `ac.getCarPhysics(0)` | Önce görsel/telemetri tekerlek verisini kullan; fizik detayına yalnızca ihtiyaç varsa geç. |
+| Dünya üzerinde bir işaret ya da rota göstermek | Araç `position`/`look` + `render.*` | Konum vektörünü alır, sahneye çizim yaparsın. |
+| Özel kamera yapmak | `ac.grabCamera()` | Kamera sahipliğini alıp konum, yön ve FOV'u uygulaman yönetir. |
+| Telemetriyi Racegrid'e göndermek | `ac.getCar(0)` + `web.*` | Önce küçük bir veri paketi oluştur, sonra HTTP/WebSocket ile ilet. |
+| Aracı ışınlamak, hızını değiştirmek veya AI kontrol etmek | `physics.*` | Bu katman korumalıdır; önce izin ve oturum koşulunu kontrol et. |
+
+### Okuma, yazma ve yan etki sözlüğü
+
+Fonksiyon adları çoğu zaman niyetini anlatır. Bu kısa sözlük, uzun listelerde daha hızlı gezinmek için kullanışlıdır:
+
+| Ad kalıbı | Genellikle yaptığı iş | Örnek | Dikkat |
+|---|---|---|---|
+| `get…` / alan okuma | Mevcut durumu döndürür | `ac.getCar(0)`, `car.speedKmh` | Her güncellemede güvenle okunabilir; gereksiz büyük veri paketleri üretme. |
+| `is…` / `has…` | Koşul veya yetenek bildirir | `sim.isOnlineRace`, `car.isInPit`, `physics.allowed()` | Müdahale öncesi koruma olarak kullan. |
+| `set…` / `override…` / `force…` | Bir değeri ya da davranışı değiştirir | `physics.setCarFuel`, `overrideRacingFlag`, `forceUserBrakesFor` | Tur geçersizliği, izin ve geri alma davranışını kontrol et. |
+| `find…` / `access…` | Var olan bir kaynak veya düğüm bulur | `ac.findNodes`, `ac.accessAppWindow` | Kaynağın bulunamaması normal bir durum olabilir; sonucu kontrol et. |
+| `on…` / callback alan çağrı | Olay gerçekleştiğinde çalışır | `ac.onScreenshot`, `web.get(..., callback)` | Ağ ve dosya işlemlerini callback içinde tamamla; ana güncelleme akışını bloklama. |
+| `grab…` | Bir sistemin geçici kontrolünü alır | `ac.grabCamera()` | Kaynağı işin bittiğinde serbest bırakacak yaşam döngüsünü planla. |
+
+### Güvenli veri okuma: en küçük yararlı örnek
+
+```lua
+local car = ac.getCar(0)   -- oyuncu aracı için anlık durum
+local sim = ac.getSim()    -- oturum ve ortam durumu
+
+local telemetry = {
+  speedKmh = car.speedKmh,
+  gear = car.gear,
+  throttle = car.gas,
+  brake = car.brake,
+  lapTimeMs = car.lapTimeMs,
+  rain = sim.rainIntensity,
+  inOnlineRace = sim.isOnlineRace
+}
+```
+
+Bu örnek hiçbir oyunsal durumu değiştirmez. Dashboard, kayıt veya dış servise gönderim için iyi başlangıç noktasıdır. İlk sürümde yüzlerce alanı taşımak yerine yalnızca kararında kullanılan alanları topla; bu hem okunabilirliği hem de veri maliyetini korur.
+
+### Fizik yazmadan önce karar ağacı
+
+1. Aynı sonucu yalnızca okuyup `ui.*`/`render.*` ile gösterebilir misin? **Evetse fizik yazma.**
+2. Değişiklik yalnızca offline veya açıkça izinli oturumda mı anlamlı? **Hayırsa davranışı kapat.**
+3. `physics.allowed()` true mu? **Hayırsa müdahale etme.**
+4. Çağrı turu geçersiz kılar mı ya da online oyunculara etkisi var mı? Fonksiyon açıklamasını kontrol et, kullanıcıya net geri bildirim ver.
+5. Değişiklik geçiciyse geri alma yolun var mı? Özellikle bayrak, kamera, kontrol kilidi ve override çağrılarında bunu tasarla.
+
 ## 1. Özet: müdahale seviyeleri
 
 | Alan | Seviye | Not |
@@ -88,6 +155,33 @@ Bu dokümanı bir fonksiyon kataloğu gibi değil, üç soruyla kullan: **ne gö
 - **Telemetri:** 266 alanlı `ac.getCar` + 16 alanlı `getCarPhysics` + tekerlek alanları — sürüş verisinin tamamı okunabilir.
 
 ## 3. `physics.*` — fizik müdahalesi (tam liste, 94 fonksiyon)
+
+Bu bölümdeki çağrılar aynı ağırlıkta değildir. Bazıları yalnızca raycast gibi okuma yapar, bazıları ise aracın konumunu, kontrolünü veya yarış sonucunu doğrudan etkiler. **Fizik erişimi yoksa** `physics.allowed()` false döner ve bu bölümün çoğu kullanılamaz.
+
+| Amaç | İlk tercih | Ne zaman kullanılır? | Başlıca risk |
+|---|---|---|---|
+| Pistle temas / mesafe ölçmek | `physics.raycastTrack()` | Aracın altındaki zemini veya bir noktanın pistle mesafesini ölçmek. | Kısa ve sınırlı sayıda ray kullan; çok sık raycast performansı etkileyebilir. |
+| Aracı konumlandırmak | `setCarPosition`, `teleportCarTo` | Antrenman başlangıcı, kontrollü respawn, senaryo kurulumu. | Tur geçersizliği ve online uyumsuzluğu. |
+| Hız veya kuvvet uygulamak | `setCarVelocity`, `addForce`, `addWheelTorque` | Test, replay/ghost prototipi veya özel oyun modu. | `addForce` zaman adımıyla (`dt`) ölçeklenmeli; yanlış değer fizik davranışını bozar. |
+| Oyuncu girdisini yönetmek | `lockUserControlsFor`, `forceUserBrakesFor`, `overrideUserSteering` | Start prosedürü, eğitim senaryosu, kısa süreli güvenlik müdahalesi. | Kontrolü kullanıcıya ne zaman ve nasıl geri vereceğini açıkça tanımla. |
+| Araç durumunu hazırlamak | `setCarFuel`, `setTyresTemperature`, `resetCarState` | Offline antrenman senaryosunun başlangıç koşulları. | Çoğu çağrı turu geçersiz kılar; setup/yarış bütünlüğünü bozabilir. |
+| AI'ı yönlendirmek | `setAILevel`, `setAIAggression`, `setAICarPosition` | Özel AI senaryosu veya test oturumu. | Yalnızca AI araçları hedefle; oyuncu aracı için aynı fonksiyonları kullanma. |
+| Yarış kuralı uygulamak | `overrideRacingFlag`, `setCarPenalty`, `setCarDRS` | Mode/etkinlik kuralları. | Override'ları temizlemeyi unutma; örneğin bayrak yönetimini sonra `None` ile geri bırak. |
+
+### Fizik çağrısı yazma şablonu
+
+```lua
+local sim = ac.getSim()
+
+if physics.allowed() and not sim.isOnlineRace then
+  -- Buraya tek, açık amaçlı fizik müdahalesi koy.
+  -- Örn. sadece eğitim senaryosunda konum/hız ayarla.
+else
+  -- Müdahaleyi sessizce atla veya HUD'da nedenini açıkla.
+end
+```
+
+Bu şablon bir güvenlik garantisi değildir; ilgili fonksiyonun kendi açıklamasındaki tur, multiplayer ve geri alma notları yine geçerlidir. Amacı, fizik yazımını kodun her yerine yaymak yerine tek bir karar noktasında toplamaktır.
 
 - **`physics.getPointVelocity(carIndex, position, posLocal)`** — Returns velocity (in world coordinates) of a car point. If there is no such car or physics currently available, returns vector with zeroes.
 - **`physics.getExtendedSuspensionTravel(carIndex, corner)`** — 
@@ -187,6 +281,22 @@ Bu dokümanı bir fonksiyon kataloğu gibi değil, üç soruyla kullan: **ne gö
 ## 4. Araç durumu okuma
 
 ### `ac.getCar(i)` — görsel/grafik durumu (266 alan)
+
+`ac.getCar(i)` günlük uygulama kodunun ana giriş noktasıdır. Dönen `ac.CarState` nesnesini **anlık görüntü** gibi düşün: fonksiyonu çağır, yalnızca o kare için gereken alanları oku, sonra bir sonraki güncellemede yeniden al. Bu nesne araç değiştirmek için değil, aracı anlamak içindir.
+
+#### En sık kullanacağın `CarState` alanları
+
+| İhtiyaç | Önce kullan | Not |
+|---|---|---|
+| Temel sürüş HUD'ı | `speedKmh`, `gear`, `rpm`, `gas`, `brake`, `clutch`, `steer`, `handbrake` | `speedKmh` kullanıcı arayüzü için daha doğal; fizik hesabında `speedMs` gerekebilir. |
+| Konum ve hareket | `position`, `velocity`, `acceleration`, `look`, `up`, `side` | Bunların çoğu `vec3`'tür; dünya uzayında çizim veya yön hesabı için kullanılır. |
+| Tur / yarış bilgisi | `lapTimeMs`, `bestLapTimeMs`, `lapCount`, `currentSector`, `racePosition`, `isLapValid` | Zaman alanları milisaniyedir; ekranda gösterirken biçimlendir. |
+| Araç sağlığı | `fuel`, `damage`, `gearboxDamage`, `engineLifeLeft`, `waterTemperature`, `oilTemperature` | Uyarı eşiğini araçtan araca farklılaştır; her alan her araçta aynı derecede anlamlı olmayabilir. |
+| Sistem durumları | `absInAction`, `tractionControlInAction`, `drsAvailable`, `drsActive`, `speedLimiterInAction` | Sürüş asistanı göstergeleri veya olay kaydı için uygundur. |
+| Oturum bağlamı | `isUserControlled`, `isAIControlled`, `isInPit`, `isInPitlane`, `isRemote`, `isConnected` | Aynı kodun oyuncu, AI, replay ve uzak araçlarda farklı davranmasını sağlar. |
+| Lastikler | `wheels[0]` … `wheels[3]` | Her tekerlek nesnesini ayrı oku; ayrıntılı yol haritası aşağıdaki tekerlek bölümünde. |
+
+**İndeks notu:** Araçlar ve tekerlek dizileri 0'dan başlar. Oyuncu aracında `ac.getCar(0)`, ilk tekerlekte `car.wheels[0]` biçimini kullanırsın. Çok araçlı bir uygulamada önce `ac.getSim().carsCount` ile sınırı al, sonra her `i` için `ac.getCar(i)` oku.
 
 `mass`, `graphicsOffset`, `graphicsPitchRotation`, `graphicsToPhysicsTransform`, `physicsToGraphicsTransform`, `steerLock`, `maxFuel`, `exposureOutside`, `exposureInside`, `shakeMultiplier`, `headlightsColor`, `customCarColor`, `aabbCenter`, `aabbSize`, `index`, `gearCount`, `turboCount`, `tractionType`, `enginePosition`, `brakesBiasLimitDown`, `brakesBiasLimitUp`, `brakesBiasStep`, `maxRelativePlankWear`, `year`, `hShifter`, `adjustableTurbo`, `brakesCockpitBias`, `extendedPhysics`, `isRacingCar`, `isRallyCar`, `isDriftCar`, `isOpenWheeler`, `isEngineDiesel`, `isKunosCar`, `prefersImperialUnits`, `headlightsAreHeadlights`, `hasLowBeams`, `isLeftHandDrive`, `sirenHorn`, `hasFlashingLights`, `hasCockpitSwitchForUserSpeedLimiter`, `hasHornAudioEvent`, `hasAnalogTelltale`, `tractionControlModes`, `absModes`, `fuelMaps`, `tractionControl2Modes`, `hasEngineBrakeSettings`, `pitTransform`, `timestamp`, `transform`, `bodyTransform`, `worldToLocal`, `position`, `velocity`, `acceleration`, `angularVelocity`, `localAngularVelocity`, `localVelocity`, `up`, `look`, `side`, `driverEyesPosition`, `groundNormal`, `groundDistance`, `gas`, `brake`, `clutch`, `steer`, `handbrake`, `gear`, `engagedGear`, `fuel`, `rpm`, `rpmLimiter`, `rpmMinimum`, `speedKmh`, `speedMs`, `turboBoost`, `drivetrainSpeed`, `waterTemperature`, `minHeight`, `restrictor`, `ballast`, `ping`, `cgHeight`, `wheelsOutside`, `engineLifeLeft`, `dirt`, `damage`, `gearboxDamage`, `nodeIndex`, `visibleIndex`, `activeLOD`, `distanceToCamera`, `splinePosition`, `driftPoints`, `driftInstantPoints`, `driftComboCounter`, `collisionDepth`, `collisionPosition`, `collidedWith`, `lapCutsCount`, `lastLapCutsCount`, `aiLevel`, `aiAggression`, `aiRainTyres`, `currentSplits`, `lastSplits`, `bestSplits`, `bestLapSplits`, `wheels`, `extrapolatedMovement`, `isActive`, `isConnected`, `isRemote`, `isAIControlled`, `isUserControlled`, `isLapValid`, `isLastLapValid`, `isCameraOnBoard`, `isInPitlane`, `isInPit`, `isRetired`, `isEngineLimiterOn`, `isGearGrinding`, `hasTurningLights`, `headlightsActive`, `brakeLightsActive`, `flashingLightsActive`, `hornActive`, `focused`, `focusedOnInterior`, `useInternalAudio`, `isHidingLabels`, `isDriftBonusOn`, `isDriftValid`, `isRaceFinished`, `isDriverVisible`, `isDriverDoorOpen`, `isDriverSeatbeltOn`, `hazardLights`, `turningLeftLights`, `turningRightLights`, `turningLeftOnly`, `turningRightOnly`, `lowBeams`, `highBeams`, `extraA`, `extraB`, `extraC`, `extraD`, `extraE`, `extraF`, `extraG`, `extraH`, `extraI`, `extraJ`, `extraK`, `extraL`, `extraM`, `extraN`, `extraO`, `extraP`, `extraQ`, `extraR`, `extraS`, `extraT`, `kersCharging`, `turningLightsActivePhase`, `anyFlamesActive`, `justJumped`, `resetCounter`, `kersCharge`, `kersInput`, `kersCurrentKJ`, `kersMaxKJ`, `kersLoad`, `distanceDrivenTotalKm`, `distanceDrivenSessionKm`, `poweredWheelsSpeed`, `batteryVoltage`, `oilPressure`, `oilTemperature`, `exhaustTemperature`, `wiperModes`, `wiperMode`, `wiperSelectedMode`, `wiperSpeed`, `wiperProgress`, `bodyWetness`, `compass`, `lapTimeMs`, `bestLapTimeMs`, `previousLapTimeMs`, `lapCount`, `currentSector`, `previousSectorTime`, `racePosition`, `drivenInRace`, `estimatedLapTimeMs`, `performanceMeter`, `performanceMeterSpeedDifferenceMs`, `sessionLapCount`, `compoundIndex`, `sessionID`, `physicsAvailable`, `speedLimiterInAction`, `absInAction`, `tractionControlInAction`, `hasUserBrakeBias`, `hasCockpitMGUHMode`, `hasCockpitERSDelivery`, `hasCockpitERSRecovery`, `drsPresent`, `drsAvailable`, `drsActive`, `kersPresent`, `kersHasButtonOverride`, `kersButtonPressed`, `mguhChargingBatteries`, `manualPitsSpeedLimiterEnabled`, `userSpeedLimiterEnabled`, `autoShift`, `autoClutch`, `mgukDelivery`, `mgukDeliveryCount`, `mgukRecovery`, `tractionControlMode`, `absMode`, `engineBrakeSettingsCount`, `currentEngineBrakeSetting`, `fuelPerLap`, `differentialPreload`, `differentialCoast`, `differentialPower`, `awdFrontShare`, `awdCenterLock`, `drivetrainTorque`, `drivetrainPower`, `brakeBias`, `speedLimiter`, `turboBoosts`, `turboWastegates`, `tractionControl2`, `fuelMap`, `steerTorque`, `ffbSteerAssist`, `ffbBase`, `ffbFinal`, `ffbPure`, `ffbMultiplier`, `aeroLiftFront`, `aeroLiftRear`, `aeroDrag`, `caster`, `rideHeight`, `p2pStatus`, `p2pActivations`, `altitude`, `ambientOcclusion`, `rawAmbientOcclusion`, `carCamerasCount`, `currentPenaltyType`, `currentPenaltyParameter`, `extraIconsCount`
 
@@ -463,6 +573,15 @@ Bu dokümanı bir fonksiyon kataloğu gibi değil, üç soruyla kullan: **ne gö
 
 ### `ac.getCarPhysics(i)` — fizik durumu (sadece oyuncu aracı) (16 alan)
 
+Bu nesne `ac.getCar()`'ın alternatifi değil, **fizik ayrıntısı eklentisidir**. Önce `car.physicsAvailable` veya `state.isAvailable` ile verinin gerçekten mevcut olduğunu doğrula. Uzak araç, replay ya da izin verilmeyen bağlamlarda alanlara güvenme.
+
+| Bu soruyu soruyorsan… | Bakılacak alan |
+|---|---|
+| Anlık vites oranı / aktarma ne yapıyor? | `gearRatio`, `finalRatio`, `drivetrainVelocity`, `clutchState` |
+| Aerodinamik veya aktarma modeli ayrıntısı gerekli mi? | `airDensity`, `engineInertia`, `drivetrainInertia`, AWD alanları |
+| Görsel tekerlek verisi yetmiyor mu? | `wheels[i]` içindeki fizik tekerleği alanları |
+| Araca özel script girdisi var mı? | `scriptControllerInputs` — 256 elemanlı dizi; ilgili araç bunu kullanmıyorsa anlamlı veri bekleme. |
+
 `isAvailable`, `gearRatio`, `finalRatio`, `airDensity`, `awd2MaxTorque`, `awd2CurrentLockTorque`, `awd2Ramp`, `engineInertia`, `drivetrainInertia`, `drivetrainVelocity`, `clutchInertia`, `clutchState`, `wheels`, `scriptControllerInputs`, `gearRatios`, `wings`
 
 <details><summary>Açıklamalar</summary>
@@ -487,6 +606,16 @@ Bu dokümanı bir fonksiyon kataloğu gibi değil, üç soruyla kullan: **ne gö
 </details>
 
 ### `car.wheels[i]` — tekerlek (62 alan)
+
+Bir lastik HUD'ı için bütün 62 alanı kullanman gerekmez. Başlangıçta her köşe için `tyreCoreTemperature`, `tyreInsideTemperature`, `tyreMiddleTemperature`, `tyreOutsideTemperature`, `tyrePressure`, `tyreWear`, `brakeTemperature`, `slipAngle`, `loadK` ve `surfaceGrip` yeterlidir.
+
+| Gösterge / analiz | Önerilen alanlar | Yorum |
+|---|---|---|
+| Sıcaklık şeridi | `tyreInsideTemperature`, `tyreMiddleTemperature`, `tyreOutsideTemperature`, `tyreOptimumTemperature` | İç-orta-dış farkı, basınç veya kamber ayarı için güçlü bir ipucudur; doğrudan teşhis değildir. |
+| Aşınma ve hasar | `tyreWear`, `tyreGrain`, `tyreBlister`, `tyreFlatSpot`, `isBlown` | Değerlerin araç/lastik bileşimine göre yorumlanması gerekir. |
+| Frenleme | `brakeTemperature`, `discTemperature`, `slipRatio`, `loadK` | Fren sıcaklığını hız ve yükle birlikte kaydetmek daha anlamlı sonuç verir. |
+| Zemin / pist | `surfaceGrip`, `surfaceDirt`, `surfacePitlane`, `surfaceValidTrack`, `contactPoint` | Pist dışı, pit yolu veya farklı yüzeylerdeki davranışı ayırmaya yardım eder. |
+| Geometri | `position`, `velocity`, `look`, `up`, `outside`, `transform` | Tekerlek başına 3D işaret veya debug çizimi için. |
 
 `tyreRadius`, `tyreWidth`, `rimRadius`, `tyreDirty`, `tyreWear`, `tyreVirtualKM`, `tyreGrain`, `tyreBlister`, `tyreFlatSpot`, `tyreStaticPressure`, `tyrePressure`, `temperatureMultiplier`, `tyreCoreTemperature`, `tyreInsideTemperature`, `tyreMiddleTemperature`, `tyreOutsideTemperature`, `tyreOptimumTemperature`, `brakeTemperature`, `discTemperature`, `angularSpeed`, `slip`, `slipAngle`, `slipRatio`, `ndSlip`, `load`, `loadK`, `speedDifference`, `camber`, `toeIn`, `suspensionDamage`, `suspensionTravel`, `tyreLoadedRadius`, `waterThickness`, `dx`, `dy`, `mz`, `fx`, `fy`, `contactNormal`, `contactPoint`, `position`, `look`, `up`, `outside`, `velocity`, `transform`, `transformWheel`, `surfaceDirt`, `surfaceSectorID`, `surfaceSectionIndex`, `surfaceGrip`, `surfaceDamping`, `surfaceGranularity`, `surfaceVibrationGain`, `surfaceVibrationLength`, `surfacePitlane`, `surfaceValidTrack`, `isBlown`, `isHot`, `isSpecialSurface`, `surfaceType`, `surfaceExtendedType`
 
@@ -577,6 +706,17 @@ Bu dokümanı bir fonksiyon kataloğu gibi değil, üç soruyla kullan: **ne gö
 </details>
 
 ### `ac.getSim()` — simülasyon durumu (164 alan)
+
+`ac.getSim()` tüm uygulamanın bağlamıdır: **hangi oturumdayım, hava nasıl, kamera nerede ve oyun canlı mı?** Araçtan bağımsız bir karar verirken önce burada başla.
+
+| Karar alanı | Önerilen alanlar | Örnek davranış |
+|---|---|---|
+| Oturum yaşam döngüsü | `isLive`, `isPaused`, `isSessionStarted`, `isSessionFinished`, `sessionTimeLeft` | Sadece aktif oturumdayken veri kaydetmek veya sayaç göstermek. |
+| Online / replay ayrımı | `isOnlineRace`, `isReplayActive`, `isReplayOnlyMode`, `carsCount` | Fizik yazmayı kapatmak, telemetriyi işaretlemek veya çok araçlı görünüm açmak. |
+| Hava ve pist | `ambientTemperature`, `roadTemperature`, `rainIntensity`, `rainWetness`, `rainWater`, `roadGrip`, `windSpeedKmh` | Yağmur uyarısı, ıslak zemin HUD'ı veya setup analizi. |
+| Yarış kuralı | `raceFlagType`, `penaltiesEnabled`, `speedLimitKmh`, `pitsSpeedLimit`, `pitWindowStartTime`, `pitWindowEndTime` | Bayrak/pit penceresi göstergesi. |
+| Performans / arayüz | `fps`, `dt`, `physicsLate`, `isVRMode`, `windowWidth`, `windowHeight` | Ağır bir HUD'ı azaltmak veya VR'a uygun yerleşim seçmek. |
+| Kamera | `cameraPosition`, `cameraLook`, `cameraUp`, `cameraFOV`, `cameraMode` | Dünya üstü çizimi aktif kameraya göre konumlandırmak. |
 
 `windowWidth`, `windowHeight`, `msaaSamples`, `worldDetailLevel`, `windowSize`, `isFullscreen`, `isVSyncActive`, `isPostProcessingActive`, `isVRMode`, `isOculusMode`, `isOpenVRMode`, `isTripleMode`, `isCustomVideoMode`, `isVRConnected`, `staticReflections`, `directMessagingAvailable`, `directUDPMessagingAvailable`, `allowTyreBlankets`, `isReplayOnlyMode`, `isOnlineRace`, `isShowroomMode`, `isPreviewsGenerationMode`, `freeCameraAllowed`, `isPitsSpeedLimiterForced`, `customAISplinesAllowed`, `isFSRActive`, `isTripleFSRActive`, `isLinearColorSpaceActive`, `allowedTyresOut`, `resultScreenTime`, `raceOverTime`, `mechanicalDamageRate`, `tyreConsumptionRate`, `fuelConsumptionRate`, `gravity`, `inputMode`, `windowHandle`, `currentVAOMode`, `neutralSunTrajectoryTimestamp`, `isMakingScreenshot`, `time`, `gameTime`, `systemTime`, `frame`, `cameraPosition`, `cameraPositionDelta`, `cameraLook`, `cameraUp`, `cameraSide`, `cameraFOV`, `cameraClipNear`, `cameraClipFar`, `cameraDOFFactor`, `cameraDOFFocus`, `cameraExposure`, `exposureMultiplier`, `carsCount`, `closelyFocusedCar`, `focusedCar`, `dt`, `isPaused`, `isInMainMenu`, `isLookingAtSessionResults`, `needsDPad`, `isLive`, `isFreeCameraOutside`, `isReplayActive`, `isFocusedOnInterior`, `isTripleScreenAvailable`, `controlsWithShifter`, `isVirtualMirrorActive`, `hideSteeringWheel`, `hideArmsInCockpit`, `isVirtualMirrorForced`, `isWindowForeground`, `isWeatherFXActive`, `isVAOPatchLoaded`, `orbitOnboardCamera`, `cameraJumped`, `isMouseSteeringActive`, `ambientLightingMultiplier`, `ambientTemperature`, `roadTemperature`, `lightSuggestion`, `roadGrip`, `windSpeedKmh`, `windVelocityKmh`, `windDirectionDeg`, `rainIntensity`, `rainWetness`, `rainWater`, `bestLapTimeMs`, `timeTotalSeconds`, `timeHours`, `timeMinutes`, `timeSeconds`, `timeMultiplier`, `timestamp`, `dayOfYear`, `raceFlagType`, `raceFlagCause`, `isSessionStarted`, `isSessionFinished`, `raceSessionType`, `timeToSessionStart`, `sessionTimeLeft`, `currentSessionIndex`, `sessionsCount`, `leaderLapCount`, `trackLengthM`, `speedLimitKmh`, `fps`, `fpsCapped`, `physicsLate`, `cpuOccupancy`, `cpuTime`, `firstPersonCameraFOV`, `cameraMode`, `driveableCameraMode`, `carCameraIndex`, `trackCamerasSetsCount`, `trackCamerasSet`, `audioMasterVolume`, `whiteReferencePoint`, `specialEvent`, `isTimedRace`, `penaltiesEnabled`, `fixedSetup`, `leaderLastLap`, `timeRaceEnded`, `timeRaceLastLap`, `timeRaceAdditionalLap`, `idealLineShown`, `damageDisplayerShown`, `driverNamesShown`, `isAdmin`, `sentAdminCommand`, `pitsSpeedLimit`, `pitWindowStartTime`, `pitWindowEndTime`, `replayFrameMs`, `timeSinceLastUDPPacket`, `replayFrames`, `replayCurrentFrame`, `replayPlaybackRate`, `weatherType`, `weatherSkyOcclusion`, `baseAltitude`, `currentQuickPitPreset`, `connectedCars`, `randomSeed`, `equinoxSunTrajectory`, `explicitDateSet`, `lapSplits`, `handshakeServerTime`, `currentServerTime`, `currentSessionTime`, `skyColor`, `horizonColor`, `fogColor`, `lightColor`, `lightDirection`, `originShift`, `weatherConditions`
 
@@ -1189,6 +1329,17 @@ Bu dokümanı bir fonksiyon kataloğu gibi değil, üç soruyla kullan: **ne gö
 
 ## 6. `render.*` — çizim (38)
 
+`render.*`, ekranda klasik uygulama penceresi açmadan 2D/3D çizim yapmak içindir. Ölçüm, rota, dünya üstü işaret ve özel kamera efektlerinde kullan; standart form, ayar ve tablo arayüzleri için önce `ui.*` daha uygundur.
+
+| İhtiyaç | Tercih | Başlangıç verisi |
+|---|---|---|
+| Basit ayar penceresi, buton, tablo | `ui.*` | Uygulamanın kendi durumu ve `ac.getCar(0)` alanları |
+| Pistte 3D işaret, fren noktası, yön oku | `render.*` | `car.position`, `car.look`, `sim.cameraPosition` |
+| Kamera koordinatına bağlı efekt | `render.*` + kamera alanları | `ac.getSim().cameraPosition`, `cameraLook`, `cameraFOV` |
+| Sahne düğümünü bulup görünürlüğünü/materyalini düzenlemek | `ac.findNodes` ve düğüm API'leri | Pist/araç node filtresi |
+
+**Performans notu:** Her karede oluşturulan nesneleri, büyük doku yüklemelerini ve tüm araçlara yapılan pahalı çizimleri sınırlı tut. `sim.dt`, `sim.fps` veya VR durumu üzerinden kaliteyi azaltmak iyi bir geri dönüş yoludur.
+
 - `render.isVisible(center, radius, gSpace, includeFarPlane)` — Can be called only within render context (otherwise returns `false`). Checks if given point is within current camera frustum. For checking if something is within the main
 - `render.setBlendMode(mode)`
 - `render.setCullMode(mode)`
@@ -1229,6 +1380,21 @@ Bu dokümanı bir fonksiyon kataloğu gibi değil, üç soruyla kullan: **ne gö
 - `render.PositioningHelper(params)` — A helper for moving things around using mouse with XYZ arrows.
 
 ## 7. `web.*`, `io.*`, `os.*`
+
+Bu aileler uygulamayı oyun dışındaki veriye bağlar. Kullanım amacı aynı görünse de sorumlulukları farklıdır:
+
+| API | Doğru kullanım | Örnek | Dikkat |
+|---|---|---|---|
+| `web.*` | HTTP/HTTPS ve WebSocket ile iletişim | Telemetriyi Racegrid'e göndermek, yerel komut almak | Aynı anda sınırlı sayıda istek çalışır; istekleri her karede başlatma. |
+| `io.*` | Dosya, klasör ve ZIP işlemleri | Oturum kaydı, ayar dosyası, önbellek | I/O erişim izni olmayabilir; yazmadan önce hata/başarı sonucunu işle. |
+| `os.*` | Saat, ileti kutusu, URL ve yerel süreç yardımcıları | Tanılama, kullanıcıya bilgi verme, dış araç çağırma | Kullanıcı makinesi ve güvenlik bağlamına etkisi yüksek; otomatik süreç/URL açmayı sınırlı tut. |
+
+### Telemetri entegrasyonu için sağlıklı akış
+
+1. `ac.getCar(0)` ve `ac.getSim()` içinden yalnızca gerekli alanlarla küçük bir tablo oluştur.
+2. Her kare göndermek yerine zaman aralığı veya anlamlı olay kullan: tur başlangıcı, sektör geçişi, pit girişi, kaza veya örneğin saniyede 5–20 örnek.
+3. Gönderim sürerken yeni istek yığma; callback sonucunda başarı/hata sayacını güncelle.
+4. Ağ yoksa uygulamanın HUD'ı çalışmaya devam etsin; gerekirse `io.*` ile yerel kuyruk/kayıt kullan.
 
 - `web.timeouts(resolve, connect, send, receive)` — Configures timeouts in milliseconds for the following web requests. If you’re sure in your server, consider lowering timeouts so that in a case of a m
 - `web.get(url, headers, callback)` — Sends a GET HTTP or HTTPS request. Note: you can only have two requests running at once, mostly to make sure a faulty script wouldn’t spam a remote se
@@ -1295,4 +1461,13 @@ Bu dokümanı bir fonksiyon kataloğu gibi değil, üç soruyla kullan: **ne gö
 
 ## 8. `ui.*` — arayüz (389 fonksiyon)
 
-ImGui tabanlı: pencere, buton, slider, giriş kutusu, tablo, çizim (`ui.drawLine/drawRect/drawImage...`), `ui.toast`, `ui.modalPopup`, medya oynatıcı, ekstra canvas. Tam liste için SDK dosyasına bak.
+ImGui tabanlıdır: pencere, buton, slider, giriş kutusu, tablo, çizim (`ui.drawLine` / `ui.drawRect` / `ui.drawImage`), `ui.toast`, `ui.modalPopup`, medya oynatıcı ve ekstra canvas sağlar. Tam listeyi aşağıdaki SDK referansından bulabilirsin; ilk uygulamada her fonksiyonu öğrenmeye çalışma.
+
+| Arayüz türü | Önce yap | Sonra ekle |
+|---|---|---|
+| Telemetri HUD'ı | Salt okunur hız/vites/lastik göstergesi | Renk eşikleri, grafikler, sürüklenebilir yerleşim |
+| Ayar ekranı | Birkaç açık seçenek ve varsayılan değer | Profil/ayar dosyası, gelişmiş açıklamalar |
+| Yarış uyarısı | Tek satırlık durum metni veya toast | Ses, modal ve kullanıcı onayı |
+| Tanılama paneli | FPS, ağ durumu, izin/fizik erişimi | Ham nesne dökümü yerine filtrelenmiş alanlar |
+
+**Okunabilirlik ilkesi:** Bir arayüz elemanı ya karar vermeyi kolaylaştırmalı ya da oyuncuya eylem önermelidir. Her alanı aynı anda göstermek yerine, normal sürüşte 3–6 kritik değer; detay modunda ise seçilmiş veri grupları göster.

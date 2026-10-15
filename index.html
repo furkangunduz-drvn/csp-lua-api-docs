@@ -19,6 +19,10 @@ body{background:radial-gradient(1100px 680px at 90% -12%,rgba(39,103,180,.17),tr
 /* Keep long API signatures and URLs inside narrow viewports. */
 .content li,.content li *{overflow-wrap:anywhere;word-break:break-word}
 </style>
+<style>
+/* Reading aids for the guided sections. */
+.content h4{margin:29px 0 11px;color:#cde4ff;font-size:1rem;letter-spacing:-.01em}.content h4:before{margin-right:8px;color:var(--accent-2);content:"◆"}.content details{margin:22px 0;padding:0 16px;border:1px solid rgba(130,161,202,.2);border-radius:10px;background:rgba(18,31,50,.55)}.content details[open]{padding-bottom:12px}.content summary{padding:12px 0;color:#c8ddf4;font-weight:650;cursor:pointer;user-select:none}.content summary::marker{color:var(--accent-2)}.content details>ul{margin-top:0}.content blockquote strong{color:#dff4ff}@media(max-width:860px){.content details{padding-inline:13px}.content h4{margin-top:25px}}
+</style>
 </head>
 <body>
 <div class="shell">
@@ -33,6 +37,162 @@ body{background:radial-gradient(1100px 680px at 90% -12%,rgba(39,103,180,.17),tr
 <article id="document" class="content">
 <h1>CSP Lua API — Assetto Corsa&#39;ya ne kadar müdahale edebiliriz?</h1>
 <p>Kaynak: kurulu CSP <strong>0.2.11 (build 3465)</strong>, <code>extension/internal/lua-sdk/ac_apps/lib.lua</code> (17.475 satır). Bu dosya SDK&#39;dan otomatik çıkarıldı; açıklamalar SDK&#39;daki İngilizce metinlerdir. Hiçbir çağrı oyunda tek tek denenmedi.</p>
+<blockquote>
+<p><strong>Bu doküman ne sağlar?</strong> CSP Lua ile neleri okuyabileceğini, ekranda gösterebileceğini ve yalnızca izinli koşullarda neleri değiştirebileceğini anlatır. Önce bu bölümü oku; aşağıdaki uzun fonksiyon listelerini ise bir fonksiyon adı veya alan ararken referans olarak kullan.</p>
+</blockquote>
+<h2>Başlamadan önce: API&#39;yi doğru okumak</h2>
+<p>Bu API tek bir şey değildir. Aynı uygulamada dört farklı katmanla çalışırsın:</p>
+<table>
+<thead>
+<tr>
+<th>Katman</th>
+<th>Temel soru</th>
+<th>Ana API&#39;ler</th>
+<th>Araç fiziğini değiştirir mi?</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Durum okuma</strong></td>
+<td>Oyunda şu anda ne oluyor?</td>
+<td><code>ac.getCar()</code>, <code>ac.getCarPhysics()</code>, <code>ac.getSim()</code></td>
+<td>Hayır</td>
+</tr>
+<tr>
+<td><strong>Sunum</strong></td>
+<td>Bunu oyuncuya nasıl gösteririm?</td>
+<td><code>ui.*</code>, <code>render.*</code>, kamera API&#39;leri</td>
+<td>Hayır</td>
+</tr>
+<tr>
+<td><strong>Veri / entegrasyon</strong></td>
+<td>Kaydeder veya başka bir uygulamaya yollar mıyım?</td>
+<td><code>io.*</code>, <code>web.*</code>, <code>os.*</code></td>
+<td>Hayır</td>
+</tr>
+<tr>
+<td><strong>Oyun müdahalesi</strong></td>
+<td>Aracı, AI&#39;ı veya kuralı değiştirmeli miyim?</td>
+<td><code>physics.*</code>, bazı <code>ac.set*</code> çağrıları</td>
+<td>Evet, izin ve tur etkisi olabilir</td>
+</tr>
+</tbody></table>
+<p>Bu ayrım önemlidir: Bir hız göstergesi için <code>physics.*</code> gerekmez; yalnızca <code>ac.getCar(0)</code> okuyup <code>ui.*</code> ile çizmek yeterlidir. Araç konumunu değiştirmek için ise sadece doğru fonksiyonu bilmek yetmez, fizik erişiminin açık olması ve bu davranışın bulunduğun oturum için doğru olması gerekir.</p>
+<h3>60 saniyelik başlangıç seçimi</h3>
+<table>
+<thead>
+<tr>
+<th>Şunu yapmak istiyorum…</th>
+<th>İlk bakılacak yer</th>
+<th>Neden?</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Hız, vites, gaz, fren veya tur süresi göstermek</td>
+<td><code>ac.getCar(0)</code></td>
+<td>Oyuncu aracının anlık telemetrisini tek nesnede verir.</td>
+</tr>
+<tr>
+<td>Yağmur, oturum süresi, bayrak veya pist sıcaklığına göre davranmak</td>
+<td><code>ac.getSim()</code></td>
+<td>Araçtan bağımsız global oturum ve hava verisini taşır.</td>
+</tr>
+<tr>
+<td>Lastik, fren veya süspansiyon analizi yapmak</td>
+<td><code>car.wheels[i]</code>, gerekirse <code>ac.getCarPhysics(0)</code></td>
+<td>Önce görsel/telemetri tekerlek verisini kullan; fizik detayına yalnızca ihtiyaç varsa geç.</td>
+</tr>
+<tr>
+<td>Dünya üzerinde bir işaret ya da rota göstermek</td>
+<td>Araç <code>position</code>/<code>look</code> + <code>render.*</code></td>
+<td>Konum vektörünü alır, sahneye çizim yaparsın.</td>
+</tr>
+<tr>
+<td>Özel kamera yapmak</td>
+<td><code>ac.grabCamera()</code></td>
+<td>Kamera sahipliğini alıp konum, yön ve FOV&#39;u uygulaman yönetir.</td>
+</tr>
+<tr>
+<td>Telemetriyi Racegrid&#39;e göndermek</td>
+<td><code>ac.getCar(0)</code> + <code>web.*</code></td>
+<td>Önce küçük bir veri paketi oluştur, sonra HTTP/WebSocket ile ilet.</td>
+</tr>
+<tr>
+<td>Aracı ışınlamak, hızını değiştirmek veya AI kontrol etmek</td>
+<td><code>physics.*</code></td>
+<td>Bu katman korumalıdır; önce izin ve oturum koşulunu kontrol et.</td>
+</tr>
+</tbody></table>
+<h3>Okuma, yazma ve yan etki sözlüğü</h3>
+<p>Fonksiyon adları çoğu zaman niyetini anlatır. Bu kısa sözlük, uzun listelerde daha hızlı gezinmek için kullanışlıdır:</p>
+<table>
+<thead>
+<tr>
+<th>Ad kalıbı</th>
+<th>Genellikle yaptığı iş</th>
+<th>Örnek</th>
+<th>Dikkat</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>get…</code> / alan okuma</td>
+<td>Mevcut durumu döndürür</td>
+<td><code>ac.getCar(0)</code>, <code>car.speedKmh</code></td>
+<td>Her güncellemede güvenle okunabilir; gereksiz büyük veri paketleri üretme.</td>
+</tr>
+<tr>
+<td><code>is…</code> / <code>has…</code></td>
+<td>Koşul veya yetenek bildirir</td>
+<td><code>sim.isOnlineRace</code>, <code>car.isInPit</code>, <code>physics.allowed()</code></td>
+<td>Müdahale öncesi koruma olarak kullan.</td>
+</tr>
+<tr>
+<td><code>set…</code> / <code>override…</code> / <code>force…</code></td>
+<td>Bir değeri ya da davranışı değiştirir</td>
+<td><code>physics.setCarFuel</code>, <code>overrideRacingFlag</code>, <code>forceUserBrakesFor</code></td>
+<td>Tur geçersizliği, izin ve geri alma davranışını kontrol et.</td>
+</tr>
+<tr>
+<td><code>find…</code> / <code>access…</code></td>
+<td>Var olan bir kaynak veya düğüm bulur</td>
+<td><code>ac.findNodes</code>, <code>ac.accessAppWindow</code></td>
+<td>Kaynağın bulunamaması normal bir durum olabilir; sonucu kontrol et.</td>
+</tr>
+<tr>
+<td><code>on…</code> / callback alan çağrı</td>
+<td>Olay gerçekleştiğinde çalışır</td>
+<td><code>ac.onScreenshot</code>, <code>web.get(..., callback)</code></td>
+<td>Ağ ve dosya işlemlerini callback içinde tamamla; ana güncelleme akışını bloklama.</td>
+</tr>
+<tr>
+<td><code>grab…</code></td>
+<td>Bir sistemin geçici kontrolünü alır</td>
+<td><code>ac.grabCamera()</code></td>
+<td>Kaynağı işin bittiğinde serbest bırakacak yaşam döngüsünü planla.</td>
+</tr>
+</tbody></table>
+<h3>Güvenli veri okuma: en küçük yararlı örnek</h3>
+<pre><code class="language-lua">local car = ac.getCar(0)   -- oyuncu aracı için anlık durum
+local sim = ac.getSim()    -- oturum ve ortam durumu
+
+local telemetry = {
+  speedKmh = car.speedKmh,
+  gear = car.gear,
+  throttle = car.gas,
+  brake = car.brake,
+  lapTimeMs = car.lapTimeMs,
+  rain = sim.rainIntensity,
+  inOnlineRace = sim.isOnlineRace
+}
+</code></pre>
+<p>Bu örnek hiçbir oyunsal durumu değiştirmez. Dashboard, kayıt veya dış servise gönderim için iyi başlangıç noktasıdır. İlk sürümde yüzlerce alanı taşımak yerine yalnızca kararında kullanılan alanları topla; bu hem okunabilirliği hem de veri maliyetini korur.</p>
+<h3>Fizik yazmadan önce karar ağacı</h3>
+<ol>
+<li>Aynı sonucu yalnızca okuyup <code>ui.*</code>/<code>render.*</code> ile gösterebilir misin? <strong>Evetse fizik yazma.</strong></li>
+<li>Değişiklik yalnızca offline veya açıkça izinli oturumda mı anlamlı? <strong>Hayırsa davranışı kapat.</strong></li>
+<li><code>physics.allowed()</code> true mu? <strong>Hayırsa müdahale etme.</strong></li>
+<li>Çağrı turu geçersiz kılar mı ya da online oyunculara etkisi var mı? Fonksiyon açıklamasını kontrol et, kullanıcıya net geri bildirim ver.</li>
+<li>Değişiklik geçiciyse geri alma yolun var mı? Özellikle bayrak, kamera, kontrol kilidi ve override çağrılarında bunu tasarla.</li>
+</ol>
 <h2>1. Özet: müdahale seviyeleri</h2>
 <table>
 <thead>
@@ -263,6 +423,70 @@ body{background:radial-gradient(1100px 680px at 90% -12%,rgba(39,103,180,.17),tr
 <li><strong>Telemetri:</strong> 266 alanlı <code>ac.getCar</code> + 16 alanlı <code>getCarPhysics</code> + tekerlek alanları — sürüş verisinin tamamı okunabilir.</li>
 </ul>
 <h2>3. <code>physics.*</code> — fizik müdahalesi (tam liste, 94 fonksiyon)</h2>
+<p>Bu bölümdeki çağrılar aynı ağırlıkta değildir. Bazıları yalnızca raycast gibi okuma yapar, bazıları ise aracın konumunu, kontrolünü veya yarış sonucunu doğrudan etkiler. <strong>Fizik erişimi yoksa</strong> <code>physics.allowed()</code> false döner ve bu bölümün çoğu kullanılamaz.</p>
+<table>
+<thead>
+<tr>
+<th>Amaç</th>
+<th>İlk tercih</th>
+<th>Ne zaman kullanılır?</th>
+<th>Başlıca risk</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Pistle temas / mesafe ölçmek</td>
+<td><code>physics.raycastTrack()</code></td>
+<td>Aracın altındaki zemini veya bir noktanın pistle mesafesini ölçmek.</td>
+<td>Kısa ve sınırlı sayıda ray kullan; çok sık raycast performansı etkileyebilir.</td>
+</tr>
+<tr>
+<td>Aracı konumlandırmak</td>
+<td><code>setCarPosition</code>, <code>teleportCarTo</code></td>
+<td>Antrenman başlangıcı, kontrollü respawn, senaryo kurulumu.</td>
+<td>Tur geçersizliği ve online uyumsuzluğu.</td>
+</tr>
+<tr>
+<td>Hız veya kuvvet uygulamak</td>
+<td><code>setCarVelocity</code>, <code>addForce</code>, <code>addWheelTorque</code></td>
+<td>Test, replay/ghost prototipi veya özel oyun modu.</td>
+<td><code>addForce</code> zaman adımıyla (<code>dt</code>) ölçeklenmeli; yanlış değer fizik davranışını bozar.</td>
+</tr>
+<tr>
+<td>Oyuncu girdisini yönetmek</td>
+<td><code>lockUserControlsFor</code>, <code>forceUserBrakesFor</code>, <code>overrideUserSteering</code></td>
+<td>Start prosedürü, eğitim senaryosu, kısa süreli güvenlik müdahalesi.</td>
+<td>Kontrolü kullanıcıya ne zaman ve nasıl geri vereceğini açıkça tanımla.</td>
+</tr>
+<tr>
+<td>Araç durumunu hazırlamak</td>
+<td><code>setCarFuel</code>, <code>setTyresTemperature</code>, <code>resetCarState</code></td>
+<td>Offline antrenman senaryosunun başlangıç koşulları.</td>
+<td>Çoğu çağrı turu geçersiz kılar; setup/yarış bütünlüğünü bozabilir.</td>
+</tr>
+<tr>
+<td>AI&#39;ı yönlendirmek</td>
+<td><code>setAILevel</code>, <code>setAIAggression</code>, <code>setAICarPosition</code></td>
+<td>Özel AI senaryosu veya test oturumu.</td>
+<td>Yalnızca AI araçları hedefle; oyuncu aracı için aynı fonksiyonları kullanma.</td>
+</tr>
+<tr>
+<td>Yarış kuralı uygulamak</td>
+<td><code>overrideRacingFlag</code>, <code>setCarPenalty</code>, <code>setCarDRS</code></td>
+<td>Mode/etkinlik kuralları.</td>
+<td>Override&#39;ları temizlemeyi unutma; örneğin bayrak yönetimini sonra <code>None</code> ile geri bırak.</td>
+</tr>
+</tbody></table>
+<h3>Fizik çağrısı yazma şablonu</h3>
+<pre><code class="language-lua">local sim = ac.getSim()
+
+if physics.allowed() and not sim.isOnlineRace then
+  -- Buraya tek, açık amaçlı fizik müdahalesi koy.
+  -- Örn. sadece eğitim senaryosunda konum/hız ayarla.
+else
+  -- Müdahaleyi sessizce atla veya HUD&#39;da nedenini açıkla.
+end
+</code></pre>
+<p>Bu şablon bir güvenlik garantisi değildir; ilgili fonksiyonun kendi açıklamasındaki tur, multiplayer ve geri alma notları yine geçerlidir. Amacı, fizik yazımını kodun her yerine yaymak yerine tek bir karar noktasında toplamaktır.</p>
 <ul>
 <li><strong><code>physics.getPointVelocity(carIndex, position, posLocal)</code></strong> — Returns velocity (in world coordinates) of a car point. If there is no such car or physics currently available, returns vector with zeroes.</li>
 <li><strong><code>physics.getExtendedSuspensionTravel(carIndex, corner)</code></strong> — </li>
@@ -361,6 +585,53 @@ body{background:radial-gradient(1100px 680px at 90% -12%,rgba(39,103,180,.17),tr
 </ul>
 <h2>4. Araç durumu okuma</h2>
 <h3><code>ac.getCar(i)</code> — görsel/grafik durumu (266 alan)</h3>
+<p><code>ac.getCar(i)</code> günlük uygulama kodunun ana giriş noktasıdır. Dönen <code>ac.CarState</code> nesnesini <strong>anlık görüntü</strong> gibi düşün: fonksiyonu çağır, yalnızca o kare için gereken alanları oku, sonra bir sonraki güncellemede yeniden al. Bu nesne araç değiştirmek için değil, aracı anlamak içindir.</p>
+<h4>En sık kullanacağın <code>CarState</code> alanları</h4>
+<table>
+<thead>
+<tr>
+<th>İhtiyaç</th>
+<th>Önce kullan</th>
+<th>Not</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Temel sürüş HUD&#39;ı</td>
+<td><code>speedKmh</code>, <code>gear</code>, <code>rpm</code>, <code>gas</code>, <code>brake</code>, <code>clutch</code>, <code>steer</code>, <code>handbrake</code></td>
+<td><code>speedKmh</code> kullanıcı arayüzü için daha doğal; fizik hesabında <code>speedMs</code> gerekebilir.</td>
+</tr>
+<tr>
+<td>Konum ve hareket</td>
+<td><code>position</code>, <code>velocity</code>, <code>acceleration</code>, <code>look</code>, <code>up</code>, <code>side</code></td>
+<td>Bunların çoğu <code>vec3</code>&#39;tür; dünya uzayında çizim veya yön hesabı için kullanılır.</td>
+</tr>
+<tr>
+<td>Tur / yarış bilgisi</td>
+<td><code>lapTimeMs</code>, <code>bestLapTimeMs</code>, <code>lapCount</code>, <code>currentSector</code>, <code>racePosition</code>, <code>isLapValid</code></td>
+<td>Zaman alanları milisaniyedir; ekranda gösterirken biçimlendir.</td>
+</tr>
+<tr>
+<td>Araç sağlığı</td>
+<td><code>fuel</code>, <code>damage</code>, <code>gearboxDamage</code>, <code>engineLifeLeft</code>, <code>waterTemperature</code>, <code>oilTemperature</code></td>
+<td>Uyarı eşiğini araçtan araca farklılaştır; her alan her araçta aynı derecede anlamlı olmayabilir.</td>
+</tr>
+<tr>
+<td>Sistem durumları</td>
+<td><code>absInAction</code>, <code>tractionControlInAction</code>, <code>drsAvailable</code>, <code>drsActive</code>, <code>speedLimiterInAction</code></td>
+<td>Sürüş asistanı göstergeleri veya olay kaydı için uygundur.</td>
+</tr>
+<tr>
+<td>Oturum bağlamı</td>
+<td><code>isUserControlled</code>, <code>isAIControlled</code>, <code>isInPit</code>, <code>isInPitlane</code>, <code>isRemote</code>, <code>isConnected</code></td>
+<td>Aynı kodun oyuncu, AI, replay ve uzak araçlarda farklı davranmasını sağlar.</td>
+</tr>
+<tr>
+<td>Lastikler</td>
+<td><code>wheels[0]</code> … <code>wheels[3]</code></td>
+<td>Her tekerlek nesnesini ayrı oku; ayrıntılı yol haritası aşağıdaki tekerlek bölümünde.</td>
+</tr>
+</tbody></table>
+<p><strong>İndeks notu:</strong> Araçlar ve tekerlek dizileri 0&#39;dan başlar. Oyuncu aracında <code>ac.getCar(0)</code>, ilk tekerlekte <code>car.wheels[0]</code> biçimini kullanırsın. Çok araçlı bir uygulamada önce <code>ac.getSim().carsCount</code> ile sınırı al, sonra her <code>i</code> için <code>ac.getCar(i)</code> oku.</p>
 <p><code>mass</code>, <code>graphicsOffset</code>, <code>graphicsPitchRotation</code>, <code>graphicsToPhysicsTransform</code>, <code>physicsToGraphicsTransform</code>, <code>steerLock</code>, <code>maxFuel</code>, <code>exposureOutside</code>, <code>exposureInside</code>, <code>shakeMultiplier</code>, <code>headlightsColor</code>, <code>customCarColor</code>, <code>aabbCenter</code>, <code>aabbSize</code>, <code>index</code>, <code>gearCount</code>, <code>turboCount</code>, <code>tractionType</code>, <code>enginePosition</code>, <code>brakesBiasLimitDown</code>, <code>brakesBiasLimitUp</code>, <code>brakesBiasStep</code>, <code>maxRelativePlankWear</code>, <code>year</code>, <code>hShifter</code>, <code>adjustableTurbo</code>, <code>brakesCockpitBias</code>, <code>extendedPhysics</code>, <code>isRacingCar</code>, <code>isRallyCar</code>, <code>isDriftCar</code>, <code>isOpenWheeler</code>, <code>isEngineDiesel</code>, <code>isKunosCar</code>, <code>prefersImperialUnits</code>, <code>headlightsAreHeadlights</code>, <code>hasLowBeams</code>, <code>isLeftHandDrive</code>, <code>sirenHorn</code>, <code>hasFlashingLights</code>, <code>hasCockpitSwitchForUserSpeedLimiter</code>, <code>hasHornAudioEvent</code>, <code>hasAnalogTelltale</code>, <code>tractionControlModes</code>, <code>absModes</code>, <code>fuelMaps</code>, <code>tractionControl2Modes</code>, <code>hasEngineBrakeSettings</code>, <code>pitTransform</code>, <code>timestamp</code>, <code>transform</code>, <code>bodyTransform</code>, <code>worldToLocal</code>, <code>position</code>, <code>velocity</code>, <code>acceleration</code>, <code>angularVelocity</code>, <code>localAngularVelocity</code>, <code>localVelocity</code>, <code>up</code>, <code>look</code>, <code>side</code>, <code>driverEyesPosition</code>, <code>groundNormal</code>, <code>groundDistance</code>, <code>gas</code>, <code>brake</code>, <code>clutch</code>, <code>steer</code>, <code>handbrake</code>, <code>gear</code>, <code>engagedGear</code>, <code>fuel</code>, <code>rpm</code>, <code>rpmLimiter</code>, <code>rpmMinimum</code>, <code>speedKmh</code>, <code>speedMs</code>, <code>turboBoost</code>, <code>drivetrainSpeed</code>, <code>waterTemperature</code>, <code>minHeight</code>, <code>restrictor</code>, <code>ballast</code>, <code>ping</code>, <code>cgHeight</code>, <code>wheelsOutside</code>, <code>engineLifeLeft</code>, <code>dirt</code>, <code>damage</code>, <code>gearboxDamage</code>, <code>nodeIndex</code>, <code>visibleIndex</code>, <code>activeLOD</code>, <code>distanceToCamera</code>, <code>splinePosition</code>, <code>driftPoints</code>, <code>driftInstantPoints</code>, <code>driftComboCounter</code>, <code>collisionDepth</code>, <code>collisionPosition</code>, <code>collidedWith</code>, <code>lapCutsCount</code>, <code>lastLapCutsCount</code>, <code>aiLevel</code>, <code>aiAggression</code>, <code>aiRainTyres</code>, <code>currentSplits</code>, <code>lastSplits</code>, <code>bestSplits</code>, <code>bestLapSplits</code>, <code>wheels</code>, <code>extrapolatedMovement</code>, <code>isActive</code>, <code>isConnected</code>, <code>isRemote</code>, <code>isAIControlled</code>, <code>isUserControlled</code>, <code>isLapValid</code>, <code>isLastLapValid</code>, <code>isCameraOnBoard</code>, <code>isInPitlane</code>, <code>isInPit</code>, <code>isRetired</code>, <code>isEngineLimiterOn</code>, <code>isGearGrinding</code>, <code>hasTurningLights</code>, <code>headlightsActive</code>, <code>brakeLightsActive</code>, <code>flashingLightsActive</code>, <code>hornActive</code>, <code>focused</code>, <code>focusedOnInterior</code>, <code>useInternalAudio</code>, <code>isHidingLabels</code>, <code>isDriftBonusOn</code>, <code>isDriftValid</code>, <code>isRaceFinished</code>, <code>isDriverVisible</code>, <code>isDriverDoorOpen</code>, <code>isDriverSeatbeltOn</code>, <code>hazardLights</code>, <code>turningLeftLights</code>, <code>turningRightLights</code>, <code>turningLeftOnly</code>, <code>turningRightOnly</code>, <code>lowBeams</code>, <code>highBeams</code>, <code>extraA</code>, <code>extraB</code>, <code>extraC</code>, <code>extraD</code>, <code>extraE</code>, <code>extraF</code>, <code>extraG</code>, <code>extraH</code>, <code>extraI</code>, <code>extraJ</code>, <code>extraK</code>, <code>extraL</code>, <code>extraM</code>, <code>extraN</code>, <code>extraO</code>, <code>extraP</code>, <code>extraQ</code>, <code>extraR</code>, <code>extraS</code>, <code>extraT</code>, <code>kersCharging</code>, <code>turningLightsActivePhase</code>, <code>anyFlamesActive</code>, <code>justJumped</code>, <code>resetCounter</code>, <code>kersCharge</code>, <code>kersInput</code>, <code>kersCurrentKJ</code>, <code>kersMaxKJ</code>, <code>kersLoad</code>, <code>distanceDrivenTotalKm</code>, <code>distanceDrivenSessionKm</code>, <code>poweredWheelsSpeed</code>, <code>batteryVoltage</code>, <code>oilPressure</code>, <code>oilTemperature</code>, <code>exhaustTemperature</code>, <code>wiperModes</code>, <code>wiperMode</code>, <code>wiperSelectedMode</code>, <code>wiperSpeed</code>, <code>wiperProgress</code>, <code>bodyWetness</code>, <code>compass</code>, <code>lapTimeMs</code>, <code>bestLapTimeMs</code>, <code>previousLapTimeMs</code>, <code>lapCount</code>, <code>currentSector</code>, <code>previousSectorTime</code>, <code>racePosition</code>, <code>drivenInRace</code>, <code>estimatedLapTimeMs</code>, <code>performanceMeter</code>, <code>performanceMeterSpeedDifferenceMs</code>, <code>sessionLapCount</code>, <code>compoundIndex</code>, <code>sessionID</code>, <code>physicsAvailable</code>, <code>speedLimiterInAction</code>, <code>absInAction</code>, <code>tractionControlInAction</code>, <code>hasUserBrakeBias</code>, <code>hasCockpitMGUHMode</code>, <code>hasCockpitERSDelivery</code>, <code>hasCockpitERSRecovery</code>, <code>drsPresent</code>, <code>drsAvailable</code>, <code>drsActive</code>, <code>kersPresent</code>, <code>kersHasButtonOverride</code>, <code>kersButtonPressed</code>, <code>mguhChargingBatteries</code>, <code>manualPitsSpeedLimiterEnabled</code>, <code>userSpeedLimiterEnabled</code>, <code>autoShift</code>, <code>autoClutch</code>, <code>mgukDelivery</code>, <code>mgukDeliveryCount</code>, <code>mgukRecovery</code>, <code>tractionControlMode</code>, <code>absMode</code>, <code>engineBrakeSettingsCount</code>, <code>currentEngineBrakeSetting</code>, <code>fuelPerLap</code>, <code>differentialPreload</code>, <code>differentialCoast</code>, <code>differentialPower</code>, <code>awdFrontShare</code>, <code>awdCenterLock</code>, <code>drivetrainTorque</code>, <code>drivetrainPower</code>, <code>brakeBias</code>, <code>speedLimiter</code>, <code>turboBoosts</code>, <code>turboWastegates</code>, <code>tractionControl2</code>, <code>fuelMap</code>, <code>steerTorque</code>, <code>ffbSteerAssist</code>, <code>ffbBase</code>, <code>ffbFinal</code>, <code>ffbPure</code>, <code>ffbMultiplier</code>, <code>aeroLiftFront</code>, <code>aeroLiftRear</code>, <code>aeroDrag</code>, <code>caster</code>, <code>rideHeight</code>, <code>p2pStatus</code>, <code>p2pActivations</code>, <code>altitude</code>, <code>ambientOcclusion</code>, <code>rawAmbientOcclusion</code>, <code>carCamerasCount</code>, <code>currentPenaltyType</code>, <code>currentPenaltyParameter</code>, <code>extraIconsCount</code></p>
 <details><summary>Açıklamalar</summary><ul>
 <li><code>mass</code> (number) Car mass in kg.</li>
@@ -631,6 +902,31 @@ body{background:radial-gradient(1100px 680px at 90% -12%,rgba(39,103,180,.17),tr
 <li><code>extraIconsCount</code> (integer) Extra driver icons set with <code>ui.UserIconsLayer()</code>. To draw, use <code>carN::special::driver::X</code> texture name.</li>
 </ul>
 </details><h3><code>ac.getCarPhysics(i)</code> — fizik durumu (sadece oyuncu aracı) (16 alan)</h3>
+<p>Bu nesne <code>ac.getCar()</code>&#39;ın alternatifi değil, <strong>fizik ayrıntısı eklentisidir</strong>. Önce <code>car.physicsAvailable</code> veya <code>state.isAvailable</code> ile verinin gerçekten mevcut olduğunu doğrula. Uzak araç, replay ya da izin verilmeyen bağlamlarda alanlara güvenme.</p>
+<table>
+<thead>
+<tr>
+<th>Bu soruyu soruyorsan…</th>
+<th>Bakılacak alan</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Anlık vites oranı / aktarma ne yapıyor?</td>
+<td><code>gearRatio</code>, <code>finalRatio</code>, <code>drivetrainVelocity</code>, <code>clutchState</code></td>
+</tr>
+<tr>
+<td>Aerodinamik veya aktarma modeli ayrıntısı gerekli mi?</td>
+<td><code>airDensity</code>, <code>engineInertia</code>, <code>drivetrainInertia</code>, AWD alanları</td>
+</tr>
+<tr>
+<td>Görsel tekerlek verisi yetmiyor mu?</td>
+<td><code>wheels[i]</code> içindeki fizik tekerleği alanları</td>
+</tr>
+<tr>
+<td>Araca özel script girdisi var mı?</td>
+<td><code>scriptControllerInputs</code> — 256 elemanlı dizi; ilgili araç bunu kullanmıyorsa anlamlı veri bekleme.</td>
+</tr>
+</tbody></table>
 <p><code>isAvailable</code>, <code>gearRatio</code>, <code>finalRatio</code>, <code>airDensity</code>, <code>awd2MaxTorque</code>, <code>awd2CurrentLockTorque</code>, <code>awd2Ramp</code>, <code>engineInertia</code>, <code>drivetrainInertia</code>, <code>drivetrainVelocity</code>, <code>clutchInertia</code>, <code>clutchState</code>, <code>wheels</code>, <code>scriptControllerInputs</code>, <code>gearRatios</code>, <code>wings</code></p>
 <details><summary>Açıklamalar</summary><ul>
 <li><code>isAvailable</code> (boolean) </li>
@@ -651,6 +947,41 @@ body{background:radial-gradient(1100px 680px at 90% -12%,rgba(39,103,180,.17),tr
 <li><code>wings</code> (ac.StateWingPhysics[]) Items start with 0. To get number of elements, use <code>#state.wings</code>.</li>
 </ul>
 </details><h3><code>car.wheels[i]</code> — tekerlek (62 alan)</h3>
+<p>Bir lastik HUD&#39;ı için bütün 62 alanı kullanman gerekmez. Başlangıçta her köşe için <code>tyreCoreTemperature</code>, <code>tyreInsideTemperature</code>, <code>tyreMiddleTemperature</code>, <code>tyreOutsideTemperature</code>, <code>tyrePressure</code>, <code>tyreWear</code>, <code>brakeTemperature</code>, <code>slipAngle</code>, <code>loadK</code> ve <code>surfaceGrip</code> yeterlidir.</p>
+<table>
+<thead>
+<tr>
+<th>Gösterge / analiz</th>
+<th>Önerilen alanlar</th>
+<th>Yorum</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Sıcaklık şeridi</td>
+<td><code>tyreInsideTemperature</code>, <code>tyreMiddleTemperature</code>, <code>tyreOutsideTemperature</code>, <code>tyreOptimumTemperature</code></td>
+<td>İç-orta-dış farkı, basınç veya kamber ayarı için güçlü bir ipucudur; doğrudan teşhis değildir.</td>
+</tr>
+<tr>
+<td>Aşınma ve hasar</td>
+<td><code>tyreWear</code>, <code>tyreGrain</code>, <code>tyreBlister</code>, <code>tyreFlatSpot</code>, <code>isBlown</code></td>
+<td>Değerlerin araç/lastik bileşimine göre yorumlanması gerekir.</td>
+</tr>
+<tr>
+<td>Frenleme</td>
+<td><code>brakeTemperature</code>, <code>discTemperature</code>, <code>slipRatio</code>, <code>loadK</code></td>
+<td>Fren sıcaklığını hız ve yükle birlikte kaydetmek daha anlamlı sonuç verir.</td>
+</tr>
+<tr>
+<td>Zemin / pist</td>
+<td><code>surfaceGrip</code>, <code>surfaceDirt</code>, <code>surfacePitlane</code>, <code>surfaceValidTrack</code>, <code>contactPoint</code></td>
+<td>Pist dışı, pit yolu veya farklı yüzeylerdeki davranışı ayırmaya yardım eder.</td>
+</tr>
+<tr>
+<td>Geometri</td>
+<td><code>position</code>, <code>velocity</code>, <code>look</code>, <code>up</code>, <code>outside</code>, <code>transform</code></td>
+<td>Tekerlek başına 3D işaret veya debug çizimi için.</td>
+</tr>
+</tbody></table>
 <p><code>tyreRadius</code>, <code>tyreWidth</code>, <code>rimRadius</code>, <code>tyreDirty</code>, <code>tyreWear</code>, <code>tyreVirtualKM</code>, <code>tyreGrain</code>, <code>tyreBlister</code>, <code>tyreFlatSpot</code>, <code>tyreStaticPressure</code>, <code>tyrePressure</code>, <code>temperatureMultiplier</code>, <code>tyreCoreTemperature</code>, <code>tyreInsideTemperature</code>, <code>tyreMiddleTemperature</code>, <code>tyreOutsideTemperature</code>, <code>tyreOptimumTemperature</code>, <code>brakeTemperature</code>, <code>discTemperature</code>, <code>angularSpeed</code>, <code>slip</code>, <code>slipAngle</code>, <code>slipRatio</code>, <code>ndSlip</code>, <code>load</code>, <code>loadK</code>, <code>speedDifference</code>, <code>camber</code>, <code>toeIn</code>, <code>suspensionDamage</code>, <code>suspensionTravel</code>, <code>tyreLoadedRadius</code>, <code>waterThickness</code>, <code>dx</code>, <code>dy</code>, <code>mz</code>, <code>fx</code>, <code>fy</code>, <code>contactNormal</code>, <code>contactPoint</code>, <code>position</code>, <code>look</code>, <code>up</code>, <code>outside</code>, <code>velocity</code>, <code>transform</code>, <code>transformWheel</code>, <code>surfaceDirt</code>, <code>surfaceSectorID</code>, <code>surfaceSectionIndex</code>, <code>surfaceGrip</code>, <code>surfaceDamping</code>, <code>surfaceGranularity</code>, <code>surfaceVibrationGain</code>, <code>surfaceVibrationLength</code>, <code>surfacePitlane</code>, <code>surfaceValidTrack</code>, <code>isBlown</code>, <code>isHot</code>, <code>isSpecialSurface</code>, <code>surfaceType</code>, <code>surfaceExtendedType</code></p>
 <details><summary>Açıklamalar</summary><ul>
 <li><code>tyreRadius</code> (number) Tyre radius in meters.</li>
@@ -731,6 +1062,46 @@ body{background:radial-gradient(1100px 680px at 90% -12%,rgba(39,103,180,.17),tr
 <li><code>discCoreTemperature</code> (number) Can vary from AC road temperature in shadows if option is enabled.</li>
 </ul>
 </details><h3><code>ac.getSim()</code> — simülasyon durumu (164 alan)</h3>
+<p><code>ac.getSim()</code> tüm uygulamanın bağlamıdır: <strong>hangi oturumdayım, hava nasıl, kamera nerede ve oyun canlı mı?</strong> Araçtan bağımsız bir karar verirken önce burada başla.</p>
+<table>
+<thead>
+<tr>
+<th>Karar alanı</th>
+<th>Önerilen alanlar</th>
+<th>Örnek davranış</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Oturum yaşam döngüsü</td>
+<td><code>isLive</code>, <code>isPaused</code>, <code>isSessionStarted</code>, <code>isSessionFinished</code>, <code>sessionTimeLeft</code></td>
+<td>Sadece aktif oturumdayken veri kaydetmek veya sayaç göstermek.</td>
+</tr>
+<tr>
+<td>Online / replay ayrımı</td>
+<td><code>isOnlineRace</code>, <code>isReplayActive</code>, <code>isReplayOnlyMode</code>, <code>carsCount</code></td>
+<td>Fizik yazmayı kapatmak, telemetriyi işaretlemek veya çok araçlı görünüm açmak.</td>
+</tr>
+<tr>
+<td>Hava ve pist</td>
+<td><code>ambientTemperature</code>, <code>roadTemperature</code>, <code>rainIntensity</code>, <code>rainWetness</code>, <code>rainWater</code>, <code>roadGrip</code>, <code>windSpeedKmh</code></td>
+<td>Yağmur uyarısı, ıslak zemin HUD&#39;ı veya setup analizi.</td>
+</tr>
+<tr>
+<td>Yarış kuralı</td>
+<td><code>raceFlagType</code>, <code>penaltiesEnabled</code>, <code>speedLimitKmh</code>, <code>pitsSpeedLimit</code>, <code>pitWindowStartTime</code>, <code>pitWindowEndTime</code></td>
+<td>Bayrak/pit penceresi göstergesi.</td>
+</tr>
+<tr>
+<td>Performans / arayüz</td>
+<td><code>fps</code>, <code>dt</code>, <code>physicsLate</code>, <code>isVRMode</code>, <code>windowWidth</code>, <code>windowHeight</code></td>
+<td>Ağır bir HUD&#39;ı azaltmak veya VR&#39;a uygun yerleşim seçmek.</td>
+</tr>
+<tr>
+<td>Kamera</td>
+<td><code>cameraPosition</code>, <code>cameraLook</code>, <code>cameraUp</code>, <code>cameraFOV</code>, <code>cameraMode</code></td>
+<td>Dünya üstü çizimi aktif kameraya göre konumlandırmak.</td>
+</tr>
+</tbody></table>
 <p><code>windowWidth</code>, <code>windowHeight</code>, <code>msaaSamples</code>, <code>worldDetailLevel</code>, <code>windowSize</code>, <code>isFullscreen</code>, <code>isVSyncActive</code>, <code>isPostProcessingActive</code>, <code>isVRMode</code>, <code>isOculusMode</code>, <code>isOpenVRMode</code>, <code>isTripleMode</code>, <code>isCustomVideoMode</code>, <code>isVRConnected</code>, <code>staticReflections</code>, <code>directMessagingAvailable</code>, <code>directUDPMessagingAvailable</code>, <code>allowTyreBlankets</code>, <code>isReplayOnlyMode</code>, <code>isOnlineRace</code>, <code>isShowroomMode</code>, <code>isPreviewsGenerationMode</code>, <code>freeCameraAllowed</code>, <code>isPitsSpeedLimiterForced</code>, <code>customAISplinesAllowed</code>, <code>isFSRActive</code>, <code>isTripleFSRActive</code>, <code>isLinearColorSpaceActive</code>, <code>allowedTyresOut</code>, <code>resultScreenTime</code>, <code>raceOverTime</code>, <code>mechanicalDamageRate</code>, <code>tyreConsumptionRate</code>, <code>fuelConsumptionRate</code>, <code>gravity</code>, <code>inputMode</code>, <code>windowHandle</code>, <code>currentVAOMode</code>, <code>neutralSunTrajectoryTimestamp</code>, <code>isMakingScreenshot</code>, <code>time</code>, <code>gameTime</code>, <code>systemTime</code>, <code>frame</code>, <code>cameraPosition</code>, <code>cameraPositionDelta</code>, <code>cameraLook</code>, <code>cameraUp</code>, <code>cameraSide</code>, <code>cameraFOV</code>, <code>cameraClipNear</code>, <code>cameraClipFar</code>, <code>cameraDOFFactor</code>, <code>cameraDOFFocus</code>, <code>cameraExposure</code>, <code>exposureMultiplier</code>, <code>carsCount</code>, <code>closelyFocusedCar</code>, <code>focusedCar</code>, <code>dt</code>, <code>isPaused</code>, <code>isInMainMenu</code>, <code>isLookingAtSessionResults</code>, <code>needsDPad</code>, <code>isLive</code>, <code>isFreeCameraOutside</code>, <code>isReplayActive</code>, <code>isFocusedOnInterior</code>, <code>isTripleScreenAvailable</code>, <code>controlsWithShifter</code>, <code>isVirtualMirrorActive</code>, <code>hideSteeringWheel</code>, <code>hideArmsInCockpit</code>, <code>isVirtualMirrorForced</code>, <code>isWindowForeground</code>, <code>isWeatherFXActive</code>, <code>isVAOPatchLoaded</code>, <code>orbitOnboardCamera</code>, <code>cameraJumped</code>, <code>isMouseSteeringActive</code>, <code>ambientLightingMultiplier</code>, <code>ambientTemperature</code>, <code>roadTemperature</code>, <code>lightSuggestion</code>, <code>roadGrip</code>, <code>windSpeedKmh</code>, <code>windVelocityKmh</code>, <code>windDirectionDeg</code>, <code>rainIntensity</code>, <code>rainWetness</code>, <code>rainWater</code>, <code>bestLapTimeMs</code>, <code>timeTotalSeconds</code>, <code>timeHours</code>, <code>timeMinutes</code>, <code>timeSeconds</code>, <code>timeMultiplier</code>, <code>timestamp</code>, <code>dayOfYear</code>, <code>raceFlagType</code>, <code>raceFlagCause</code>, <code>isSessionStarted</code>, <code>isSessionFinished</code>, <code>raceSessionType</code>, <code>timeToSessionStart</code>, <code>sessionTimeLeft</code>, <code>currentSessionIndex</code>, <code>sessionsCount</code>, <code>leaderLapCount</code>, <code>trackLengthM</code>, <code>speedLimitKmh</code>, <code>fps</code>, <code>fpsCapped</code>, <code>physicsLate</code>, <code>cpuOccupancy</code>, <code>cpuTime</code>, <code>firstPersonCameraFOV</code>, <code>cameraMode</code>, <code>driveableCameraMode</code>, <code>carCameraIndex</code>, <code>trackCamerasSetsCount</code>, <code>trackCamerasSet</code>, <code>audioMasterVolume</code>, <code>whiteReferencePoint</code>, <code>specialEvent</code>, <code>isTimedRace</code>, <code>penaltiesEnabled</code>, <code>fixedSetup</code>, <code>leaderLastLap</code>, <code>timeRaceEnded</code>, <code>timeRaceLastLap</code>, <code>timeRaceAdditionalLap</code>, <code>idealLineShown</code>, <code>damageDisplayerShown</code>, <code>driverNamesShown</code>, <code>isAdmin</code>, <code>sentAdminCommand</code>, <code>pitsSpeedLimit</code>, <code>pitWindowStartTime</code>, <code>pitWindowEndTime</code>, <code>replayFrameMs</code>, <code>timeSinceLastUDPPacket</code>, <code>replayFrames</code>, <code>replayCurrentFrame</code>, <code>replayPlaybackRate</code>, <code>weatherType</code>, <code>weatherSkyOcclusion</code>, <code>baseAltitude</code>, <code>currentQuickPitPreset</code>, <code>connectedCars</code>, <code>randomSeed</code>, <code>equinoxSunTrajectory</code>, <code>explicitDateSet</code>, <code>lapSplits</code>, <code>handshakeServerTime</code>, <code>currentServerTime</code>, <code>currentSessionTime</code>, <code>skyColor</code>, <code>horizonColor</code>, <code>fogColor</code>, <code>lightColor</code>, <code>lightDirection</code>, <code>originShift</code>, <code>weatherConditions</code></p>
 <h2>5. <code>ac.*</code> fonksiyonları (577 adet, konuya göre)</h2>
 <h3>Kamera / görüntü (53)</h3>
@@ -1338,6 +1709,37 @@ body{background:radial-gradient(1100px 680px at 90% -12%,rgba(39,103,180,.17),tr
 <li><code>ac.setColorCorrection(targetLDR, priority)</code> — YEBIS uses color matrices to quickly adjust HDR (input 0…∞ range) and LDR (output 0…1 range) color. Tweaks such as saturation, brightness and contrast configured in YEBIS</li>
 </ul>
 <h2>6. <code>render.*</code> — çizim (38)</h2>
+<p><code>render.*</code>, ekranda klasik uygulama penceresi açmadan 2D/3D çizim yapmak içindir. Ölçüm, rota, dünya üstü işaret ve özel kamera efektlerinde kullan; standart form, ayar ve tablo arayüzleri için önce <code>ui.*</code> daha uygundur.</p>
+<table>
+<thead>
+<tr>
+<th>İhtiyaç</th>
+<th>Tercih</th>
+<th>Başlangıç verisi</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Basit ayar penceresi, buton, tablo</td>
+<td><code>ui.*</code></td>
+<td>Uygulamanın kendi durumu ve <code>ac.getCar(0)</code> alanları</td>
+</tr>
+<tr>
+<td>Pistte 3D işaret, fren noktası, yön oku</td>
+<td><code>render.*</code></td>
+<td><code>car.position</code>, <code>car.look</code>, <code>sim.cameraPosition</code></td>
+</tr>
+<tr>
+<td>Kamera koordinatına bağlı efekt</td>
+<td><code>render.*</code> + kamera alanları</td>
+<td><code>ac.getSim().cameraPosition</code>, <code>cameraLook</code>, <code>cameraFOV</code></td>
+</tr>
+<tr>
+<td>Sahne düğümünü bulup görünürlüğünü/materyalini düzenlemek</td>
+<td><code>ac.findNodes</code> ve düğüm API&#39;leri</td>
+<td>Pist/araç node filtresi</td>
+</tr>
+</tbody></table>
+<p><strong>Performans notu:</strong> Her karede oluşturulan nesneleri, büyük doku yüklemelerini ve tüm araçlara yapılan pahalı çizimleri sınırlı tut. <code>sim.dt</code>, <code>sim.fps</code> veya VR durumu üzerinden kaliteyi azaltmak iyi bir geri dönüş yoludur.</p>
 <ul>
 <li><code>render.isVisible(center, radius, gSpace, includeFarPlane)</code> — Can be called only within render context (otherwise returns <code>false</code>). Checks if given point is within current camera frustum. For checking if something is within the main</li>
 <li><code>render.setBlendMode(mode)</code></li>
@@ -1379,6 +1781,42 @@ body{background:radial-gradient(1100px 680px at 90% -12%,rgba(39,103,180,.17),tr
 <li><code>render.PositioningHelper(params)</code> — A helper for moving things around using mouse with XYZ arrows.</li>
 </ul>
 <h2>7. <code>web.*</code>, <code>io.*</code>, <code>os.*</code></h2>
+<p>Bu aileler uygulamayı oyun dışındaki veriye bağlar. Kullanım amacı aynı görünse de sorumlulukları farklıdır:</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Doğru kullanım</th>
+<th>Örnek</th>
+<th>Dikkat</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>web.*</code></td>
+<td>HTTP/HTTPS ve WebSocket ile iletişim</td>
+<td>Telemetriyi Racegrid&#39;e göndermek, yerel komut almak</td>
+<td>Aynı anda sınırlı sayıda istek çalışır; istekleri her karede başlatma.</td>
+</tr>
+<tr>
+<td><code>io.*</code></td>
+<td>Dosya, klasör ve ZIP işlemleri</td>
+<td>Oturum kaydı, ayar dosyası, önbellek</td>
+<td>I/O erişim izni olmayabilir; yazmadan önce hata/başarı sonucunu işle.</td>
+</tr>
+<tr>
+<td><code>os.*</code></td>
+<td>Saat, ileti kutusu, URL ve yerel süreç yardımcıları</td>
+<td>Tanılama, kullanıcıya bilgi verme, dış araç çağırma</td>
+<td>Kullanıcı makinesi ve güvenlik bağlamına etkisi yüksek; otomatik süreç/URL açmayı sınırlı tut.</td>
+</tr>
+</tbody></table>
+<h3>Telemetri entegrasyonu için sağlıklı akış</h3>
+<ol>
+<li><code>ac.getCar(0)</code> ve <code>ac.getSim()</code> içinden yalnızca gerekli alanlarla küçük bir tablo oluştur.</li>
+<li>Her kare göndermek yerine zaman aralığı veya anlamlı olay kullan: tur başlangıcı, sektör geçişi, pit girişi, kaza veya örneğin saniyede 5–20 örnek.</li>
+<li>Gönderim sürerken yeni istek yığma; callback sonucunda başarı/hata sayacını güncelle.</li>
+<li>Ağ yoksa uygulamanın HUD&#39;ı çalışmaya devam etsin; gerekirse <code>io.*</code> ile yerel kuyruk/kayıt kullan.</li>
+</ol>
 <ul>
 <li><code>web.timeouts(resolve, connect, send, receive)</code> — Configures timeouts in milliseconds for the following web requests. If you’re sure in your server, consider lowering timeouts so that in a case of a m</li>
 <li><code>web.get(url, headers, callback)</code> — Sends a GET HTTP or HTTPS request. Note: you can only have two requests running at once, mostly to make sure a faulty script wouldn’t spam a remote se</li>
@@ -1444,7 +1882,37 @@ body{background:radial-gradient(1100px 680px at 90% -12%,rgba(39,103,180,.17),tr
 <li><code>os.runConsoleProcess(params, callback)</code> — Run a console process in background with given arguments, return exit code and output in callback. Launched process will be tied to AC process to shut</li>
 </ul>
 <h2>8. <code>ui.*</code> — arayüz (389 fonksiyon)</h2>
-<p>ImGui tabanlı: pencere, buton, slider, giriş kutusu, tablo, çizim (<code>ui.drawLine/drawRect/drawImage...</code>), <code>ui.toast</code>, <code>ui.modalPopup</code>, medya oynatıcı, ekstra canvas. Tam liste için SDK dosyasına bak.</p>
+<p>ImGui tabanlıdır: pencere, buton, slider, giriş kutusu, tablo, çizim (<code>ui.drawLine</code> / <code>ui.drawRect</code> / <code>ui.drawImage</code>), <code>ui.toast</code>, <code>ui.modalPopup</code>, medya oynatıcı ve ekstra canvas sağlar. Tam listeyi aşağıdaki SDK referansından bulabilirsin; ilk uygulamada her fonksiyonu öğrenmeye çalışma.</p>
+<table>
+<thead>
+<tr>
+<th>Arayüz türü</th>
+<th>Önce yap</th>
+<th>Sonra ekle</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Telemetri HUD&#39;ı</td>
+<td>Salt okunur hız/vites/lastik göstergesi</td>
+<td>Renk eşikleri, grafikler, sürüklenebilir yerleşim</td>
+</tr>
+<tr>
+<td>Ayar ekranı</td>
+<td>Birkaç açık seçenek ve varsayılan değer</td>
+<td>Profil/ayar dosyası, gelişmiş açıklamalar</td>
+</tr>
+<tr>
+<td>Yarış uyarısı</td>
+<td>Tek satırlık durum metni veya toast</td>
+<td>Ses, modal ve kullanıcı onayı</td>
+</tr>
+<tr>
+<td>Tanılama paneli</td>
+<td>FPS, ağ durumu, izin/fizik erişimi</td>
+<td>Ham nesne dökümü yerine filtrelenmiş alanlar</td>
+</tr>
+</tbody></table>
+<p><strong>Okunabilirlik ilkesi:</strong> Bir arayüz elemanı ya karar vermeyi kolaylaştırmalı ya da oyuncuya eylem önermelidir. Her alanı aynı anda göstermek yerine, normal sürüşte 3–6 kritik değer; detay modunda ise seçilmiş veri grupları göster.</p>
 
 </article>
 </main>
