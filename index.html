@@ -27,6 +27,9 @@ body{background:radial-gradient(1100px 680px at 90% -12%,rgba(39,103,180,.17),tr
 /* Use the wide-screen gutter as a focused, secondary navigation rail. */
 .quick-panel{display:none}@media(min-width:1550px){.shell{grid-template-columns:296px minmax(0,1fr) 278px}.content{max-width:1280px}.quick-panel{position:sticky;top:0;display:block;align-self:start;height:100vh;overflow-y:auto;padding:30px 20px 34px;border-left:1px solid var(--line);background:linear-gradient(195deg,rgba(18,31,51,.86),rgba(9,13,22,.74))}.quick-panel-card{margin-bottom:14px;padding:15px;border:1px solid rgba(130,161,202,.17);border-radius:12px;background:rgba(9,16,28,.52);box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}.quick-eyebrow{margin:0 0 7px;color:var(--accent-2);font-size:.65rem;font-weight:750;letter-spacing:.14em;text-transform:uppercase}.quick-panel h2{margin:0 0 11px;color:#f1f6ff;font-size:1rem;line-height:1.3;letter-spacing:-.02em}.quick-panel p{margin:0;color:#9fb0c7;font-size:.82rem;line-height:1.55}.quick-panel strong{color:#dbeaff}.quick-links{display:grid;gap:3px}.quick-links a{padding:7px 8px;border-radius:7px;color:#aebed3;font-size:.82rem;line-height:1.32;text-decoration:none}.quick-links a:hover,.quick-links a:focus{background:rgba(104,185,255,.12);color:#f5f9ff;outline:none}.quick-panel ul{margin:8px 0 0;padding-left:17px;color:#9fb0c7;font-size:.79rem;line-height:1.55}.quick-panel li::marker{color:var(--accent-2)}}
 </style>
+<style>
+.source-link{display:block;margin:12px 0 0;padding:8px 9px;border:1px solid rgba(117,224,189,.17);border-radius:8px;color:#9ee7cf;font-size:.78rem;line-height:1.25;text-decoration:none;transition:background .15s ease,border-color .15s ease}.source-link:hover,.source-link:focus{border-color:rgba(117,224,189,.52);background:rgba(117,224,189,.09);color:#e0fff4;outline:none}
+</style>
 </head>
 <body>
 <div class="shell">
@@ -34,6 +37,7 @@ body{background:radial-gradient(1100px 680px at 90% -12%,rgba(39,103,180,.17),tr
 <a class="brand" href="#top-of-page">Racegrid <span>CSP Lua API</span></a>
 <input id="search" class="search" type="search" placeholder="Bölüm veya API ara…" autocomplete="off" aria-label="Belgede ara">
 <div id="search-results" class="search-results" aria-live="polite"></div>
+<a class="source-link" href="./markdown.html">⌘ Markdown kaynağını aç</a>
 <nav id="toc" class="toc" aria-label="İçindekiler"></nav>
 </aside>
 <main class="main" id="top-of-page">
