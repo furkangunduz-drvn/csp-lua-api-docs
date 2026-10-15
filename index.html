@@ -23,6 +23,10 @@ body{background:radial-gradient(1100px 680px at 90% -12%,rgba(39,103,180,.17),tr
 /* Reading aids for the guided sections. */
 .content h4{margin:29px 0 11px;color:#cde4ff;font-size:1rem;letter-spacing:-.01em}.content h4:before{margin-right:8px;color:var(--accent-2);content:"◆"}.content details{margin:22px 0;padding:0 16px;border:1px solid rgba(130,161,202,.2);border-radius:10px;background:rgba(18,31,50,.55)}.content details[open]{padding-bottom:12px}.content summary{padding:12px 0;color:#c8ddf4;font-weight:650;cursor:pointer;user-select:none}.content summary::marker{color:var(--accent-2)}.content details>ul{margin-top:0}.content blockquote strong{color:#dff4ff}@media(max-width:860px){.content details{padding-inline:13px}.content h4{margin-top:25px}}
 </style>
+<style>
+/* Use the wide-screen gutter as a focused, secondary navigation rail. */
+.quick-panel{display:none}@media(min-width:1550px){.shell{grid-template-columns:296px minmax(0,1fr) 278px}.content{max-width:1280px}.quick-panel{position:sticky;top:0;display:block;align-self:start;height:100vh;overflow-y:auto;padding:30px 20px 34px;border-left:1px solid var(--line);background:linear-gradient(195deg,rgba(18,31,51,.86),rgba(9,13,22,.74))}.quick-panel-card{margin-bottom:14px;padding:15px;border:1px solid rgba(130,161,202,.17);border-radius:12px;background:rgba(9,16,28,.52);box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}.quick-eyebrow{margin:0 0 7px;color:var(--accent-2);font-size:.65rem;font-weight:750;letter-spacing:.14em;text-transform:uppercase}.quick-panel h2{margin:0 0 11px;color:#f1f6ff;font-size:1rem;line-height:1.3;letter-spacing:-.02em}.quick-panel p{margin:0;color:#9fb0c7;font-size:.82rem;line-height:1.55}.quick-panel strong{color:#dbeaff}.quick-links{display:grid;gap:3px}.quick-links a{padding:7px 8px;border-radius:7px;color:#aebed3;font-size:.82rem;line-height:1.32;text-decoration:none}.quick-links a:hover,.quick-links a:focus{background:rgba(104,185,255,.12);color:#f5f9ff;outline:none}.quick-panel ul{margin:8px 0 0;padding-left:17px;color:#9fb0c7;font-size:.79rem;line-height:1.55}.quick-panel li::marker{color:var(--accent-2)}}
+</style>
 </head>
 <body>
 <div class="shell">
@@ -1913,9 +1917,465 @@ end
 </tr>
 </tbody></table>
 <p><strong>Okunabilirlik ilkesi:</strong> Bir arayüz elemanı ya karar vermeyi kolaylaştırmalı ya da oyuncuya eylem önermelidir. Her alanı aynı anda göstermek yerine, normal sürüşte 3–6 kritik değer; detay modunda ise seçilmiş veri grupları göster.</p>
+<!-- ui-methods:start --><h3>Tam <code>ui.*</code> metod listesi (389 imza)</h3>
+<p>Bu liste kurulu CSP <strong>0.2.11 (build 3465)</strong> SDK&#39;sından doğrudan çıkarılmıştır. İmza, parametre adlarını gösterir; ayrıntılı parametre türü, varsayılan değer ve notlar için SDK&#39;daki aynı fonksiyona bak. Uzun listeyi kapalı tutup yalnızca ihtiyacın olan grubu açabilirsin.</p>
+<table>
+<thead>
+<tr>
+<th>Sık gereken sabit grupları</th>
+<th>Kullanım amacı</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ui.WindowFlags</code>, <code>ui.ButtonFlags</code>, <code>ui.ComboFlags</code>, <code>ui.InputTextFlags</code></td>
+<td>Pencere ve kontrol davranışlarını bayraklarla değiştirmek.</td>
+</tr>
+<tr>
+<td><code>ui.StyleVar</code>, <code>ui.StyleColor</code>, <code>ui.Font</code>, <code>ui.Alignment</code></td>
+<td>Görsel stil, yazı tipi ve hizalama seçmek.</td>
+</tr>
+<tr>
+<td><code>ui.Key</code>, <code>ui.MouseButton</code>, <code>ui.MouseCursor</code></td>
+<td>Girdi, kısayol ve imleç davranışı.</td>
+</tr>
+<tr>
+<td><code>ui.TabBarFlags</code>, <code>ui.TabItemFlags</code>, <code>ui.TreeNodeFlags</code>, <code>ui.SelectableFlags</code></td>
+<td>Gezinti ve seçim bileşenlerinin durumu.</td>
+</tr>
+<tr>
+<td><code>ui.ImageFit</code>, <code>ui.CornerFlags</code>, <code>ui.ColorPickerFlags</code>, <code>ui.Icons</code></td>
+<td>Görsel, çizim ve renk bileşenleri.</td>
+</tr>
+</tbody></table>
+<details>
+<summary>Metin, ikon ve yerleşim (42)</summary><ul>
+<li><code>ui.itemHyperlink(hyperlinkColor)</code></li>
+<li><code>ui.itemUnderline(underlineColor, dashSize, gapSize)</code></li>
+<li><code>ui.text(text)</code></li>
+<li><code>ui.textHyperlink(text, hyperlinkColor)</code></li>
+<li><code>ui.textAligned(text, alignment, size, ellipsis)</code></li>
+<li><code>ui.textWrapped(text, wrapPos)</code></li>
+<li><code>ui.textColored(text, color)</code></li>
+<li><code>ui.labelText(label, text)</code></li>
+<li><code>ui.textDisabled(text)</code></li>
+<li><code>ui.isKnownIcon24(iconID)</code></li>
+<li><code>ui.icon(iconID, size, tintCol, iconSize)</code></li>
+<li><code>ui.addIcon(iconID, size, alignment, colorOpt, padding)</code></li>
+<li><code>ui.icon24(iconID, size, tintCol)</code></li>
+<li><code>ui.icon32(iconID, size, tintCol)</code></li>
+<li><code>ui.icon64(iconID, size, tintCol)</code></li>
+<li><code>ui.flag(iconID, size, tintCol)</code></li>
+<li><code>ui.getCursor()</code></li>
+<li><code>ui.setCursor(v)</code></li>
+<li><code>ui.offsetCursor(v)</code></li>
+<li><code>ui.getCursorX()</code></li>
+<li><code>ui.setCursorX(v)</code></li>
+<li><code>ui.getCursorY()</code></li>
+<li><code>ui.setCursorY(v)</code></li>
+<li><code>ui.offsetCursorX(v)</code></li>
+<li><code>ui.offsetCursorY(v)</code></li>
+<li><code>ui.sameLine(offsetFromStart, spacing)</code></li>
+<li><code>ui.backupCursor()</code></li>
+<li><code>ui.restoreCursor()</code></li>
+<li><code>ui.getMaxCursorX()</code></li>
+<li><code>ui.getMaxCursorY()</code></li>
+<li><code>ui.setMaxCursorX(v)</code></li>
+<li><code>ui.setMaxCursorY(v)</code></li>
+<li><code>ui.newLine(spacing)</code></li>
+<li><code>ui.beginGroup(width)</code></li>
+<li><code>ui.endGroup()</code></li>
+<li><code>ui.availableSpaceX()</code></li>
+<li><code>ui.availableSpaceY()</code></li>
+<li><code>ui.availableSpace()</code></li>
+<li><code>ui.iconButton(iconID, size, color, bgColor, framePadding, uv1, uv2, keepAspectRatio, flags)</code></li>
+<li><code>ui.setCursorScreenPos(pos)</code></li>
+<li><code>ui.textLineHeight()</code></li>
+<li><code>ui.textLineHeightWithSpacing()</code></li>
+</ul>
+</details><details>
+<summary>Çizim, path ve kırpma (57)</summary><ul>
+<li><code>ui.drawImage(imageSource, p1, p2, color, uv1, uv2, mode)</code></li>
+<li><code>ui.drawIcon(iconID, p1, p2, color)</code></li>
+<li><code>ui.drawLoadingSpinner(p1, p2, color)</code></li>
+<li><code>ui.drawImageRounded(imageSource, p1, p2, color, uv1, uv2, rounding, corners)</code></li>
+<li><code>ui.drawImageQuad(imageSource, p1, p2, p3, p4, color, uv1, uv2, uv3, uv4)</code></li>
+<li><code>ui.drawQuadFilled(p1, p2, p3, p4, color)</code></li>
+<li><code>ui.drawQuad(p1, p2, p3, p4, color)</code></li>
+<li><code>ui.beginTextureShade(imageSource)</code></li>
+<li><code>ui.endTextureShade(p1, p2, uv1, uv2, clamp)</code></li>
+<li><code>ui.beginGradientShade()</code></li>
+<li><code>ui.endGradientShade(p1, p2, col1, col2, useAlpha)</code></li>
+<li><code>ui.pushClipRect(p1, p2, intersectWithExisting)</code></li>
+<li><code>ui.pushClipRectFullScreen()</code></li>
+<li><code>ui.popClipRect()</code></li>
+<li><code>ui.drawRect(p1, p2, color, rounding, roundingFlags, thickness)</code></li>
+<li><code>ui.drawRectFilled(p1, p2, color, rounding, roundingFlags)</code></li>
+<li><code>ui.drawRectFilledMultiColor(p1, p2, colorTopLeft, colorTopRight, colorBottomRight, colorBottomLeft)</code></li>
+<li><code>ui.drawLine(p1, p2, color, thickness)</code></li>
+<li><code>ui.drawSimpleLine(p1, p2, color, thickness)</code></li>
+<li><code>ui.drawBezierCurve(p1, p2, p3, p4, color, thickness)</code></li>
+<li><code>ui.drawCircle(p1, radius, color, numSegments, thickness)</code></li>
+<li><code>ui.drawCircleFilled(p1, radius, color, numSegments)</code></li>
+<li><code>ui.drawEllipseFilled(p1, radius, color, numSegments)</code></li>
+<li><code>ui.drawTriangle(p1, p2, p3, color, thickness)</code></li>
+<li><code>ui.drawTriangleFilled(p1, p2, p3, color)</code></li>
+<li><code>ui.drawText(text, pos, color)</code></li>
+<li><code>ui.dwriteDrawText(text, fontSize, pos, color)</code></li>
+<li><code>ui.drawTextClipped(text, posMin, posMax, color, alignment, ellipsis)</code></li>
+<li><code>ui.dwriteDrawTextClipped(text, fontSize, posMin, posMax, horizontalAligment, verticalAlignment, allowWordWrapping, color)</code></li>
+<li><code>ui.pathClear()</code></li>
+<li><code>ui.pathLineTo(pos)</code></li>
+<li><code>ui.pathLineToMergeDuplicate(pos)</code></li>
+<li><code>ui.pathFillConvex(color)</code></li>
+<li><code>ui.pathStroke(color, closed, thickness)</code></li>
+<li><code>ui.pathSimpleStroke(color, closed, thickness)</code></li>
+<li><code>ui.pathSmoothStroke(color, closed, thickness)</code></li>
+<li><code>ui.pathArcTo(center, radius, angleFrom, angleTo, numSegments)</code></li>
+<li><code>ui.pathUnevenArcTo(center, radius, angleFrom, angleTo, numSegments)</code></li>
+<li><code>ui.pathVariableArcTo(center, radiusFrom, radiusTo, angleFrom, angleTo, numSegments)</code></li>
+<li><code>ui.pathArcToFast(center, radius, angleMinOf_12, angleMaxOf_12)</code></li>
+<li><code>ui.pathBezierCurveTo(p1, p2, p3, numSegments)</code></li>
+<li><code>ui.pathRect(rectMin, rectMax, rounding, roundingCorners)</code></li>
+<li><code>ui.glowRectFilled(p1, p2, color, noClip)</code></li>
+<li><code>ui.glowCircleFilled(p1, radius, color, noClip)</code></li>
+<li><code>ui.glowEllipseFilled(p1, radius, color, noClip)</code></li>
+<li><code>ui.getDrawCommandsCount()</code></li>
+<li><code>ui.beginTextureSaturationAdjustment()</code></li>
+<li><code>ui.endTextureSaturationAdjustment(value)</code></li>
+<li><code>ui.dwriteText(text, fontSize, color)</code></li>
+<li><code>ui.dwriteTextHyperlink(text, fontSize, hyperlinkColor)</code></li>
+<li><code>ui.dwriteTextWrapped(text, fontSize, color)</code></li>
+<li><code>ui.dwriteTextAligned(text, fontSize, horizontalAligment, verticalAlignment, size, allowWordWrapping, color)</code></li>
+<li><code>ui.drawDriverIcon(carIndex, pos, useCustomIcon)</code></li>
+<li><code>ui.drawVirtualMirror(p1, p2, color)</code></li>
+<li><code>ui.drawRaceFlag(color)</code></li>
+<li><code>ui.drawCarIcon(iconID, color, hint)</code></li>
+<li><code>ui.drawPie(center, radius, angleFrom, angleTo, color, image)</code></li>
+</ul>
+</details><details>
+<summary>Pencere, menü, sekme ve tablo (63)</summary><ul>
+<li><code>ui.beginToolWindow(windowID, pos, size, noPadding, inputs)</code></li>
+<li><code>ui.endToolWindow()</code></li>
+<li><code>ui.beginTransparentWindow(windowID, pos, size, noPadding, inputs)</code></li>
+<li><code>ui.endTransparentWindow()</code></li>
+<li><code>ui.beginPremultipliedAlphaTexture()</code></li>
+<li><code>ui.endPremultipliedAlphaTexture()</code></li>
+<li><code>ui.beginOutline()</code></li>
+<li><code>ui.endOutline(color, scale)</code></li>
+<li><code>ui.beginSharpening()</code></li>
+<li><code>ui.endSharpening(sharpening)</code></li>
+<li><code>ui.beginMIPBias()</code></li>
+<li><code>ui.endMIPBias(bias, useBicubic)</code></li>
+<li><code>ui.beginBlurring()</code></li>
+<li><code>ui.endBlurring(blurring)</code></li>
+<li><code>ui.beginSubtraction()</code></li>
+<li><code>ui.endSubtraction()</code></li>
+<li><code>ui.beginPointSampler()</code></li>
+<li><code>ui.endPointSampler()</code></li>
+<li><code>ui.beginTonemapping()</code></li>
+<li><code>ui.endTonemapping(gamma, whitePoint, lcsAware)</code></li>
+<li><code>ui.beginRotation()</code></li>
+<li><code>ui.endRotation(deg, offset)</code></li>
+<li><code>ui.endPivotRotation(deg, pivot, offset)</code></li>
+<li><code>ui.beginScale()</code></li>
+<li><code>ui.endScale(scale)</code></li>
+<li><code>ui.endPivotScale(scale, pivot)</code></li>
+<li><code>ui.beginTransformMatrix()</code></li>
+<li><code>ui.endTransformMatrix(mat)</code></li>
+<li><code>ui.setNextTextBold()</code></li>
+<li><code>ui.setNextWindowPosition(pos, pivot)</code></li>
+<li><code>ui.setNextWindowSize(size)</code></li>
+<li><code>ui.setNextWindowSizeConstraints(sizeMin, sizeMax)</code></li>
+<li><code>ui.setNextWindowContentSize(size)</code></li>
+<li><code>ui.setNextItemWidth(width)</code></li>
+<li><code>ui.setNextItemIcon(iconID, color, relativePadding)</code></li>
+<li><code>ui.beginCombo(label, previewValue, flags)</code></li>
+<li><code>ui.endCombo()</code></li>
+<li><code>ui.beginChild(id, size, border, flags)</code></li>
+<li><code>ui.endChild()</code></li>
+<li><code>ui.modernMenuItem(label, iconID, selected, flags, childItem)</code></li>
+<li><code>ui.beginTabBar(id, flags)</code></li>
+<li><code>ui.endTabBar()</code></li>
+<li><code>ui.beginTabItem(label, flags, opened)</code></li>
+<li><code>ui.endTabItem()</code></li>
+<li><code>ui.beginTreeNode(label, flags)</code></li>
+<li><code>ui.endTreeNode()</code></li>
+<li><code>ui.beginPopupContextItem(id, mouseButton)</code></li>
+<li><code>ui.menuItem(label, selected, flags, shortcut)</code></li>
+<li><code>ui.beginMenu(id, selected, enabled, shortcut)</code></li>
+<li><code>ui.endMenu()</code></li>
+<li><code>ui.openPopup(id)</code></li>
+<li><code>ui.closePopup()</code></li>
+<li><code>ui.beginPopup(id, flags, padding, opened)</code></li>
+<li><code>ui.endPopup()</code></li>
+<li><code>ui.beginTooltip(padding)</code></li>
+<li><code>ui.endTooltip()</code></li>
+<li><code>ui.treeNode(label, flags, content)</code></li>
+<li><code>ui.tabBar(id, flags, content)</code></li>
+<li><code>ui.tabItem(label, flags, content, opened)</code></li>
+<li><code>ui.beginSubgroup(offsetX)</code></li>
+<li><code>ui.endSubgroup()</code></li>
+<li><code>ui.popup(callback, params)</code></li>
+<li><code>ui.setNextTextSpanStyle(from, to, color, bold)</code></li>
+</ul>
+</details><details>
+<summary>Etkileşimli kontroller (15)</summary><ul>
+<li><code>ui.hotkeyCtrl()</code></li>
+<li><code>ui.hotkeyAlt()</code></li>
+<li><code>ui.hotkeyShift()</code></li>
+<li><code>ui.button(label, size, flags)</code></li>
+<li><code>ui.smallButton(label)</code></li>
+<li><code>ui.invisibleButton(label, size, flags)</code></li>
+<li><code>ui.checkbox(label, checked)</code></li>
+<li><code>ui.radioButton(label, checked)</code></li>
+<li><code>ui.selectable(label, selected, flags, size)</code></li>
+<li><code>ui.inputText(label, str, flags, size)</code></li>
+<li><code>ui.colorPicker(label, color, flags)</code></li>
+<li><code>ui.colorButton(label, color, flags, size)</code></li>
+<li><code>ui.combo(label, previewValue, flags, content)</code></li>
+<li><code>ui.slider(label, value, min, max, format, power)</code></li>
+<li><code>ui.inputTextCommand(command, argument, lookActive)</code></li>
+</ul>
+</details><details>
+<summary>Durum, fare ve klavye (60)</summary><ul>
+<li><code>ui.itemTextColor(alpha)</code></li>
+<li><code>ui.setItemDefaultFocus()</code></li>
+<li><code>ui.setKeyboardFocusHere(offset)</code></li>
+<li><code>ui.mouseBusy()</code></li>
+<li><code>ui.mouseClicked(mouseButton)</code></li>
+<li><code>ui.mouseDoubleClicked(mouseButton)</code></li>
+<li><code>ui.mouseReleased(mouseButton)</code></li>
+<li><code>ui.mouseDown(mouseButton)</code></li>
+<li><code>ui.mousePos()</code></li>
+<li><code>ui.mouseLocalPos()</code></li>
+<li><code>ui.itemRectMin()</code></li>
+<li><code>ui.itemRectMax()</code></li>
+<li><code>ui.itemRectSize()</code></li>
+<li><code>ui.mouseDelta()</code></li>
+<li><code>ui.mouseWheel()</code></li>
+<li><code>ui.keyboardButtonDown(keyIndex)</code></li>
+<li><code>ui.keyboardButtonPressed(keyIndex, withRepeat)</code></li>
+<li><code>ui.keyboardButtonReleased(keyIndex)</code></li>
+<li><code>ui.setKeyboardButtonDown(keyIndex, down)</code></li>
+<li><code>ui.addInputCharacter(keyIndex)</code></li>
+<li><code>ui.clearInputCharacters()</code></li>
+<li><code>ui.keyPressed(keyCode)</code></li>
+<li><code>ui.getKeyIndex(keyCode)</code></li>
+<li><code>ui.clearActiveID()</code></li>
+<li><code>ui.activateItem(id)</code></li>
+<li><code>ui.setTooltip(tooltip)</code></li>
+<li><code>ui.itemHovered(flags)</code></li>
+<li><code>ui.itemClicked(mouseButton, buttonBehaviour)</code></li>
+<li><code>ui.itemActive()</code></li>
+<li><code>ui.itemFocused()</code></li>
+<li><code>ui.itemVisible()</code></li>
+<li><code>ui.itemEdited()</code></li>
+<li><code>ui.itemActivated()</code></li>
+<li><code>ui.itemDeactivated()</code></li>
+<li><code>ui.itemDeactivatedAfterEdit()</code></li>
+<li><code>ui.anyItemHovered()</code></li>
+<li><code>ui.anyItemActive()</code></li>
+<li><code>ui.anyItemFocused()</code></li>
+<li><code>ui.getItemRectMin()</code></li>
+<li><code>ui.getItemRectMax()</code></li>
+<li><code>ui.getItemRectSize()</code></li>
+<li><code>ui.setItemAllowOverlap()</code></li>
+<li><code>ui.itemToggledSelection()</code></li>
+<li><code>ui.isImageReady(imageSource)</code></li>
+<li><code>ui.isWindowAppearing()</code></li>
+<li><code>ui.isWindowCollapsed()</code></li>
+<li><code>ui.isWindowFocused(flags)</code></li>
+<li><code>ui.keyPressedAmount(keyIndex, repeatDelay, rate)</code></li>
+<li><code>ui.isAnyMouseDown()</code></li>
+<li><code>ui.isMouseReleased(mouseButton)</code></li>
+<li><code>ui.isMouseDragging(mouseButton, lockThreshold)</code></li>
+<li><code>ui.mousePosOnOpeningCurrentPopup()</code></li>
+<li><code>ui.mouseDragDelta(mouseButton, lockThreshold)</code></li>
+<li><code>ui.mouseCursor()</code></li>
+<li><code>ui.setMouseCursor(type)</code></li>
+<li><code>ui.captureMouse(wantCaptureMouseValue)</code></li>
+<li><code>ui.tooltip(padding, content)</code></li>
+<li><code>ui.itemPopup(id, mouseButton, content)</code></li>
+<li><code>ui.captureKeyboard(wantCaptureKeyboard, wantCaptureText, globalInput)</code></li>
+<li><code>ui.itemRect()</code></li>
+</ul>
+</details><details>
+<summary>Stil, yazı tipi, görsel ve medya (46)</summary><ul>
+<li><code>ui.imageSize(imageSource)</code></li>
+<li><code>ui.popStyleVar(count)</code></li>
+<li><code>ui.styleColor(varID, styleSet)</code></li>
+<li><code>ui.pushStyleColor(varID, value)</code></li>
+<li><code>ui.popStyleColor(count)</code></li>
+<li><code>ui.pushFont(fontType)</code></li>
+<li><code>ui.popFont()</code></li>
+<li><code>ui.pushItemWidth(itemWidth)</code></li>
+<li><code>ui.popItemWidth()</code></li>
+<li><code>ui.pushTextWrapPosition(wrapPos)</code></li>
+<li><code>ui.popTextWrapPosition()</code></li>
+<li><code>ui.pushACFont(name)</code></li>
+<li><code>ui.popACFont()</code></li>
+<li><code>ui.pushDWriteFont(name)</code></li>
+<li><code>ui.popDWriteFont()</code></li>
+<li><code>ui.popID()</code></li>
+<li><code>ui.loadStoredNumber(id, defaultValue)</code></li>
+<li><code>ui.loadStoredBool(id, defaultValue)</code></li>
+<li><code>ui.pushColumnsBackground()</code></li>
+<li><code>ui.popColumnsBackground()</code></li>
+<li><code>ui.pushDisabled()</code></li>
+<li><code>ui.popDisabled()</code></li>
+<li><code>ui.image(imageSource, size, color, borderColor, uv1, uv2, mode)</code></li>
+<li><code>ui.imageButton(imageSource, size, bgColor, color, uv1, uv2, framePadding, mode)</code></li>
+<li><code>ui.setAsynchronousImagesLoading(value)</code></li>
+<li><code>ui.pushAllowKeyboardFocus(allowKeyboardFocus)</code></li>
+<li><code>ui.popAllowKeyboardFocus()</code></li>
+<li><code>ui.pushButtonRepeat(repeatValue)</code></li>
+<li><code>ui.popButtonRepeat()</code></li>
+<li><code>ui.fontSize()</code></li>
+<li><code>ui.fontWhitePixelUV()</code></li>
+<li><code>ui.pushStyleVarAlpha(alpha)</code></li>
+<li><code>ui.pushAlignment(vertical, alignment)</code></li>
+<li><code>ui.popAlignment()</code></li>
+<li><code>ui.unloadImage(imageSource)</code></li>
+<li><code>ui.imageState(imageSource)</code></li>
+<li><code>ui.pushStyleVar(varID, value)</code></li>
+<li><code>ui.pushID(value)</code></li>
+<li><code>ui.atlasIconID(filename, uv1, uv2)</code></li>
+<li><code>ui.atlasIcons(filename, columns, rows, icons)</code></li>
+<li><code>ui.MediaPlayer.supported()</code></li>
+<li><code>ui.MediaPlayer(source, audioParams)</code></li>
+<li><code>ui.MediaPlayer.supported()</code></li>
+<li><code>ui.MediaPlayer.supportedAsync(callback)</code></li>
+<li><code>ui.GIFPlayer(source)</code></li>
+<li><code>ui.UserIconsLayer(priority, column)</code></li>
+</ul>
+</details><details>
+<summary>Diğer yardımcılar (106)</summary><ul>
+<li><code>ui.bringWindowToFront()</code></li>
+<li><code>ui.decodeImage(data)</code></li>
+<li><code>ui.applyTransformationToWindows(active)</code></li>
+<li><code>ui.areaVisible(size)</code></li>
+<li><code>ui.areaVisibleY(height)</code></li>
+<li><code>ui.rectVisible(p1, p2)</code></li>
+<li><code>ui.rectHovered(p1, p2, clip)</code></li>
+<li><code>ui.getScrollX()</code></li>
+<li><code>ui.getScrollY()</code></li>
+<li><code>ui.getScrollMaxX()</code></li>
+<li><code>ui.getScrollMaxY()</code></li>
+<li><code>ui.setScrollX(scrollX, relative, smooth)</code></li>
+<li><code>ui.setScrollY(scrollY, relative, smooth)</code></li>
+<li><code>ui.setScrollHereX(centerXRatio)</code></li>
+<li><code>ui.setScrollHereY(centerYRatio)</code></li>
+<li><code>ui.windowHovered(flags)</code></li>
+<li><code>ui.windowFocused(flags)</code></li>
+<li><code>ui.windowResizing()</code></li>
+<li><code>ui.windowScrolling()</code></li>
+<li><code>ui.windowPinned()</code></li>
+<li><code>ui.deltaTime()</code></li>
+<li><code>ui.windowPos()</code></li>
+<li><code>ui.windowSize()</code></li>
+<li><code>ui.windowContentSize()</code></li>
+<li><code>ui.windowContentExplicitSize()</code></li>
+<li><code>ui.setShadingOffset(brightness, offset, alphaMult, alphaOffset)</code></li>
+<li><code>ui.resetShadingOffset()</code></li>
+<li><code>ui.acText(text, letter, marginOffset, color, lineSpace, monospace)</code></li>
+<li><code>ui.calculateACTextSize(text, letter, marginOffset, lineSpace, monospace)</code></li>
+<li><code>ui.measureText(text, wrapWidth)</code></li>
+<li><code>ui.measureDWriteText(text, fontSize, wrapWidth)</code></li>
+<li><code>ui.getLastID()</code></li>
+<li><code>ui.getActiveID()</code></li>
+<li><code>ui.getFocusID()</code></li>
+<li><code>ui.getHoveredID()</code></li>
+<li><code>ui.storeNumber(id, value)</code></li>
+<li><code>ui.storeBool(id, value)</code></li>
+<li><code>ui.columns(columns, border, id)</code></li>
+<li><code>ui.nextColumn()</code></li>
+<li><code>ui.setColumnWidth(columnIndex, width)</code></li>
+<li><code>ui.getColumnWidth(columnIndex)</code></li>
+<li><code>ui.columnSortingHeader(title, orderDirection, alignRight)</code></li>
+<li><code>ui.copyable(label)</code></li>
+<li><code>ui.modernButton(label, size, flags, icon, iconSize, iconBg)</code></li>
+<li><code>ui.configureStyle(accentColor, brightTheme, roundedCorners, bgAlpha)</code></li>
+<li><code>ui.dummy(size)</code></li>
+<li><code>ui.thinScrollbarBegin(appearOnHover)</code></li>
+<li><code>ui.thinScrollbarEnd()</code></li>
+<li><code>ui.arrowButton(strID, dir, size, flags)</code></li>
+<li><code>ui.bullet()</code></li>
+<li><code>ui.separator()</code></li>
+<li><code>ui.progressBar(fraction, size, overlay)</code></li>
+<li><code>ui.setExtraContentMark(active)</code></li>
+<li><code>ui.setTitleBarContentHint(marginLeft, marginRight)</code></li>
+<li><code>ui.notificationCounter(counter, pos, noclip)</code></li>
+<li><code>ui.header(text)</code></li>
+<li><code>ui.bulletText(text)</code></li>
+<li><code>ui.setForcedImagesCaching(value)</code></li>
+<li><code>ui.calcItemWidth()</code></li>
+<li><code>ui.indent(indentW)</code></li>
+<li><code>ui.unindent(indentW)</code></li>
+<li><code>ui.cursorStartPos()</code></li>
+<li><code>ui.cursorScreenPos()</code></li>
+<li><code>ui.alignTextToFramePadding()</code></li>
+<li><code>ui.frameHeight()</code></li>
+<li><code>ui.frameHeightWithSpacing()</code></li>
+<li><code>ui.setScrollFromPosX(localX, centerXRatio)</code></li>
+<li><code>ui.setScrollFromPosY(localY, centerYRatio)</code></li>
+<li><code>ui.windowTitle()</code></li>
+<li><code>ui.forceSimplifiedComposition()</code></li>
+<li><code>ui.passthroughIMGUI()</code></li>
+<li><code>ui.windowWidth()</code></li>
+<li><code>ui.windowHeight()</code></li>
+<li><code>ui.resetMouseDragDelta(mouseButton)</code></li>
+<li><code>ui.getClipboardText()</code></li>
+<li><code>ui.setClipboardText(text)</code></li>
+<li><code>ui.time()</code></li>
+<li><code>ui.frameCount()</code></li>
+<li><code>ui.onUIFinale(callback)</code></li>
+<li><code>ui.onChat(callback, settingsCallback)</code></li>
+<li><code>ui.onExclusiveHUD(callback)</code></li>
+<li><code>ui.modalPopup(title, msg, okText, cancelText, okIconID, cancelIconID, callback)</code></li>
+<li><code>ui.modalDialog(title, callback, autoclose, closeCallback)</code></li>
+<li><code>ui.modalPrompt(title, msg, defaultValue, okText, cancelText, okIconID, cancelIconID, callback)</code></li>
+<li><code>ui.projectPoint(pos, considerUiScale)</code></li>
+<li><code>ui.setDriverTooltip(carIndex)</code></li>
+<li><code>ui.setDriverPopup(id, carIndex)</code></li>
+<li><code>ui.mentionDriverInChat(carIndex, autofocus)</code></li>
+<li><code>ui.onDriverContextMenu(callback)</code></li>
+<li><code>ui.SmoothInterpolation(initialValue, weightMult)</code></li>
+<li><code>ui.FadingElement(drawCallback, initialState)</code></li>
+<li><code>ui.weatherIcon(weatherType)</code></li>
+<li><code>ui.toast(icon, message, undoCallback)</code></li>
+<li><code>ui.transparentWindow(id, pos, size, noPadding, inputs, content)</code></li>
+<li><code>ui.toolWindow(id, pos, size, noPadding, inputs, content)</code></li>
+<li><code>ui.childWindow(id, size, border, flags, content)</code></li>
+<li><code>ui.onImageReady(imageSource, callback)</code></li>
+<li><code>ui.ExtraCanvas(resolution, mips, antialiasingMode, textureFormat, flags)</code></li>
+<li><code>ui.shortcut(key, ...)</code></li>
+<li><code>ui.renderTexture(params)</code></li>
+<li><code>ui.renderShader(params)</code></li>
+<li><code>ui.SharedTexture(handle, ntMode)</code></li>
+<li><code>ui.interactiveArea(id, size)</code></li>
+<li><code>ui.addSettings(params, callback)</code></li>
+<li><code>ui.onDriverTooltip(overrideOriginal, callback)</code></li>
+<li><code>ui.onDriverNameTag(overrideOriginal, bgColor, callback, tweaks)</code></li>
+</ul>
+</details><!-- ui-methods:end -->
 
 </article>
 </main>
+<aside class="quick-panel" aria-label="Hızlı başvuru">
+<section class="quick-panel-card">
+<p class="quick-eyebrow">Hızlı başvuru</p>
+<h2>Doğru bölüme git</h2>
+<nav id="quick-links" class="quick-links" aria-label="Hızlı bağlantılar"></nav>
+</section>
+<section class="quick-panel-card">
+<p class="quick-eyebrow">Güvenli varsayılan</p>
+<p><strong>Önce oku, sonra göster.</strong> Araç fiziğini değiştiren çağrılarda izin, online oturum ve tur geçersizliği etkisini kontrol et.</p>
+</section>
+<section class="quick-panel-card">
+<p class="quick-eyebrow">UI ipucu</p>
+<p><strong>389 imza</strong> yedi açılır grupta. Arama kutusuna <code>ui.button</code>, <code>ui.draw</code> veya <code>ui.input</code> yaz.</p>
+</section>
+</aside>
 </div>
 <button id="top" type="button" aria-label="Sayfanın başına dön">↑ Başa dön</button>
 <script>
@@ -1933,6 +2393,21 @@ end
     link.textContent = heading.textContent;
     if (heading.tagName === 'H3') link.className = 'toc-h3';
     toc.append(link);
+  });
+  const quickLinks = document.getElementById('quick-links');
+  const quickSections = [
+    ['Başlangıç rehberi', 'Başlamadan önce'],
+    ['Karar rehberi', 'Pratik karar rehberi'],
+    ['Fizik ve izinler', 'physics.*'],
+    ['Araç verisi', 'ac.getCar(i)'],
+    ['Simülasyon verisi', 'ac.getSim()'],
+    ['UI metodları', 'Tam ui.* metod listesi']
+  ];
+  quickSections.forEach(([label, phrase]) => {
+    const heading = headings.find(item => item.textContent.includes(phrase));
+    if (!heading) return;
+    const link = document.createElement('a'); link.href = `#${heading.id}`; link.textContent = label;
+    quickLinks.append(link);
   });
   doc.querySelectorAll('table').forEach(table => { const wrap = document.createElement('div'); wrap.className = 'table-wrap'; table.before(wrap); wrap.append(table); });
   const searchable = [...doc.querySelectorAll('h2,h3,p,li,pre,table')];

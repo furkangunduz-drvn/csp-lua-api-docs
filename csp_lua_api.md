@@ -1471,3 +1471,449 @@ ImGui tabanlıdır: pencere, buton, slider, giriş kutusu, tablo, çizim (`ui.dr
 | Tanılama paneli | FPS, ağ durumu, izin/fizik erişimi | Ham nesne dökümü yerine filtrelenmiş alanlar |
 
 **Okunabilirlik ilkesi:** Bir arayüz elemanı ya karar vermeyi kolaylaştırmalı ya da oyuncuya eylem önermelidir. Her alanı aynı anda göstermek yerine, normal sürüşte 3–6 kritik değer; detay modunda ise seçilmiş veri grupları göster.
+<!-- ui-methods:start -->
+
+### Tam `ui.*` metod listesi (389 imza)
+
+Bu liste kurulu CSP **0.2.11 (build 3465)** SDK'sından doğrudan çıkarılmıştır. İmza, parametre adlarını gösterir; ayrıntılı parametre türü, varsayılan değer ve notlar için SDK'daki aynı fonksiyona bak. Uzun listeyi kapalı tutup yalnızca ihtiyacın olan grubu açabilirsin.
+
+| Sık gereken sabit grupları | Kullanım amacı |
+|---|---|
+| `ui.WindowFlags`, `ui.ButtonFlags`, `ui.ComboFlags`, `ui.InputTextFlags` | Pencere ve kontrol davranışlarını bayraklarla değiştirmek. |
+| `ui.StyleVar`, `ui.StyleColor`, `ui.Font`, `ui.Alignment` | Görsel stil, yazı tipi ve hizalama seçmek. |
+| `ui.Key`, `ui.MouseButton`, `ui.MouseCursor` | Girdi, kısayol ve imleç davranışı. |
+| `ui.TabBarFlags`, `ui.TabItemFlags`, `ui.TreeNodeFlags`, `ui.SelectableFlags` | Gezinti ve seçim bileşenlerinin durumu. |
+| `ui.ImageFit`, `ui.CornerFlags`, `ui.ColorPickerFlags`, `ui.Icons` | Görsel, çizim ve renk bileşenleri. |
+
+<details>
+<summary>Metin, ikon ve yerleşim (42)</summary>
+
+- `ui.itemHyperlink(hyperlinkColor)`
+- `ui.itemUnderline(underlineColor, dashSize, gapSize)`
+- `ui.text(text)`
+- `ui.textHyperlink(text, hyperlinkColor)`
+- `ui.textAligned(text, alignment, size, ellipsis)`
+- `ui.textWrapped(text, wrapPos)`
+- `ui.textColored(text, color)`
+- `ui.labelText(label, text)`
+- `ui.textDisabled(text)`
+- `ui.isKnownIcon24(iconID)`
+- `ui.icon(iconID, size, tintCol, iconSize)`
+- `ui.addIcon(iconID, size, alignment, colorOpt, padding)`
+- `ui.icon24(iconID, size, tintCol)`
+- `ui.icon32(iconID, size, tintCol)`
+- `ui.icon64(iconID, size, tintCol)`
+- `ui.flag(iconID, size, tintCol)`
+- `ui.getCursor()`
+- `ui.setCursor(v)`
+- `ui.offsetCursor(v)`
+- `ui.getCursorX()`
+- `ui.setCursorX(v)`
+- `ui.getCursorY()`
+- `ui.setCursorY(v)`
+- `ui.offsetCursorX(v)`
+- `ui.offsetCursorY(v)`
+- `ui.sameLine(offsetFromStart, spacing)`
+- `ui.backupCursor()`
+- `ui.restoreCursor()`
+- `ui.getMaxCursorX()`
+- `ui.getMaxCursorY()`
+- `ui.setMaxCursorX(v)`
+- `ui.setMaxCursorY(v)`
+- `ui.newLine(spacing)`
+- `ui.beginGroup(width)`
+- `ui.endGroup()`
+- `ui.availableSpaceX()`
+- `ui.availableSpaceY()`
+- `ui.availableSpace()`
+- `ui.iconButton(iconID, size, color, bgColor, framePadding, uv1, uv2, keepAspectRatio, flags)`
+- `ui.setCursorScreenPos(pos)`
+- `ui.textLineHeight()`
+- `ui.textLineHeightWithSpacing()`
+
+</details>
+
+<details>
+<summary>Çizim, path ve kırpma (57)</summary>
+
+- `ui.drawImage(imageSource, p1, p2, color, uv1, uv2, mode)`
+- `ui.drawIcon(iconID, p1, p2, color)`
+- `ui.drawLoadingSpinner(p1, p2, color)`
+- `ui.drawImageRounded(imageSource, p1, p2, color, uv1, uv2, rounding, corners)`
+- `ui.drawImageQuad(imageSource, p1, p2, p3, p4, color, uv1, uv2, uv3, uv4)`
+- `ui.drawQuadFilled(p1, p2, p3, p4, color)`
+- `ui.drawQuad(p1, p2, p3, p4, color)`
+- `ui.beginTextureShade(imageSource)`
+- `ui.endTextureShade(p1, p2, uv1, uv2, clamp)`
+- `ui.beginGradientShade()`
+- `ui.endGradientShade(p1, p2, col1, col2, useAlpha)`
+- `ui.pushClipRect(p1, p2, intersectWithExisting)`
+- `ui.pushClipRectFullScreen()`
+- `ui.popClipRect()`
+- `ui.drawRect(p1, p2, color, rounding, roundingFlags, thickness)`
+- `ui.drawRectFilled(p1, p2, color, rounding, roundingFlags)`
+- `ui.drawRectFilledMultiColor(p1, p2, colorTopLeft, colorTopRight, colorBottomRight, colorBottomLeft)`
+- `ui.drawLine(p1, p2, color, thickness)`
+- `ui.drawSimpleLine(p1, p2, color, thickness)`
+- `ui.drawBezierCurve(p1, p2, p3, p4, color, thickness)`
+- `ui.drawCircle(p1, radius, color, numSegments, thickness)`
+- `ui.drawCircleFilled(p1, radius, color, numSegments)`
+- `ui.drawEllipseFilled(p1, radius, color, numSegments)`
+- `ui.drawTriangle(p1, p2, p3, color, thickness)`
+- `ui.drawTriangleFilled(p1, p2, p3, color)`
+- `ui.drawText(text, pos, color)`
+- `ui.dwriteDrawText(text, fontSize, pos, color)`
+- `ui.drawTextClipped(text, posMin, posMax, color, alignment, ellipsis)`
+- `ui.dwriteDrawTextClipped(text, fontSize, posMin, posMax, horizontalAligment, verticalAlignment, allowWordWrapping, color)`
+- `ui.pathClear()`
+- `ui.pathLineTo(pos)`
+- `ui.pathLineToMergeDuplicate(pos)`
+- `ui.pathFillConvex(color)`
+- `ui.pathStroke(color, closed, thickness)`
+- `ui.pathSimpleStroke(color, closed, thickness)`
+- `ui.pathSmoothStroke(color, closed, thickness)`
+- `ui.pathArcTo(center, radius, angleFrom, angleTo, numSegments)`
+- `ui.pathUnevenArcTo(center, radius, angleFrom, angleTo, numSegments)`
+- `ui.pathVariableArcTo(center, radiusFrom, radiusTo, angleFrom, angleTo, numSegments)`
+- `ui.pathArcToFast(center, radius, angleMinOf_12, angleMaxOf_12)`
+- `ui.pathBezierCurveTo(p1, p2, p3, numSegments)`
+- `ui.pathRect(rectMin, rectMax, rounding, roundingCorners)`
+- `ui.glowRectFilled(p1, p2, color, noClip)`
+- `ui.glowCircleFilled(p1, radius, color, noClip)`
+- `ui.glowEllipseFilled(p1, radius, color, noClip)`
+- `ui.getDrawCommandsCount()`
+- `ui.beginTextureSaturationAdjustment()`
+- `ui.endTextureSaturationAdjustment(value)`
+- `ui.dwriteText(text, fontSize, color)`
+- `ui.dwriteTextHyperlink(text, fontSize, hyperlinkColor)`
+- `ui.dwriteTextWrapped(text, fontSize, color)`
+- `ui.dwriteTextAligned(text, fontSize, horizontalAligment, verticalAlignment, size, allowWordWrapping, color)`
+- `ui.drawDriverIcon(carIndex, pos, useCustomIcon)`
+- `ui.drawVirtualMirror(p1, p2, color)`
+- `ui.drawRaceFlag(color)`
+- `ui.drawCarIcon(iconID, color, hint)`
+- `ui.drawPie(center, radius, angleFrom, angleTo, color, image)`
+
+</details>
+
+<details>
+<summary>Pencere, menü, sekme ve tablo (63)</summary>
+
+- `ui.beginToolWindow(windowID, pos, size, noPadding, inputs)`
+- `ui.endToolWindow()`
+- `ui.beginTransparentWindow(windowID, pos, size, noPadding, inputs)`
+- `ui.endTransparentWindow()`
+- `ui.beginPremultipliedAlphaTexture()`
+- `ui.endPremultipliedAlphaTexture()`
+- `ui.beginOutline()`
+- `ui.endOutline(color, scale)`
+- `ui.beginSharpening()`
+- `ui.endSharpening(sharpening)`
+- `ui.beginMIPBias()`
+- `ui.endMIPBias(bias, useBicubic)`
+- `ui.beginBlurring()`
+- `ui.endBlurring(blurring)`
+- `ui.beginSubtraction()`
+- `ui.endSubtraction()`
+- `ui.beginPointSampler()`
+- `ui.endPointSampler()`
+- `ui.beginTonemapping()`
+- `ui.endTonemapping(gamma, whitePoint, lcsAware)`
+- `ui.beginRotation()`
+- `ui.endRotation(deg, offset)`
+- `ui.endPivotRotation(deg, pivot, offset)`
+- `ui.beginScale()`
+- `ui.endScale(scale)`
+- `ui.endPivotScale(scale, pivot)`
+- `ui.beginTransformMatrix()`
+- `ui.endTransformMatrix(mat)`
+- `ui.setNextTextBold()`
+- `ui.setNextWindowPosition(pos, pivot)`
+- `ui.setNextWindowSize(size)`
+- `ui.setNextWindowSizeConstraints(sizeMin, sizeMax)`
+- `ui.setNextWindowContentSize(size)`
+- `ui.setNextItemWidth(width)`
+- `ui.setNextItemIcon(iconID, color, relativePadding)`
+- `ui.beginCombo(label, previewValue, flags)`
+- `ui.endCombo()`
+- `ui.beginChild(id, size, border, flags)`
+- `ui.endChild()`
+- `ui.modernMenuItem(label, iconID, selected, flags, childItem)`
+- `ui.beginTabBar(id, flags)`
+- `ui.endTabBar()`
+- `ui.beginTabItem(label, flags, opened)`
+- `ui.endTabItem()`
+- `ui.beginTreeNode(label, flags)`
+- `ui.endTreeNode()`
+- `ui.beginPopupContextItem(id, mouseButton)`
+- `ui.menuItem(label, selected, flags, shortcut)`
+- `ui.beginMenu(id, selected, enabled, shortcut)`
+- `ui.endMenu()`
+- `ui.openPopup(id)`
+- `ui.closePopup()`
+- `ui.beginPopup(id, flags, padding, opened)`
+- `ui.endPopup()`
+- `ui.beginTooltip(padding)`
+- `ui.endTooltip()`
+- `ui.treeNode(label, flags, content)`
+- `ui.tabBar(id, flags, content)`
+- `ui.tabItem(label, flags, content, opened)`
+- `ui.beginSubgroup(offsetX)`
+- `ui.endSubgroup()`
+- `ui.popup(callback, params)`
+- `ui.setNextTextSpanStyle(from, to, color, bold)`
+
+</details>
+
+<details>
+<summary>Etkileşimli kontroller (15)</summary>
+
+- `ui.hotkeyCtrl()`
+- `ui.hotkeyAlt()`
+- `ui.hotkeyShift()`
+- `ui.button(label, size, flags)`
+- `ui.smallButton(label)`
+- `ui.invisibleButton(label, size, flags)`
+- `ui.checkbox(label, checked)`
+- `ui.radioButton(label, checked)`
+- `ui.selectable(label, selected, flags, size)`
+- `ui.inputText(label, str, flags, size)`
+- `ui.colorPicker(label, color, flags)`
+- `ui.colorButton(label, color, flags, size)`
+- `ui.combo(label, previewValue, flags, content)`
+- `ui.slider(label, value, min, max, format, power)`
+- `ui.inputTextCommand(command, argument, lookActive)`
+
+</details>
+
+<details>
+<summary>Durum, fare ve klavye (60)</summary>
+
+- `ui.itemTextColor(alpha)`
+- `ui.setItemDefaultFocus()`
+- `ui.setKeyboardFocusHere(offset)`
+- `ui.mouseBusy()`
+- `ui.mouseClicked(mouseButton)`
+- `ui.mouseDoubleClicked(mouseButton)`
+- `ui.mouseReleased(mouseButton)`
+- `ui.mouseDown(mouseButton)`
+- `ui.mousePos()`
+- `ui.mouseLocalPos()`
+- `ui.itemRectMin()`
+- `ui.itemRectMax()`
+- `ui.itemRectSize()`
+- `ui.mouseDelta()`
+- `ui.mouseWheel()`
+- `ui.keyboardButtonDown(keyIndex)`
+- `ui.keyboardButtonPressed(keyIndex, withRepeat)`
+- `ui.keyboardButtonReleased(keyIndex)`
+- `ui.setKeyboardButtonDown(keyIndex, down)`
+- `ui.addInputCharacter(keyIndex)`
+- `ui.clearInputCharacters()`
+- `ui.keyPressed(keyCode)`
+- `ui.getKeyIndex(keyCode)`
+- `ui.clearActiveID()`
+- `ui.activateItem(id)`
+- `ui.setTooltip(tooltip)`
+- `ui.itemHovered(flags)`
+- `ui.itemClicked(mouseButton, buttonBehaviour)`
+- `ui.itemActive()`
+- `ui.itemFocused()`
+- `ui.itemVisible()`
+- `ui.itemEdited()`
+- `ui.itemActivated()`
+- `ui.itemDeactivated()`
+- `ui.itemDeactivatedAfterEdit()`
+- `ui.anyItemHovered()`
+- `ui.anyItemActive()`
+- `ui.anyItemFocused()`
+- `ui.getItemRectMin()`
+- `ui.getItemRectMax()`
+- `ui.getItemRectSize()`
+- `ui.setItemAllowOverlap()`
+- `ui.itemToggledSelection()`
+- `ui.isImageReady(imageSource)`
+- `ui.isWindowAppearing()`
+- `ui.isWindowCollapsed()`
+- `ui.isWindowFocused(flags)`
+- `ui.keyPressedAmount(keyIndex, repeatDelay, rate)`
+- `ui.isAnyMouseDown()`
+- `ui.isMouseReleased(mouseButton)`
+- `ui.isMouseDragging(mouseButton, lockThreshold)`
+- `ui.mousePosOnOpeningCurrentPopup()`
+- `ui.mouseDragDelta(mouseButton, lockThreshold)`
+- `ui.mouseCursor()`
+- `ui.setMouseCursor(type)`
+- `ui.captureMouse(wantCaptureMouseValue)`
+- `ui.tooltip(padding, content)`
+- `ui.itemPopup(id, mouseButton, content)`
+- `ui.captureKeyboard(wantCaptureKeyboard, wantCaptureText, globalInput)`
+- `ui.itemRect()`
+
+</details>
+
+<details>
+<summary>Stil, yazı tipi, görsel ve medya (46)</summary>
+
+- `ui.imageSize(imageSource)`
+- `ui.popStyleVar(count)`
+- `ui.styleColor(varID, styleSet)`
+- `ui.pushStyleColor(varID, value)`
+- `ui.popStyleColor(count)`
+- `ui.pushFont(fontType)`
+- `ui.popFont()`
+- `ui.pushItemWidth(itemWidth)`
+- `ui.popItemWidth()`
+- `ui.pushTextWrapPosition(wrapPos)`
+- `ui.popTextWrapPosition()`
+- `ui.pushACFont(name)`
+- `ui.popACFont()`
+- `ui.pushDWriteFont(name)`
+- `ui.popDWriteFont()`
+- `ui.popID()`
+- `ui.loadStoredNumber(id, defaultValue)`
+- `ui.loadStoredBool(id, defaultValue)`
+- `ui.pushColumnsBackground()`
+- `ui.popColumnsBackground()`
+- `ui.pushDisabled()`
+- `ui.popDisabled()`
+- `ui.image(imageSource, size, color, borderColor, uv1, uv2, mode)`
+- `ui.imageButton(imageSource, size, bgColor, color, uv1, uv2, framePadding, mode)`
+- `ui.setAsynchronousImagesLoading(value)`
+- `ui.pushAllowKeyboardFocus(allowKeyboardFocus)`
+- `ui.popAllowKeyboardFocus()`
+- `ui.pushButtonRepeat(repeatValue)`
+- `ui.popButtonRepeat()`
+- `ui.fontSize()`
+- `ui.fontWhitePixelUV()`
+- `ui.pushStyleVarAlpha(alpha)`
+- `ui.pushAlignment(vertical, alignment)`
+- `ui.popAlignment()`
+- `ui.unloadImage(imageSource)`
+- `ui.imageState(imageSource)`
+- `ui.pushStyleVar(varID, value)`
+- `ui.pushID(value)`
+- `ui.atlasIconID(filename, uv1, uv2)`
+- `ui.atlasIcons(filename, columns, rows, icons)`
+- `ui.MediaPlayer.supported()`
+- `ui.MediaPlayer(source, audioParams)`
+- `ui.MediaPlayer.supported()`
+- `ui.MediaPlayer.supportedAsync(callback)`
+- `ui.GIFPlayer(source)`
+- `ui.UserIconsLayer(priority, column)`
+
+</details>
+
+<details>
+<summary>Diğer yardımcılar (106)</summary>
+
+- `ui.bringWindowToFront()`
+- `ui.decodeImage(data)`
+- `ui.applyTransformationToWindows(active)`
+- `ui.areaVisible(size)`
+- `ui.areaVisibleY(height)`
+- `ui.rectVisible(p1, p2)`
+- `ui.rectHovered(p1, p2, clip)`
+- `ui.getScrollX()`
+- `ui.getScrollY()`
+- `ui.getScrollMaxX()`
+- `ui.getScrollMaxY()`
+- `ui.setScrollX(scrollX, relative, smooth)`
+- `ui.setScrollY(scrollY, relative, smooth)`
+- `ui.setScrollHereX(centerXRatio)`
+- `ui.setScrollHereY(centerYRatio)`
+- `ui.windowHovered(flags)`
+- `ui.windowFocused(flags)`
+- `ui.windowResizing()`
+- `ui.windowScrolling()`
+- `ui.windowPinned()`
+- `ui.deltaTime()`
+- `ui.windowPos()`
+- `ui.windowSize()`
+- `ui.windowContentSize()`
+- `ui.windowContentExplicitSize()`
+- `ui.setShadingOffset(brightness, offset, alphaMult, alphaOffset)`
+- `ui.resetShadingOffset()`
+- `ui.acText(text, letter, marginOffset, color, lineSpace, monospace)`
+- `ui.calculateACTextSize(text, letter, marginOffset, lineSpace, monospace)`
+- `ui.measureText(text, wrapWidth)`
+- `ui.measureDWriteText(text, fontSize, wrapWidth)`
+- `ui.getLastID()`
+- `ui.getActiveID()`
+- `ui.getFocusID()`
+- `ui.getHoveredID()`
+- `ui.storeNumber(id, value)`
+- `ui.storeBool(id, value)`
+- `ui.columns(columns, border, id)`
+- `ui.nextColumn()`
+- `ui.setColumnWidth(columnIndex, width)`
+- `ui.getColumnWidth(columnIndex)`
+- `ui.columnSortingHeader(title, orderDirection, alignRight)`
+- `ui.copyable(label)`
+- `ui.modernButton(label, size, flags, icon, iconSize, iconBg)`
+- `ui.configureStyle(accentColor, brightTheme, roundedCorners, bgAlpha)`
+- `ui.dummy(size)`
+- `ui.thinScrollbarBegin(appearOnHover)`
+- `ui.thinScrollbarEnd()`
+- `ui.arrowButton(strID, dir, size, flags)`
+- `ui.bullet()`
+- `ui.separator()`
+- `ui.progressBar(fraction, size, overlay)`
+- `ui.setExtraContentMark(active)`
+- `ui.setTitleBarContentHint(marginLeft, marginRight)`
+- `ui.notificationCounter(counter, pos, noclip)`
+- `ui.header(text)`
+- `ui.bulletText(text)`
+- `ui.setForcedImagesCaching(value)`
+- `ui.calcItemWidth()`
+- `ui.indent(indentW)`
+- `ui.unindent(indentW)`
+- `ui.cursorStartPos()`
+- `ui.cursorScreenPos()`
+- `ui.alignTextToFramePadding()`
+- `ui.frameHeight()`
+- `ui.frameHeightWithSpacing()`
+- `ui.setScrollFromPosX(localX, centerXRatio)`
+- `ui.setScrollFromPosY(localY, centerYRatio)`
+- `ui.windowTitle()`
+- `ui.forceSimplifiedComposition()`
+- `ui.passthroughIMGUI()`
+- `ui.windowWidth()`
+- `ui.windowHeight()`
+- `ui.resetMouseDragDelta(mouseButton)`
+- `ui.getClipboardText()`
+- `ui.setClipboardText(text)`
+- `ui.time()`
+- `ui.frameCount()`
+- `ui.onUIFinale(callback)`
+- `ui.onChat(callback, settingsCallback)`
+- `ui.onExclusiveHUD(callback)`
+- `ui.modalPopup(title, msg, okText, cancelText, okIconID, cancelIconID, callback)`
+- `ui.modalDialog(title, callback, autoclose, closeCallback)`
+- `ui.modalPrompt(title, msg, defaultValue, okText, cancelText, okIconID, cancelIconID, callback)`
+- `ui.projectPoint(pos, considerUiScale)`
+- `ui.setDriverTooltip(carIndex)`
+- `ui.setDriverPopup(id, carIndex)`
+- `ui.mentionDriverInChat(carIndex, autofocus)`
+- `ui.onDriverContextMenu(callback)`
+- `ui.SmoothInterpolation(initialValue, weightMult)`
+- `ui.FadingElement(drawCallback, initialState)`
+- `ui.weatherIcon(weatherType)`
+- `ui.toast(icon, message, undoCallback)`
+- `ui.transparentWindow(id, pos, size, noPadding, inputs, content)`
+- `ui.toolWindow(id, pos, size, noPadding, inputs, content)`
+- `ui.childWindow(id, size, border, flags, content)`
+- `ui.onImageReady(imageSource, callback)`
+- `ui.ExtraCanvas(resolution, mips, antialiasingMode, textureFormat, flags)`
+- `ui.shortcut(key, ...)`
+- `ui.renderTexture(params)`
+- `ui.renderShader(params)`
+- `ui.SharedTexture(handle, ntMode)`
+- `ui.interactiveArea(id, size)`
+- `ui.addSettings(params, callback)`
+- `ui.onDriverTooltip(overrideOriginal, callback)`
+- `ui.onDriverNameTag(overrideOriginal, bgColor, callback, tweaks)`
+
+</details>
+
+<!-- ui-methods:end -->
