@@ -1,0 +1,1489 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="data:,">
+<title>CSP Lua API — Racegrid</title>
+<style>
+:root{--bg:#0c111b;--panel:#121a27;--panel-2:#172235;--text:#e8edf5;--muted:#9aa8bc;--line:#28364e;--accent:#69b9ff;--accent-2:#8ce4c6;--code:#0a0f18;--shadow:0 16px 45px rgba(0,0,0,.25)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.68 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}.shell{display:grid;grid-template-columns:280px minmax(0,1fr);min-height:100vh}.sidebar{position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;padding:28px 20px;background:linear-gradient(180deg,#101827 0%,#0c111b 100%);border-right:1px solid var(--line)}.brand{display:block;margin-bottom:24px;color:var(--text);font-size:1.05rem;font-weight:750;letter-spacing:-.02em;text-decoration:none}.brand span{display:block;margin-top:2px;color:var(--accent-2);font-size:.78rem;font-weight:650;letter-spacing:.08em;text-transform:uppercase}.search{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:#0a101a;color:var(--text);outline:none}.search:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(105,185,255,.14)}.toc{margin-top:20px}.toc a{display:block;padding:6px 9px;border-radius:6px;color:var(--muted);font-size:.88rem;line-height:1.35;text-decoration:none}.toc a:hover,.toc a:focus{background:rgba(105,185,255,.11);color:var(--text);outline:none}.toc .toc-h3{padding-left:20px;font-size:.82rem}.search-results{margin-top:13px}.result{display:block;margin:6px 0;padding:8px 9px;border:1px solid var(--line);border-radius:7px;color:var(--text);font-size:.82rem;line-height:1.35;text-decoration:none}.result:hover{border-color:var(--accent);background:rgba(105,185,255,.08)}.no-results{margin:12px 2px;color:var(--muted);font-size:.85rem}.main{min-width:0}.hero{padding:52px max(7vw,36px) 34px;background:radial-gradient(700px 350px at 20% 0%,rgba(62,134,207,.19),transparent 72%);border-bottom:1px solid var(--line)}.eyebrow{margin:0 0 9px;color:var(--accent-2);font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase}.hero h1{max-width:900px;margin:0;font-size:clamp(2rem,4vw,3.25rem);line-height:1.14;letter-spacing:-.045em}.hero p{max-width:760px;margin:14px 0 0;color:var(--muted)}.content{max-width:1120px;padding:42px max(7vw,36px) 80px}.content h1{display:none}.content h2{margin:58px 0 18px;padding-top:12px;border-top:1px solid var(--line);font-size:1.55rem;line-height:1.25;letter-spacing:-.025em;scroll-margin-top:22px}.content h2:first-child{margin-top:0;border-top:0}.content h3{margin:35px 0 12px;font-size:1.2rem;scroll-margin-top:22px}.content p,.content li{color:#d8e0ed}.content ul,.content ol{padding-left:1.45rem}.content a{color:var(--accent);text-underline-offset:3px}.content strong{color:#fff}.content code{padding:.12em .35em;border:1px solid rgba(140,228,198,.16);border-radius:5px;background:rgba(140,228,198,.08);color:#b5f2db;font: .88em/1.35 ui-monospace,SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere}.content pre{overflow:auto;margin:18px 0;padding:17px;border:1px solid var(--line);border-radius:10px;background:var(--code);box-shadow:var(--shadow)}.content pre code{padding:0;border:0;background:transparent;color:#d7e2f4;font-size:.84rem}.table-wrap{overflow-x:auto;margin:20px 0;border:1px solid var(--line);border-radius:10px;background:var(--panel);box-shadow:var(--shadow)}table{width:100%;border-collapse:collapse;min-width:620px}th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:var(--panel-2);color:#fff;font-size:.88rem}tr:last-child td{border-bottom:0}td{color:#d3ddea;font-size:.92rem}blockquote{margin:20px 0;padding:4px 18px;border-left:3px solid var(--accent);color:var(--muted);background:rgba(105,185,255,.05)}hr{border:0;border-top:1px solid var(--line);margin:38px 0}#top{position:fixed;right:20px;bottom:20px;display:none;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--text);cursor:pointer;box-shadow:var(--shadow)}#top.visible{display:block}@media(max-width:860px){.shell{display:block}.sidebar{position:relative;height:auto;padding:20px;border-right:0;border-bottom:1px solid var(--line)}.toc{display:none}.hero{padding:34px 24px 26px}.content{padding:30px 24px 58px}.search-results{max-height:180px;overflow:auto}}@media print{.sidebar,#top{display:none}.shell{display:block}.hero,.content{padding:24px}.hero{background:none}.content h1{display:none}body{background:#fff;color:#111}.content p,.content li,td{color:#222}.content h2{border-color:#bbb}.content code,pre{color:#111;background:#f5f5f5;border-color:#ddd}}
+</style>
+<style>
+/* Refined documentation theme */
+:root{--bg:#090d16;--panel:#111a2a;--panel-2:#17243a;--panel-3:#1d2d46;--text:#f0f5ff;--muted:#9eacc1;--line:rgba(151,181,221,.16);--line-bright:rgba(151,181,221,.3);--accent:#68b9ff;--accent-2:#75e0bd;--accent-warm:#ffc36b;--code:#080d16;--shadow:0 24px 70px rgba(0,0,0,.34)}
+body{background:radial-gradient(1100px 680px at 90% -12%,rgba(39,103,180,.17),transparent 62%),radial-gradient(800px 600px at 0 70%,rgba(20,136,121,.075),transparent 65%),var(--bg);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.002em}.shell{grid-template-columns:296px minmax(0,1fr)}.sidebar{padding:26px 18px 30px;background:linear-gradient(165deg,rgba(19,31,51,.96),rgba(9,13,22,.96) 62%);border-right:1px solid var(--line);box-shadow:16px 0 45px rgba(0,0,0,.12);scrollbar-color:#304563 transparent}.brand{position:relative;margin:0 7px 27px;padding-left:16px;font-size:1.15rem;letter-spacing:-.035em}.brand:before{position:absolute;left:0;top:3px;width:5px;height:32px;border-radius:99px;background:linear-gradient(var(--accent),var(--accent-2));content:"";box-shadow:0 0 19px rgba(104,185,255,.5)}.brand span{margin-top:3px;color:#8bb5df;font-size:.68rem;letter-spacing:.14em}.search{padding:11px 13px;border-color:rgba(151,181,221,.22);border-radius:10px;background:rgba(3,8,16,.58);box-shadow:inset 0 1px 0 rgba(255,255,255,.035)}.search::placeholder{color:#728198}.search:focus{background:rgba(8,15,26,.9);border-color:var(--accent);box-shadow:0 0 0 4px rgba(104,185,255,.13)}.toc{margin-top:19px;padding-top:16px;border-top:1px solid var(--line)}.toc a{position:relative;margin:2px 0;padding:7px 10px;border:1px solid transparent;border-radius:8px;transition:background .16s ease,border-color .16s ease,color .16s ease,transform .16s ease}.toc a:hover,.toc a:focus{border-color:rgba(104,185,255,.15);background:linear-gradient(90deg,rgba(104,185,255,.14),transparent);color:#f5f9ff;transform:translateX(2px)}.toc a:first-child{color:#c8ddf4}.toc .toc-h3{margin-left:8px;padding-left:14px;color:#8494aa}.toc .toc-h3:before{position:absolute;left:2px;top:14px;width:5px;height:1px;background:#536782;content:""}.result{border-color:rgba(151,181,221,.16);background:rgba(8,14,24,.54);transition:border-color .15s ease,background .15s ease}.result:hover{border-color:rgba(104,185,255,.65);background:rgba(29,74,118,.22)}.hero{position:relative;overflow:hidden;padding:64px max(8vw,48px) 48px;background:linear-gradient(110deg,rgba(18,38,68,.82),rgba(14,25,43,.76) 54%,rgba(12,20,32,.58));border-bottom:1px solid var(--line)}.hero:before{position:absolute;inset:0;background-image:linear-gradient(rgba(151,181,221,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(151,181,221,.045) 1px,transparent 1px);background-size:32px 32px;mask-image:linear-gradient(90deg,black,transparent 85%);content:""}.hero:after{position:absolute;right:-170px;top:-160px;width:510px;height:510px;border:1px solid rgba(117,224,189,.22);border-radius:50%;box-shadow:0 0 0 52px rgba(104,185,255,.035),0 0 0 105px rgba(104,185,255,.025);content:""}.hero>*{position:relative;z-index:1}.eyebrow{display:flex;align-items:center;gap:9px;color:var(--accent-2);font-size:.72rem;letter-spacing:.15em}.eyebrow:before{width:22px;height:1px;background:currentColor;content:""}.hero h1{font-size:clamp(2.25rem,4.5vw,3.65rem);text-wrap:balance;text-shadow:0 8px 35px rgba(0,0,0,.2)}.hero p:last-child{max-width:640px;color:#b9c8dd;font-size:1.03rem}.content{max-width:1160px;padding-top:50px;padding-bottom:100px}.content h2{position:relative;margin:68px 0 20px;padding:0 0 14px;border:0;font-size:clamp(1.4rem,2.3vw,1.78rem);font-weight:730;letter-spacing:-.035em}.content h2:after{position:absolute;left:0;bottom:0;width:min(140px,36%);height:2px;background:linear-gradient(90deg,var(--accent),var(--accent-2),transparent);content:""}.content h2:first-child{margin-top:0}.content h3{position:relative;margin-top:42px;padding-left:15px;font-size:1.19rem;letter-spacing:-.02em}.content h3:before{position:absolute;left:0;top:.22em;width:4px;height:1.05em;border-radius:6px;background:var(--accent-2);content:""}.content p,.content li{color:#d4deec}.content li::marker{color:#74bfff}.content a{color:#8fcbff;text-decoration-color:rgba(143,203,255,.42);transition:color .15s ease}.content a:hover{color:#c0e3ff}.content strong{color:#fff;font-weight:700}.content code{border-color:rgba(117,224,189,.18);border-radius:6px;background:rgba(57,131,120,.12);color:#a9efd6;font-size:.87em}.content pre{position:relative;margin:22px 0;padding:20px 21px;border-color:rgba(130,161,202,.22);border-radius:13px;background:linear-gradient(145deg,#0a111d,#080d16);box-shadow:0 12px 32px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.03)}.content pre:before{position:absolute;top:10px;right:14px;color:#61738d;font:600 9px/1 ui-sans-serif,system-ui;letter-spacing:.12em;content:"LUA"}.content pre code{color:#dceafd;line-height:1.6}.table-wrap{margin:23px 0;border-color:rgba(130,161,202,.22);border-radius:13px;background:rgba(14,24,40,.75);box-shadow:0 16px 38px rgba(0,0,0,.16)}th{background:linear-gradient(180deg,rgba(34,53,80,.9),rgba(25,40,61,.9));color:#eff7ff;font-size:.78rem;letter-spacing:.045em;text-transform:uppercase}td{border-bottom-color:var(--line);color:#d2deed}tr:hover td{background:rgba(104,185,255,.035)}blockquote{border-left-width:3px;border-radius:0 9px 9px 0;background:linear-gradient(90deg,rgba(104,185,255,.1),transparent);color:#b2c3d9}#top{right:26px;bottom:26px;border-color:rgba(151,181,221,.27);border-radius:10px;background:rgba(16,27,45,.86);backdrop-filter:blur(12px);transition:transform .16s ease,background .16s ease}#top:hover{background:#203755;transform:translateY(-2px)}@media(max-width:860px){.sidebar{background:linear-gradient(135deg,#121f34,#0b111d)}.brand{margin-bottom:18px}.hero{padding:43px 24px 34px}.hero:after{right:-230px;top:-220px}.content{padding:36px 24px 72px}.content h2{margin-top:52px}.content pre{padding:17px}.table-wrap{border-radius:10px}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+<style>
+/* Keep long API signatures and URLs inside narrow viewports. */
+.content li,.content li *{overflow-wrap:anywhere;word-break:break-word}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside class="sidebar" aria-label="Belge gezintisi">
+<a class="brand" href="#top-of-page">Racegrid <span>CSP Lua API</span></a>
+<input id="search" class="search" type="search" placeholder="Bölüm veya API ara…" autocomplete="off" aria-label="Belgede ara">
+<div id="search-results" class="search-results" aria-live="polite"></div>
+<nav id="toc" class="toc" aria-label="İçindekiler"></nav>
+</aside>
+<main class="main" id="top-of-page">
+<header class="hero"><p class="eyebrow">Referans Dokümantasyonu</p><h1>CSP Lua API</h1><p>Assetto Corsa için Custom Shaders Patch Lua API kapsamı, müdahale seviyeleri ve fonksiyon referansı.</p></header>
+<article id="document" class="content">
+<h1>CSP Lua API — Assetto Corsa&#39;ya ne kadar müdahale edebiliriz?</h1>
+<p>Kaynak: kurulu CSP <strong>0.2.11 (build 3465)</strong>, <code>extension/internal/lua-sdk/ac_apps/lib.lua</code> (17.475 satır). Bu dosya SDK&#39;dan otomatik çıkarıldı; açıklamalar SDK&#39;daki İngilizce metinlerdir. Hiçbir çağrı oyunda tek tek denenmedi.</p>
+<h2>1. Özet: müdahale seviyeleri</h2>
+<table>
+<thead>
+<tr>
+<th>Alan</th>
+<th>Seviye</th>
+<th>Not</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Aracı konumlandırma / hız</td>
+<td><strong>Tam</strong></td>
+<td><code>setCarPosition</code>, <code>setCarVelocity</code>, <code>teleportCarTo</code>, <code>addForce</code>, <code>setWheelAngularVelocity</code></td>
+</tr>
+<tr>
+<td>Girdiler (gaz/fren/debriyaj/el freni/direksiyon/vites)</td>
+<td><strong>Tam</strong></td>
+<td><code>forceUser*For</code>, <code>overrideSteering</code>, <code>lockUserControlsFor</code>, <code>engageGear</code>, <code>setCarAutopilot</code></td>
+</tr>
+<tr>
+<td>Araç durumu (yakıt, hasar, lastik, sıcaklık, motor)</td>
+<td><strong>Tam</strong></td>
+<td><code>setCarFuel</code>, <code>setCarBodyDamage</code>, <code>setTyresTemperature</code>, <code>blowTyres</code>, <code>setEngineRPM</code>...</td>
+</tr>
+<tr>
+<td>Lastik grip, hava yoğunluğu, ağırlık, restriktör</td>
+<td><strong>Geniş</strong></td>
+<td><code>setGripDecrease</code>, <code>setAirDensityMultiplier</code>, <code>setCarBallast</code>, <code>setCarRestrictor</code></td>
+</tr>
+<tr>
+<td>AI araçlar</td>
+<td><strong>Çok geniş</strong></td>
+<td>~30 <code>setAI*</code> fonksiyonu: seviye, agresiflik, hız sınırı, spline kayması, konum, lastik, hata yapma</td>
+</tr>
+<tr>
+<td>Yeni fizik nesneleri</td>
+<td><strong>Var</strong></td>
+<td><code>physics.RigidBody</code>, <code>Collider.*</code>, <code>addTrackSurface</code>, <code>raycastTrack</code></td>
+</tr>
+<tr>
+<td>Çarpışma</td>
+<td><strong>Var</strong></td>
+<td><code>setCarCollisions</code>, <code>disableCarCollisions</code></td>
+</tr>
+<tr>
+<td>Yarış kuralları (bayrak, ceza, DRS, pit)</td>
+<td><strong>Var</strong></td>
+<td><code>overrideRacingFlag</code>, <code>setCarPenalty</code>, <code>setCarDRS</code>, <code>blockTeleportingToPits</code></td>
+</tr>
+<tr>
+<td>Kamera</td>
+<td><strong>Tam</strong></td>
+<td><code>ac.grabCamera</code> ile kendi kameran (FastTravel haritası bunu kullanıyor)</td>
+</tr>
+<tr>
+<td>Hava / ışık / saat</td>
+<td><strong>Sınırlı</strong></td>
+<td>Hava zamanı (<code>setWeatherExactUTC</code>, <code>setWeatherTimeMultiplier</code>, <code>setWeatherTimeOffset</code>), kar (<code>forceSnow</code>), farlar (<code>setHeadlights</code>, <code>setDaytimeLights</code>). Yağmur/bulut gibi hava değerlerini ayarlayan ayrı bir <code>ac.set*</code> yok; çoğu <code>ac.get*</code> ile okunur — bölüm 5</td>
+</tr>
+<tr>
+<td>Çizim / HUD / arayüz</td>
+<td><strong>Tam</strong></td>
+<td><code>ui.*</code> (389 fonksiyon), <code>render.*</code> (38), kendi pencerelerin</td>
+</tr>
+<tr>
+<td>Ses</td>
+<td><strong>Var</strong></td>
+<td><code>ac.AudioEvent</code>, ses seviyesi/olaylar</td>
+</tr>
+<tr>
+<td>Dosya / ağ</td>
+<td><strong>Var</strong></td>
+<td><code>io.*</code>, <code>web.*</code> (HTTP istekleri), <code>os.*</code></td>
+</tr>
+<tr>
+<td>Pist (mesh/sahne düğümleri)</td>
+<td><strong>Okuma + sınırlı değişiklik</strong></td>
+<td><code>ac.findNodes</code> ile sahne düğümleri, malzeme, görünürlük</td>
+</tr>
+</tbody></table>
+<p><strong>Sınırlar</strong> (SDK&#39;dan çıkarılabilenler, deneyle doğrulanmadı):</p>
+<ul>
+<li>Çoğu <code>physics.*</code> çağrısı <strong>tek kişilik / izinli oturumlarda</strong> çalışır. Önce <code>physics.allowed()</code> ve gerekirse <code>ac.isCarResetAllowed()</code> kontrol edilmeli. Online sunucuda genelde kapalıdır.</li>
+<li>Fizik durumu (<code>ac.getCarPhysics</code>) <strong>sadece oyuncu aracı için</strong>; replay ve uzak araçlarda fizik alanları yoktur.</li>
+<li><code>physics.*</code> değişikliklerinin çoğu <strong>turu geçersiz kılar</strong> (<code>invalidates current lap</code>).</li>
+<li><code>engageGear</code> H-shifter&#39;lı oyuncu aracında iyi çalışmayabilir.</li>
+<li><code>ac.loadCarState</code> sadece offline ve basit oturum modlarında kullanılabilir.</li>
+<li><code>overrideSteering</code>&#39;in değer birimi dokümanda belirtilmemiş. [Unknown]</li>
+<li>Lua uygulamaları <strong>Python (<code>apps/python</code>) tarafından ayrı</strong> çalışır; ikisi arasında doğrudan çağrı yok (dosya/ağ ile köprü gerekir).</li>
+</ul>
+<h2>Pratik karar rehberi: hedef → veri → API</h2>
+<p>Bu dokümanı bir fonksiyon kataloğu gibi değil, üç soruyla kullan: <strong>ne görmek istiyorum, neyi değiştirmek istiyorum ve bunun oturum kuralı nedir?</strong> Önce durumu oku, sonra gerekiyorsa ekrana çiz veya değişiklik yap. Araç fiziğine dokunan çağrıları en son aşama olarak düşün.</p>
+<h3>Temel veri yapıları — nereden başlanır?</h3>
+<table>
+<thead>
+<tr>
+<th>Veri / yapı</th>
+<th>Ne anlatır?</th>
+<th>Ne zaman kullanılır?</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ac.getCar(i)</code> → <code>ac.CarState</code></td>
+<td>Bir aracın konumu, hızı, girdileri, turu, hasarı, sistemleri ve görsel durumu. <code>i = 0</code> normalde ilk/oyuncu aracıdır.</td>
+<td>Telemetri, HUD, araç karşılaştırma, ghost kaydı ve araç durumunu gösterme.</td>
+</tr>
+<tr>
+<td><code>ac.getCarPhysics(i)</code></td>
+<td>Oyuncu aracının daha ayrıntılı fizik anlık görüntüsü. Uzak araç/replay için alanları olmayabilir.</td>
+<td>Süspansiyon, lastik, kuvvet veya ayrıntılı sürüş analizi gerektiğinde.</td>
+</tr>
+<tr>
+<td><code>ac.getSim()</code> → <code>ac.SimState</code></td>
+<td>Oturum, pist, hava, kamera, zaman ve genel simülasyon durumu.</td>
+<td>Yağmurda farklı HUD, yarış durumuna göre davranış veya oturum sayacı.</td>
+</tr>
+<tr>
+<td><code>car.wheels[i]</code></td>
+<td><code>ac.getCar()</code> içindeki dört tekerleğin görsel/telemetri durumu.</td>
+<td>Lastik sıcaklığı, aşınma, basınç ya da tekerlek bazlı gösterge.</td>
+</tr>
+<tr>
+<td><code>getCarPhysics(i).wheels[i]</code></td>
+<td>Tekerleğin fizik tarafındaki ek verileri.</td>
+<td>Tutunma ve süspansiyon davranışını daha ayrıntılı analiz etmek.</td>
+</tr>
+<tr>
+<td><code>vec3</code></td>
+<td>Üç bileşenli uzaysal değer: ör. <code>position</code>, <code>velocity</code>, <code>look</code>, <code>up</code>.</td>
+<td>Dünya koordinatında işaret, çizim, kamera veya hız yönü işlemleri.</td>
+</tr>
+<tr>
+<td><code>mat4x4</code></td>
+<td>Konum ve yönelimi birlikte taşıyan dönüşüm matrisi: ör. <code>transform</code>, <code>bodyTransform</code>.</td>
+<td>Bir 3D nesneyi araca/piste hizalama; yalnızca konum gerekiyorsa önce <code>position</code> ile başla.</td>
+</tr>
+</tbody></table>
+<p>Örnek okuma akışı: <code>local car = ac.getCar(0)</code> ile anlık araç kaydını al; ardından <code>car.speedKmh</code>, <code>car.position</code>, <code>car.gas</code>, <code>car.brake</code>, <code>car.lapTimeMs</code> veya <code>car.wheels[0]</code> gibi ihtiyaç duyduğun alanları oku. Genel koşullar için ayrı olarak <code>local sim = ac.getSim()</code> al; örneğin <code>sim.rainIntensity</code>, <code>sim.isOnlineRace</code>, <code>sim.sessionTimeLeft</code>.</p>
+<blockquote>
+<p><strong>Kural:</strong> <code>ac.getCar()</code> ve <code>ac.getSim()</code> gözlem için en güvenli başlangıçtır. <code>physics.*</code> ile araç durumunu değiştirmek ise ayrı izin, offline/izinli oturum ve tur geçersizliği riski taşır.</p>
+</blockquote>
+<h3>Hangi amaç için hangi API ailesi?</h3>
+<table>
+<thead>
+<tr>
+<th>Hedef</th>
+<th>Önce oku</th>
+<th>Sonra kullan</th>
+<th>Tipik sonuç</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Sürüş telemetrisi / dashboard</td>
+<td><code>ac.getCar(0)</code>, <code>ac.getSim()</code></td>
+<td><code>ui.*</code>, gerekirse <code>render.*</code></td>
+<td>Hız, vites, delta, lastik ve hava bilgisi gösteren uygulama.</td>
+</tr>
+<tr>
+<td>Tur analizi / veri kaydı</td>
+<td><code>ac.getCar(0)</code>, <code>ac.getCarPhysics(0)</code>, tekerlekler</td>
+<td><code>io.*</code> ile kayıt, <code>web.*</code> ile gönderim</td>
+<td>Her karede örnek alıp CSV/JSON veya yerel API&#39;ye telemetri göndermek.</td>
+</tr>
+<tr>
+<td>Ghost / geri sarma prototipi</td>
+<td><code>position</code>, <code>velocity</code>, <code>gear</code>, <code>rpm</code>, direksiyon ve tekerlek durumu</td>
+<td><code>physics.setCarPosition</code>, <code>setCarVelocity</code>, <code>engageGear</code>, <code>setEngineRPM</code></td>
+<td>Kaydedilmiş bir anı yeniden oynatmak; yalnızca izinli fizik bağlamında.</td>
+</tr>
+<tr>
+<td>Antrenman senaryosu</td>
+<td><code>ac.getCar(0)</code> ile başlangıcı doğrula</td>
+<td>Konum/hız/vites/yakıt/lastik için ilgili <code>physics.set*</code> çağrıları</td>
+<td>Aracı belirli viraj çıkışına veya egzersize hazırlamak.</td>
+</tr>
+<tr>
+<td>Kendi kamera / sinematik</td>
+<td><code>ac.getSim()</code> ve kamera vektörleri</td>
+<td><code>ac.grabCamera</code>, kamera örneğinin konum/yön/FOV metotları</td>
+<td>Harita, chase-cam veya özgür kamera deneyimi.</td>
+</tr>
+<tr>
+<td>Pist üstü 3D işaret / HUD</td>
+<td>Araç konumu, kamera ve pist bilgisi</td>
+<td><code>render.*</code>, <code>ui.*</code>, gerekirse <code>ac.findNodes</code></td>
+<td>Fren noktası göstergesi, rota oku, performans paneli.</td>
+</tr>
+<tr>
+<td>Yarış kuralı veya etkinlik</td>
+<td><code>ac.getSim()</code>, araç tur/ceza durumu</td>
+<td><code>overrideRacingFlag</code>, <code>setCarPenalty</code>, <code>setCarDRS</code>, pit çağrıları</td>
+<td>Senaryo bazlı bayrak, ceza, DRS veya pit akışı.</td>
+</tr>
+<tr>
+<td>AI davranışı</td>
+<td>AI aracın <code>ac.getCar(i)</code> durumu</td>
+<td><code>physics.setAI*</code> fonksiyonları</td>
+<td>Hız, agresiflik, hata ve spline davranışı ayarlanan AI.</td>
+</tr>
+<tr>
+<td>Dış uygulamayla haberleşme</td>
+<td>Okunacak telemetri nesneleri</td>
+<td><code>web.*</code>, <code>io.*</code>, <code>os.*</code></td>
+<td>Racegrid gibi yerel servise veri gönderme veya komut alma.</td>
+</tr>
+</tbody></table>
+<h3>Güvenli çalışma sırası</h3>
+<ol>
+<li><strong>Oku:</strong> İhtiyacın olan en küçük veri kümesini <code>ac.getCar(0)</code> ve/veya <code>ac.getSim()</code> ile al.</li>
+<li><strong>Karar ver:</strong> Koşulları yalnızca bu anlık görüntüden üret; örneğin hız 80 km/h üstündeyse uyarı ver.</li>
+<li><strong>Göster veya kaydet:</strong> Değişiklik gerekmiyorsa <code>ui.*</code>, <code>render.*</code>, <code>io.*</code> veya <code>web.*</code> ile burada bitir.</li>
+<li><strong>Değiştirmen gerekiyorsa kontrol et:</strong> <code>physics.allowed()</code> ve gerekli durum kontrollerini yap; online oturum ve tur geçersizliği etkisini hesaba kat.</li>
+<li><strong>Tek amaca yönelik çağrı seç:</strong> Örneğin hız vermek için yalnızca <code>setCarVelocity</code>; konum + yön için <code>setCarPosition</code>; tam kamera kontrolü için <code>grabCamera</code> kullan. Birden çok çağrıyı ancak aynı fizik anını tutarlı kurmak gerektiğinde birleştir.</li>
+</ol>
+<h3>Başlangıç için üç küçük proje</h3>
+<ul>
+<li><strong>Lastik ve fren HUD&#39;ı:</strong> <code>ac.getCar(0)</code> + <code>car.wheels[i]</code> oku, <code>ui.*</code> ile dört lastiğin sıcaklığını ve <code>car.brake</code> değerini göster. Fizik yazma yoktur; en güvenli ilk proje budur.</li>
+<li><strong>Viraj giriş telemetrisi:</strong> Her güncellemede <code>speedKmh</code>, <code>brake</code>, <code>steer</code>, <code>position</code> ve <code>lapTimeMs</code> kaydet; <code>io.*</code> ile dosyaya veya <code>web.*</code> ile yerel Racegrid servisine gönder. Sonradan viraj başına frenleme noktalarını çıkarabilirsin.</li>
+<li><strong>Başlangıç noktası egzersizi:</strong> Önce offline/izinli fizik erişimini doğrula. Sonra <code>setCarPosition</code>, <code>setCarVelocity</code> ve <code>engageGear</code> ile belirli bir senaryoyu başlat. Her fizik yazımını açık bir kullanıcı eylemine bağla.</li>
+</ul>
+<h2>2. Mevcut uygulamalar için hızlı reçeteler</h2>
+<ul>
+<li><strong>Işınlanma + hız/vites/direksiyon koruma:</strong> <code>setCarPosition</code> + <code>setCarVelocity</code> + <code>engageGear</code> + <code>setEngineRPM</code> + <code>setWheelAngularVelocity</code> + <code>overrideSteering</code> (bu repodaki <code>fasttravel_app</code> bunu yapıyor).</li>
+<li><strong>Gerçek durum kaydı:</strong> <code>ac.saveCarStateAsync</code> / <code>ac.loadCarState</code> (tam fizik anlık görüntüsü, offline).</li>
+<li><strong>Hayalet/geri sarma:</strong> her karede <code>getCar(0)</code> durumunu kaydet, sonra <code>setCarPosition/Velocity</code> ile oynat.</li>
+<li><strong>Antrenman senaryoları:</strong> başlangıç hızı + vites + konumla &quot;viraj çıkışı&quot; tekrarları, <code>setCarFuel</code>/lastik ısısı sıfırlama.</li>
+<li><strong>Dış kontrol:</strong> <code>web.*</code> ile yerel bir sunucuya (ör. racegrid API) telemetri gönder veya komut çek.</li>
+<li><strong>Telemetri:</strong> 266 alanlı <code>ac.getCar</code> + 16 alanlı <code>getCarPhysics</code> + tekerlek alanları — sürüş verisinin tamamı okunabilir.</li>
+</ul>
+<h2>3. <code>physics.*</code> — fizik müdahalesi (tam liste, 94 fonksiyon)</h2>
+<ul>
+<li><strong><code>physics.getPointVelocity(carIndex, position, posLocal)</code></strong> — Returns velocity (in world coordinates) of a car point. If there is no such car or physics currently available, returns vector with zeroes.</li>
+<li><strong><code>physics.getExtendedSuspensionTravel(carIndex, corner)</code></strong> — </li>
+<li><strong><code>physics.getExtendedDamperTravel(carIndex, corner)</code></strong> — </li>
+<li><strong><code>physics.Collider.Box(size, offset, look, up, debug)</code></strong> — Box collider.</li>
+<li><strong><code>physics.Collider.Sphere(radius, offset, debug)</code></strong> — Sphere collider.</li>
+<li><strong><code>physics.Collider.Capsule(length, radius, offset, look, debug)</code></strong> — Capsule collider (like cylinder, but instead of flat caps it has hemispheres and works a bit faster).</li>
+<li><strong><code>physics.Collider.Cylinder(length, radius, offset, look, debug)</code></strong> — Cylinder collider (slower than capsule, consider using capsule where appropriate).</li>
+<li><strong><code>physics.RigidBody(collider, mass, cog, semiDynamic, startsInWorld)</code></strong> — Create a new physics rigidbody with a collider (could be a mesh from KN5 or one or several geometric colliders). It’s up to your code to keep track of rigidbody transform and assign it to something visual. Example (link to “cone.kn5”: <a href="https://files.acstuff.club/VmRC/cone.kn5">https://files.acstuff.club/VmRC/cone.kn5</a>; note how single KN5 stores both visuals and a collider mesh): local targetRoot = ac.findNodes(&#39;dynamicRoot:yes&#39;) local loadedModel = targetRoot:loadKN5({filename = &#39;cone.kn5&#39;, filter = &#39;mesh&#39;}) local physics = physics.RigidBody({   filename = &#39;cone.kn5&#39;,   filter = &#39;collider&#39;,   debug = true,   transform = true }, 10) physics:setSemiDynamic(true, true) physics:setTransformation(mat4x4.translation(vec3(-2679.85, -41.06, -202.68))) setInterval(function ()   loadedModel:setTransformationFrom(physics) end) By default spawened bodies have a bit of a damping. Use <code>:setDamping()</code> to remove it.</li>
+<li><strong><code>physics.addTrackSurface(vertices, indices, surfaceName, transform, debugColor)</code></strong> — Create a new track physics mesh (could be a wall or a road). Requires AC to use Embree for raycasting (default settings). Currently, causes a huge lag, working on solving the problem. Not available to scripts without Physics API access.</li>
+<li><strong><code>physics.teleportCarTo(carIndex, spawnSet)</code></strong> — Teleports car to certain spawn point, invalidates current lap.</li>
+<li><strong><code>physics.setCarPosition(carIndex, pos, dir)</code></strong> — Sets car position and orientation and invalidates current lap time. Car will be aligned on track surface.</li>
+<li><strong><code>physics.setCarVelocity(carIndex, velocity)</code></strong> — Sets car velocity and invalidates current lap time.</li>
+<li><strong><code>physics.engageGear(carIndex, gearToEngage)</code></strong> — Forces certain gear to engage. Might not work well for user car with H-shifter. Also, invalidates current lap time.</li>
+<li><strong><code>physics.setMGUKDelivery(carIndex, level)</code></strong> — Sets MGUK delivery mode. Note: for controling user car consider using <code>ac.setMGUKDelivery()</code> instead, it’ll work better with HUD and everything.</li>
+<li><strong><code>physics.setMGUKRecovery(carIndex, level)</code></strong> — Sets MGUK recovery mode. Note: for controling user car consider using <code>ac.setMGUKDelivery()</code> instead, it’ll work better with HUD and everything.</li>
+<li><strong><code>physics.setGentleStop(carIndex, stop)</code></strong> — Activates or deactivates gentle stopping.</li>
+<li><strong><code>physics.lockUserControlsFor(time)</code></strong> — Locks user controls for specified time. Use this one instead of <code>physics.setCarNoInput()</code> if you only need to stop car temporarily and then let user control it back.</li>
+<li><strong><code>physics.lockUserGearboxFor(time, resetGear)</code></strong> — Locks user car gearbox for specified time. Uses the same logic AC uses for starting line.</li>
+<li><strong><code>physics.forceUserBrakesFor(time, brakingIntensity)</code></strong> — Forces fully engaged brakes for user car for given time. Invalidates lap. Subsequent calls override value set earlier.</li>
+<li><strong><code>physics.forceUserThrottleFor(time, throttleIntensity)</code></strong> — Forces fully engaged throttle pedal for user car for given time. Invalidates lap. Subsequent calls override value set earlier.</li>
+<li><strong><code>physics.forceUserClutchFor(time, clutchValue)</code></strong> — Forces fully engaged clutch pedal for user car for given time. Invalidates lap. Subsequent calls override value set earlier.</li>
+<li><strong><code>physics.forceUserHandbrakeFor(time, handbrakeValue)</code></strong> — Forces fully engaged handbrake for user car for given time. Invalidates lap. Subsequent calls override value set earlier.</li>
+<li><strong><code>physics.offsetUserSteering(offset)</code></strong> — Offsets user steering angle.</li>
+<li><strong><code>physics.overrideUserSteering(value, share)</code></strong> — Overrides user steering angle.</li>
+<li><strong><code>physics.overrideSteering(carIndex, value)</code></strong> — Overrides steering completely for a certain car.</li>
+<li><strong><code>physics.resetCarState(carIndex, fuelMult)</code></strong> — Resets car state (repairs damage, resets fuel) and invalidates current lap.</li>
+<li><strong><code>physics.setCarFuel(carIndex, fuelLiters)</code></strong> — Sets car fuel and invalidates current lap.</li>
+<li><strong><code>physics.setCarNoInput(active)</code></strong> — Disables input for user car, switches car to “parked” state. If it’s meant for game rules and such, try <code>physics.lockUserControlsFor()</code> instead.</li>
+<li><strong><code>physics.setCarAutopilot(active, chooseTyres)</code></strong> — Activates or deactivates autopilot for user car. Invalidates lap.</li>
+<li><strong><code>physics.getCarInputControls()</code></strong> — Returns state of car controls user input. Works even if user car controls were deactivated or AI is controlling user car.</li>
+<li><strong><code>physics.setGripDecrease(carIndex, wheels, decrease)</code></strong> — Reduces grip for some tyres of a certain car. Invalidates current lap. Could be used as a cheap way to simulate some things like ice.</li>
+<li><strong><code>physics.setTyresAIMultiplier(carIndex, wheels, aiMultiplier)</code></strong> — Not recommended to use. Invalidates lap.</li>
+<li><strong><code>physics.setAirDensityMultiplier(carIndex, value)</code></strong> — Changes air density for a certain car. Invalidates lap.</li>
+<li><strong><code>physics.resetWearPlanks(carIndex)</code></strong> — Resets wear planks. Invalidates lap.</li>
+<li><strong><code>physics.resetTrackPhysicsObject(filter)</code></strong> — Resets a position of track physics objects.</li>
+<li><strong><code>physics.blowTyres(carIndex, wheels)</code></strong> — Blows up some tyres of a certain car. Does not invalidate current lap.</li>
+<li><strong><code>physics.setTyresBlankets(carIndex, wheels, blanketActive)</code></strong> — Sets tyre blankets and invalidates current lap. If set, they would keep tyres at optimal temperature until car would reach 10 km/h, and then they would be removed. If you need to set tyres temperature for a moving car, use <code>physics.setTyresTemperature()</code> (to get optimal tyre temperature, use <code>ac.getCar(N).wheels[0].tyreOptimumTemperature</code>.</li>
+<li><strong><code>physics.setTyresCompound(carIndex, wheels, compoundIndex)</code></strong> — Sets tyre compounds, circumventing the current setup. Use carefully in very special cases, as a last resort. Might cause physics to explode.</li>
+<li><strong><code>physics.setWaterTemperature(carIndex, temperature)</code></strong> — Sets water temperature. Does not invalidate lap.</li>
+<li><strong><code>physics.setTyresTemperature(carIndex, wheels, temperature, destinationFlags)</code></strong> — Sets tyres temperature and invalidates current lap. To get optimal tyre temperature, use <code>ac.getCar(N).wheels[0].tyreOptimumTemperature</code>.</li>
+<li><strong><code>physics.setTyresVirtualKM(carIndex, wheels, virtualKm)</code></strong> — Sets driven distance used for wear computation.</li>
+<li><strong><code>physics.setCarBodyDamage(carIndex, bodyDamage)</code></strong> — Sets damage levels of a given car, invalidates lap if car body state improves.</li>
+<li><strong><code>physics.setCarEngineLife(carIndex, engineLife)</code></strong> — Sets damage level of the engine of a given car, invalidates lap if engine state improves.</li>
+<li><strong><code>physics.setCarBallast(carIndex, ballast)</code></strong> — Sets car ballast, invalidates current lap if ballast is negative.</li>
+<li><strong><code>physics.setCarRestrictor(carIndex, restrictor)</code></strong> — Sets car restrictor. Does not invalidate lap.</li>
+<li><strong><code>physics.setCarAutoShifter(carIndex, active)</code></strong> — Activates or deactivates automatic shifter for a car. Does not invalidate lap.</li>
+<li><strong><code>physics.setCarCollisions(carIndex, disable)</code></strong> — Enables and disables car collisions (wouldn’t affect disabled collisions in pits, more like an extra option to  further disable collisions). Invalidates lap.  Use <code>physics.disableCarCollisions()</code> instead.</li>
+<li><strong><code>physics.disableCarCollisions(carIndex, disable, applyToRemote)</code></strong> — Enables and disables car collisions (wouldn’t affect disabled collisions in pits, more like an extra option to  further disable collisions). Invalidates lap of the car it’s applied to.  By default won&#39;t affect remote cars (a bug, kept for backwards compatibility). Set third argument (added in 0.2.8) to <code>true</code>  to change that behavior.</li>
+<li><strong><code>physics.resetColliderWears(carIndex)</code></strong> — Resets collider wears.</li>
+<li><strong><code>physics.allowCarDRS(carIndex, active)</code></strong> — Allows and disallows car DRS. If DRS is already disallowed by track zones, wouldn’t override it, but allows to add more  conditions disallowing DRS further (FIA rules and all that). If DRS is already engaged, it’ll be disengaged. Does not  invalidate lap.</li>
+<li><strong><code>physics.setCarDRS(carIndex, active)</code></strong> — If DRS is present and available, activates or deactivates it. Does not invalidate lap.</li>
+<li><strong><code>physics.setCarPenalty(penaltyType, penaltyParam)</code></strong> — Sets penalty for user car, invalidates current lap.</li>
+<li><strong><code>physics.setAllowedTyresOut(allowedTyresOut)</code></strong> — New Mode scripts can use this function even if the rest of Physics API is not available.</li>
+<li><strong><code>physics.awakeCar(carIndex)</code></strong> — Stops car from sleeping, invalidates current lap.</li>
+<li><strong><code>physics.addForce(carIndex, position, posLocal, force, forceLocal, wheelIndex)</code></strong> — Adds force to a car, invalidates current lap. Note: you have to scale your force by <code>dt</code> accordingly.</li>
+<li><strong><code>physics.addWheelTorque(carIndex, wheels, torque)</code></strong> — Alters angular speed of a wheel or several. Invalidates current lap.</li>
+<li><strong><code>physics.setWheelAngularVelocity(carIndex, wheels, angularVelocity)</code></strong> — Alters angular speed of a wheel or several. Invalidates current lap.</li>
+<li><strong><code>physics.markLapAsSpoiled(carIndex)</code></strong> — Marks current lap as spoiled. Works only during the race</li>
+<li><strong><code>physics.setEngineStallEnabled(carIndex, value)</code></strong> — Enables engine stalling (if RPM is below idling, torque would be added only if backspace is pressed). Use it together with <code>physics.setEngineRPM()</code> to shut off the engine.</li>
+<li><strong><code>physics.setEngineRPM(carIndex, rpm)</code></strong> — Sets engine RPM.</li>
+<li><strong><code>physics.setDriverName(name, nationCode)</code></strong> — Sets name of a user, announces new name online to other clients. Could be used for some hot driver swapping.</li>
+<li><strong><code>physics.setDriverTeam(team)</code></strong> — Sets name of a user’s team, announces new name online to other clients. Could be used for some hot driver swapping.</li>
+<li><strong><code>physics.overrideRacingFlag(flag)</code></strong> — Overrides racing flag. Don’t forget to call <code>physics.overrideRacingFlag(ac.FlagType.None)</code> later to revert to original AC flag handling.</li>
+<li><strong><code>physics.blockTeleportingToPits()</code></strong> — Prevents car from teleporting to pits no matter what, apart from starting new session, by EMERGENCY_RESET option or with physics API. Make sure to release disposable when you no longer need the block.</li>
+<li><strong><code>physics.startPhysicsWorker(script, data, callback)</code></strong> — Load a separate Lua script and run it in physics thread. Works similar to <code>ac.startBackgroundWorker()</code>, but these workers run at 333 frames a second and have access to some very limited physics API. Use carefully, make sure to keep scripts as lightweight as possible. Good if you want to simulate some continuous force. Make sure to use custom <code>physics.</code> methods to access latest physics state as well. Important: use this script to access some limited physics API such as <code>physics.addForce()</code>. Sim state (<code>ac.getSim()</code>, <code>ac.getCar()</code>, etc.) still updates at render rate. To access current car positions at physics rate, use <code>physics.getBodyTransform()</code>. Be extremely careful with these types of scripts: slow code will mess up physics performance! This type of worker still relies on <code>script.update()</code>. Call <code>worker.terminate()</code> to stop it. No other <code>worker</code> methods are available. Use shared structures to exchange data between your main script and a worker.</li>
+<li><strong><code>physics.allowed()</code></strong> — Returns <code>true</code> if script can affect physics engine. If not, only <code>physics.raycastTrack()</code> is available.</li>
+<li><strong><code>physics.raycastTrack(pos, dir, length, point, normal)</code></strong> — Casts a ray from given position in a certain direction to check if it hits any physics surfaces. Returns distance to a hit, or -1 if there wasn’t any. Optionally can return contact point and normal too, if vectors in their place are passed. Note: smaller rays are faster to cast. Also, rays going straight down are slightly faster as well.</li>
+<li><strong><code>physics.setAILevel(carIndex, level)</code></strong> — Changes AI level. Use <code>ac.getCar(carIndex).aiLevel</code> to get current value.</li>
+<li><strong><code>physics.setAINoInput(carIndex, active, stall)</code></strong> — Disables input for an AI car, switches car to “parked” state.</li>
+<li><strong><code>physics.setAIDriverName(carIndex, name, nationCode)</code></strong> — Sets name of an AI, announces new name online to other clients. Could be used for some hot driver swapping.</li>
+<li><strong><code>physics.setAIDriverTeam(carIndex, team)</code></strong> — Sets name of an AI’s team, announces new name online to other clients. Could be used for some hot driver swapping.</li>
+<li><strong><code>physics.setAICarPosition(carIndex, pos, dir)</code></strong> — Changes position of an AI car.</li>
+<li><strong><code>physics.setAIAggression(carIndex, aggression)</code></strong> — Changes AI aggression. Use <code>ac.getCar(carIndex).aiAggression</code> to get current value.</li>
+<li><strong><code>physics.setAIAeroHint(carIndex, value)</code></strong> — Changes AI <code>[PHYSICS_HINTS] AERO_HINT</code> value.</li>
+<li><strong><code>physics.setAITyresHint(carIndex, value)</code></strong> — Changes AI <code>[TYRES] HINT</code> value.</li>
+<li><strong><code>physics.preventAIFromRetiring(carIndex)</code></strong> — Prevent an AI from retiring for some time. If not moving, they will still retire some time after this function is called, unless you’ll keep calling it.</li>
+<li><strong><code>physics.setAIShiftingThresholds(carIndex, upshift, downshift)</code></strong> — Changes AI shifting thresholds. Once called, stops CSP logic altering thresholds dynamically.</li>
+<li><strong><code>physics.setAICaution(carIndex, caution)</code></strong> — Changes AI caution, altering the distance it keeps from the car in front of it. Default value: <code>1</code>. Experimental.</li>
+<li><strong><code>physics.setAILookaheadBase(carIndex, value)</code></strong> — Changes AI base lookahead value. Use <code>ac.INIConfig.carData(carIndex, &#39;ai.ini&#39;):get(&#39;LOOKAHEAD&#39;, &#39;BASE&#39;, 12)</code> to load original value first and go from there (don’t re-read it each frame though, it’ll get expensive).</li>
+<li><strong><code>physics.setAILookaheadGasBrake(carIndex, value)</code></strong> — Changes AI gas/brake lookahead value. Use <code>ac.INIConfig.carData(carIndex, &#39;ai.ini&#39;):get(&#39;LOOKAHEAD&#39;, &#39;GAS_BRAKE_LOOKAHEAD&#39;, 10)</code> to load original value first and go from there (don’t re-read it each frame though, it’ll get expensive).</li>
+<li><strong><code>physics.setAIBrakeHint(carIndex, value)</code></strong> — Changes AI brake hint value. Use <code>ac.INIConfig.carData(carIndex, &#39;ai.ini&#39;):get(&#39;PEDALS&#39;, &#39;BRAKE_HINT&#39;, 1)</code> to load original value first and go from there (don’t re-read it each frame though, it’ll get expensive).</li>
+<li><strong><code>physics.setAIStopCounter(carIndex, time)</code></strong> — Forces AI to brake for a specified amount of time. Originally, this mechanism is used to get AIs to brake after an incident. Subsequent calls overwrite current waiting, pass 0 to get cars to move.</li>
+<li><strong><code>physics.setAIThrottleLimit(carIndex, limit)</code></strong> — Limits AI throttle pedal.</li>
+<li><strong><code>physics.setAITopSpeed(carIndex, limit)</code></strong> — Limits AI top speed. Use <code>math.huge</code> (or just 1e9) to remove limitation.</li>
+<li><strong><code>physics.setAISteerMultiplier(carIndex, mult)</code></strong> — Sets steering multiplier allowing to get cars to drive more straight in some cases.</li>
+<li><strong><code>physics.setAISplineOffset(carIndex, offset, overrideAiAwareness)</code></strong> — Sets lateral offset along spline, can be used to get cars to drive further to the left or to the right. Actual offset will be limited by track width as well.</li>
+<li><strong><code>physics.setAISplineAbsoluteOffset(carIndex, offset, overrideAiAwareness)</code></strong> — Sets lateral offset along spline, can be used to get cars to drive further to the left or to the right. Actual offset will be limited by track width as well.</li>
+<li><strong><code>physics.setAISpline(carIndex, filename)</code></strong> — If not loaded yet, loads new AI spline in background and uses it instead of main API spline. Experimental.</li>
+<li><strong><code>physics.setExtraAIGrip(carIndex, value)</code></strong> — Changes extra AI grip (120% by default).</li>
+<li><strong><code>physics.setAIPitStopRequest(carIndex, value)</code></strong> — Controls if AI goes to pits or not.</li>
+<li><strong><code>physics.setAITyres(carIndex, index)</code></strong> — Sets currently selected tyres, resetting damage as well.</li>
+<li><strong><code>physics.setAIBrakeMistake(carIndex, time)</code></strong> — Triggers brake mistake causing wheels to lock on braking.</li>
+<li><strong><code>physics.setAITractionMistake(carIndex, time, severity)</code></strong> — Triggers traction mistake.</li>
+<li><strong><code>physics.setAIRainTyres(carIndex, useRainTyres)</code></strong> — Hint AIs to put rain tyres on or off, overrides default behaviour.</li>
+</ul>
+<h2>4. Araç durumu okuma</h2>
+<h3><code>ac.getCar(i)</code> — görsel/grafik durumu (266 alan)</h3>
+<p><code>mass</code>, <code>graphicsOffset</code>, <code>graphicsPitchRotation</code>, <code>graphicsToPhysicsTransform</code>, <code>physicsToGraphicsTransform</code>, <code>steerLock</code>, <code>maxFuel</code>, <code>exposureOutside</code>, <code>exposureInside</code>, <code>shakeMultiplier</code>, <code>headlightsColor</code>, <code>customCarColor</code>, <code>aabbCenter</code>, <code>aabbSize</code>, <code>index</code>, <code>gearCount</code>, <code>turboCount</code>, <code>tractionType</code>, <code>enginePosition</code>, <code>brakesBiasLimitDown</code>, <code>brakesBiasLimitUp</code>, <code>brakesBiasStep</code>, <code>maxRelativePlankWear</code>, <code>year</code>, <code>hShifter</code>, <code>adjustableTurbo</code>, <code>brakesCockpitBias</code>, <code>extendedPhysics</code>, <code>isRacingCar</code>, <code>isRallyCar</code>, <code>isDriftCar</code>, <code>isOpenWheeler</code>, <code>isEngineDiesel</code>, <code>isKunosCar</code>, <code>prefersImperialUnits</code>, <code>headlightsAreHeadlights</code>, <code>hasLowBeams</code>, <code>isLeftHandDrive</code>, <code>sirenHorn</code>, <code>hasFlashingLights</code>, <code>hasCockpitSwitchForUserSpeedLimiter</code>, <code>hasHornAudioEvent</code>, <code>hasAnalogTelltale</code>, <code>tractionControlModes</code>, <code>absModes</code>, <code>fuelMaps</code>, <code>tractionControl2Modes</code>, <code>hasEngineBrakeSettings</code>, <code>pitTransform</code>, <code>timestamp</code>, <code>transform</code>, <code>bodyTransform</code>, <code>worldToLocal</code>, <code>position</code>, <code>velocity</code>, <code>acceleration</code>, <code>angularVelocity</code>, <code>localAngularVelocity</code>, <code>localVelocity</code>, <code>up</code>, <code>look</code>, <code>side</code>, <code>driverEyesPosition</code>, <code>groundNormal</code>, <code>groundDistance</code>, <code>gas</code>, <code>brake</code>, <code>clutch</code>, <code>steer</code>, <code>handbrake</code>, <code>gear</code>, <code>engagedGear</code>, <code>fuel</code>, <code>rpm</code>, <code>rpmLimiter</code>, <code>rpmMinimum</code>, <code>speedKmh</code>, <code>speedMs</code>, <code>turboBoost</code>, <code>drivetrainSpeed</code>, <code>waterTemperature</code>, <code>minHeight</code>, <code>restrictor</code>, <code>ballast</code>, <code>ping</code>, <code>cgHeight</code>, <code>wheelsOutside</code>, <code>engineLifeLeft</code>, <code>dirt</code>, <code>damage</code>, <code>gearboxDamage</code>, <code>nodeIndex</code>, <code>visibleIndex</code>, <code>activeLOD</code>, <code>distanceToCamera</code>, <code>splinePosition</code>, <code>driftPoints</code>, <code>driftInstantPoints</code>, <code>driftComboCounter</code>, <code>collisionDepth</code>, <code>collisionPosition</code>, <code>collidedWith</code>, <code>lapCutsCount</code>, <code>lastLapCutsCount</code>, <code>aiLevel</code>, <code>aiAggression</code>, <code>aiRainTyres</code>, <code>currentSplits</code>, <code>lastSplits</code>, <code>bestSplits</code>, <code>bestLapSplits</code>, <code>wheels</code>, <code>extrapolatedMovement</code>, <code>isActive</code>, <code>isConnected</code>, <code>isRemote</code>, <code>isAIControlled</code>, <code>isUserControlled</code>, <code>isLapValid</code>, <code>isLastLapValid</code>, <code>isCameraOnBoard</code>, <code>isInPitlane</code>, <code>isInPit</code>, <code>isRetired</code>, <code>isEngineLimiterOn</code>, <code>isGearGrinding</code>, <code>hasTurningLights</code>, <code>headlightsActive</code>, <code>brakeLightsActive</code>, <code>flashingLightsActive</code>, <code>hornActive</code>, <code>focused</code>, <code>focusedOnInterior</code>, <code>useInternalAudio</code>, <code>isHidingLabels</code>, <code>isDriftBonusOn</code>, <code>isDriftValid</code>, <code>isRaceFinished</code>, <code>isDriverVisible</code>, <code>isDriverDoorOpen</code>, <code>isDriverSeatbeltOn</code>, <code>hazardLights</code>, <code>turningLeftLights</code>, <code>turningRightLights</code>, <code>turningLeftOnly</code>, <code>turningRightOnly</code>, <code>lowBeams</code>, <code>highBeams</code>, <code>extraA</code>, <code>extraB</code>, <code>extraC</code>, <code>extraD</code>, <code>extraE</code>, <code>extraF</code>, <code>extraG</code>, <code>extraH</code>, <code>extraI</code>, <code>extraJ</code>, <code>extraK</code>, <code>extraL</code>, <code>extraM</code>, <code>extraN</code>, <code>extraO</code>, <code>extraP</code>, <code>extraQ</code>, <code>extraR</code>, <code>extraS</code>, <code>extraT</code>, <code>kersCharging</code>, <code>turningLightsActivePhase</code>, <code>anyFlamesActive</code>, <code>justJumped</code>, <code>resetCounter</code>, <code>kersCharge</code>, <code>kersInput</code>, <code>kersCurrentKJ</code>, <code>kersMaxKJ</code>, <code>kersLoad</code>, <code>distanceDrivenTotalKm</code>, <code>distanceDrivenSessionKm</code>, <code>poweredWheelsSpeed</code>, <code>batteryVoltage</code>, <code>oilPressure</code>, <code>oilTemperature</code>, <code>exhaustTemperature</code>, <code>wiperModes</code>, <code>wiperMode</code>, <code>wiperSelectedMode</code>, <code>wiperSpeed</code>, <code>wiperProgress</code>, <code>bodyWetness</code>, <code>compass</code>, <code>lapTimeMs</code>, <code>bestLapTimeMs</code>, <code>previousLapTimeMs</code>, <code>lapCount</code>, <code>currentSector</code>, <code>previousSectorTime</code>, <code>racePosition</code>, <code>drivenInRace</code>, <code>estimatedLapTimeMs</code>, <code>performanceMeter</code>, <code>performanceMeterSpeedDifferenceMs</code>, <code>sessionLapCount</code>, <code>compoundIndex</code>, <code>sessionID</code>, <code>physicsAvailable</code>, <code>speedLimiterInAction</code>, <code>absInAction</code>, <code>tractionControlInAction</code>, <code>hasUserBrakeBias</code>, <code>hasCockpitMGUHMode</code>, <code>hasCockpitERSDelivery</code>, <code>hasCockpitERSRecovery</code>, <code>drsPresent</code>, <code>drsAvailable</code>, <code>drsActive</code>, <code>kersPresent</code>, <code>kersHasButtonOverride</code>, <code>kersButtonPressed</code>, <code>mguhChargingBatteries</code>, <code>manualPitsSpeedLimiterEnabled</code>, <code>userSpeedLimiterEnabled</code>, <code>autoShift</code>, <code>autoClutch</code>, <code>mgukDelivery</code>, <code>mgukDeliveryCount</code>, <code>mgukRecovery</code>, <code>tractionControlMode</code>, <code>absMode</code>, <code>engineBrakeSettingsCount</code>, <code>currentEngineBrakeSetting</code>, <code>fuelPerLap</code>, <code>differentialPreload</code>, <code>differentialCoast</code>, <code>differentialPower</code>, <code>awdFrontShare</code>, <code>awdCenterLock</code>, <code>drivetrainTorque</code>, <code>drivetrainPower</code>, <code>brakeBias</code>, <code>speedLimiter</code>, <code>turboBoosts</code>, <code>turboWastegates</code>, <code>tractionControl2</code>, <code>fuelMap</code>, <code>steerTorque</code>, <code>ffbSteerAssist</code>, <code>ffbBase</code>, <code>ffbFinal</code>, <code>ffbPure</code>, <code>ffbMultiplier</code>, <code>aeroLiftFront</code>, <code>aeroLiftRear</code>, <code>aeroDrag</code>, <code>caster</code>, <code>rideHeight</code>, <code>p2pStatus</code>, <code>p2pActivations</code>, <code>altitude</code>, <code>ambientOcclusion</code>, <code>rawAmbientOcclusion</code>, <code>carCamerasCount</code>, <code>currentPenaltyType</code>, <code>currentPenaltyParameter</code>, <code>extraIconsCount</code></p>
+<details><summary>Açıklamalar</summary><ul>
+<li><code>mass</code> (number) Car mass in kg.</li>
+<li><code>graphicsOffset</code> (vec3) Graphics offset from car.ini</li>
+<li><code>graphicsPitchRotation</code> (number) Graphics pitch rotation in radians from car.ini</li>
+<li><code>graphicsToPhysicsTransform</code> (mat4x4) Graphics-to-physics transform based on graphics offset and pitch rotation from car.ini</li>
+<li><code>physicsToGraphicsTransform</code> (mat4x4) Physics-to-graphics transform based on graphics offset and pitch rotation from car.ini</li>
+<li><code>steerLock</code> (number) Maximum steering wheel angle in degrees.</li>
+<li><code>maxFuel</code> (number) Maximum amount of fuel in liters.</li>
+<li><code>exposureOutside</code> (number) Outboard exposure from car.ini</li>
+<li><code>exposureInside</code> (number) Onboard exposure from car.ini</li>
+<li><code>shakeMultiplier</code> (number) SHAKE_MUL value from car.ini</li>
+<li><code>headlightsColor</code> (rgb) </li>
+<li><code>customCarColor</code> (rgb) Custom car color selected online, or <code>math.nan</code> if color is the default one</li>
+<li><code>aabbCenter</code> (vec3) Center of AABB (calculated from LOD D or collider mesh).</li>
+<li><code>aabbSize</code> (vec3) Size of AABB in meters (calculated from LOD D or collider mesh).</li>
+<li><code>index</code> (integer) 0-based (0 for first car).</li>
+<li><code>gearCount</code> (integer) Excluding neutral and reverse. Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>turboCount</code> (integer) Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>tractionType</code> (integer) 0 for rwd, 1 for fwd, 2 for awd, 3 for new awd, -1 for N/A. Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>enginePosition</code> (integer) 0 for unspecified, 1 for front, 2 for rear, 3 for mid. Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>brakesBiasLimitDown</code> (number) Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>brakesBiasLimitUp</code> (number) Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>brakesBiasStep</code> (number) Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>maxRelativePlankWear</code> (number) From 0 to 1. Physics-only (see <code>ac.CarState.physicsAvailable</code>), 0 if not available.</li>
+<li><code>year</code> (integer) Manufactoring year.</li>
+<li><code>hShifter</code> (boolean) True if car has H-shifter in its physics data.</li>
+<li><code>adjustableTurbo</code> (boolean) Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>brakesCockpitBias</code> (boolean) Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>extendedPhysics</code> (boolean) True if extended car physics is active.</li>
+<li><code>isRacingCar</code> (boolean) True for racing cars (cars with class different from “road” or “street”).</li>
+<li><code>isRallyCar</code> (boolean) Car counts as a rally car if it has a corresponding tag or “rally” in its name.</li>
+<li><code>isDriftCar</code> (boolean) Car counts as a drift car if it has a corresponding tag or “drift” in its name.</li>
+<li><code>isOpenWheeler</code> (boolean) Check is based on car tags.</li>
+<li><code>isEngineDiesel</code> (boolean) Check is based on car tags.</li>
+<li><code>isKunosCar</code> (boolean) True if car is standard, from Kunos.</li>
+<li><code>prefersImperialUnits</code> (boolean) True for cars from UK or USA.</li>
+<li><code>headlightsAreHeadlights</code> (boolean) If set to <code>false</code>, headlights do something else (like change display mode).</li>
+<li><code>hasLowBeams</code> (boolean) If set to <code>false</code>, low beams are not present (as in, headlights operate in a single mode).</li>
+<li><code>isLeftHandDrive</code> (boolean) If set to <code>true</code>, steering wheel is on the left side.</li>
+<li><code>sirenHorn</code> (boolean) If set to <code>true</code>, horn is working in siren mode (press to toggle).</li>
+<li><code>hasFlashingLights</code> (boolean) </li>
+<li><code>hasCockpitSwitchForUserSpeedLimiter</code> (boolean) Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>hasHornAudioEvent</code> (boolean) </li>
+<li><code>hasAnalogTelltale</code> (boolean) Car has max RPM arrow.</li>
+<li><code>tractionControlModes</code> (integer) 0 if TC is not present. Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>absModes</code> (integer) 0 if ABS is not present. Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>fuelMaps</code> (integer) </li>
+<li><code>tractionControl2Modes</code> (integer) </li>
+<li><code>hasEngineBrakeSettings</code> (boolean) </li>
+<li><code>pitTransform</code> (mat4x4) Transformation of pit position.</li>
+<li><code>timestamp</code> (number) Time of last physics state record, in milliseconds (counting from the same point as ac.SimState.time)</li>
+<li><code>transform</code> (mat4x4) Car physics transformation in world space (does not match body transformation! for it, use <code>bodyTransform</code>)</li>
+<li><code>bodyTransform</code> (mat4x4) Car visual transformation (the one applied to 3D model).</li>
+<li><code>worldToLocal</code> (mat4x4) Inverse of car visual transformation.</li>
+<li><code>position</code> (vec3) Car position in the world (corresponds to 0 coordinate in its model space).</li>
+<li><code>velocity</code> (vec3) Car velocity in m/s.</li>
+<li><code>acceleration</code> (vec3) G-forces, X for sideways relative to car, Z for forwards/backwards.</li>
+<li><code>angularVelocity</code> (vec3) </li>
+<li><code>localAngularVelocity</code> (vec3) </li>
+<li><code>localVelocity</code> (vec3) </li>
+<li><code>up</code> (vec3) Vector facing upwards (normalized).</li>
+<li><code>look</code> (vec3) Vector facing forward (normalized).</li>
+<li><code>side</code> (vec3) Vector facing sideways (normalized).</li>
+<li><code>driverEyesPosition</code> (vec3) In-car coordinates for driver eyes position (can be changed by user).</li>
+<li><code>groundNormal</code> (vec3) Normal of ground below car.</li>
+<li><code>groundDistance</code> (number) Distance of ground below car (defines ground plane together with normal).</li>
+<li><code>gas</code> (number) Throttle, from 0 to 1.</li>
+<li><code>brake</code> (number) Brake, from 0 to 1.</li>
+<li><code>clutch</code> (number) Clutch, from 0 to 1 (1 for pedal fully depressed).</li>
+<li><code>steer</code> (number) Angle of steering wheel in degrees.</li>
+<li><code>handbrake</code> (number) Handbrake, from 0 to 1.</li>
+<li><code>gear</code> (integer) Current gear, 0 for neutral, -1 for reverse. Does not go through 0 on sequential shifts</li>
+<li><code>engagedGear</code> (integer) Current gear, 0 for neutral, -1 for reverse. Goes through 0 on sequential shifts</li>
+<li><code>fuel</code> (number) Remaining fuel in liters.</li>
+<li><code>rpm</code> (number) Engine RPM.</li>
+<li><code>rpmLimiter</code> (number) RPM limiter threshold, if exists.</li>
+<li><code>rpmMinimum</code> (number) Minimum RPM (or -1 if physics not available).</li>
+<li><code>speedKmh</code> (number) Current speed in km/h.</li>
+<li><code>speedMs</code> (number) Current speed in m/s.</li>
+<li><code>turboBoost</code> (number) Turboboost value, from 0 and upwards.</li>
+<li><code>drivetrainSpeed</code> (number) Speed delivered to wheels.</li>
+<li><code>waterTemperature</code> (number) Approximation of water temperature in °C done by original AC.</li>
+<li><code>minHeight</code> (number) Minimum allowed ride height in meters.</li>
+<li><code>restrictor</code> (number) Restrictor.</li>
+<li><code>ballast</code> (number) Ballast in kg.</li>
+<li><code>ping</code> (integer) Ping in ms (or -1 if not available).</li>
+<li><code>cgHeight</code> (number) </li>
+<li><code>wheelsOutside</code> (integer) Number of wheels outside of allowed area.</li>
+<li><code>engineLifeLeft</code> (number) Engine life left (1000 for new engine, breaks at 0).</li>
+<li><code>dirt</code> (number) Body dirt level from 0 to 1.</li>
+<li><code>damage</code> (number[]) Damage values from 0 to maximum collision speed in km/h for four different zones (fifth one is not really used). 5 items, starts with 0.</li>
+<li><code>gearboxDamage</code> (number) Gearbox damage (0 for new gearbox, 1 for non-functional).</li>
+<li><code>nodeIndex</code> (integer) Car index if 0 is nearest to camera, 1 is second nearest and so on.</li>
+<li><code>visibleIndex</code> (integer) Car index if 0 is nearest to camera and visible in main camera, 1 is second nearest visible and so on. Cars outside of main camera would have 255 here.</li>
+<li><code>activeLOD</code> (integer) 0-based index of visible LOD.</li>
+<li><code>distanceToCamera</code> (number) Distance to camera in meters.</li>
+<li><code>splinePosition</code> (number) Position of car along the track, 0 for starting line, 1 for finishing line.</li>
+<li><code>driftPoints</code> (number) Drift points (calculated in any racing mode).</li>
+<li><code>driftInstantPoints</code> (number) Drift instant points (calculated in any racing mode).</li>
+<li><code>driftComboCounter</code> (integer) Drift combo counter (calculated in any racing mode).</li>
+<li><code>collisionDepth</code> (number) How deep is current collision, in meters (generally it’s better to use change of car speed to estimate collision intensity though, depth is much less predictable).</li>
+<li><code>collisionPosition</code> (vec3) Coordinates of current collision in car space.</li>
+<li><code>collidedWith</code> (integer) 0 for track, non-zero for cars.</li>
+<li><code>lapCutsCount</code> (integer) Number of lap cuts in current lap. Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>lastLapCutsCount</code> (integer) Number of lap cuts in last lap.</li>
+<li><code>aiLevel</code> (number) AI level from 0 to 1 (or -1 if there is no AI).</li>
+<li><code>aiAggression</code> (number) AI aggression from 0 to 1 (or -1 if there is no AI). Note: aggression level set in a launcher will be multiplied by 0.95, so 100% aggression will show up as 0.95 here.</li>
+<li><code>aiRainTyres</code> (number) <code>True</code> if currently AI is using rain tyres.</li>
+<li><code>currentSplits</code> (integer[]) Time for different splits of current lap, in milliseconds. Items start with 0. To get number of elements, use <code>#state.currentSplits</code>.</li>
+<li><code>lastSplits</code> (integer[]) Time for different splits of last lap, in milliseconds. Items start with 0. To get number of elements, use <code>#state.lastSplits</code>.</li>
+<li><code>bestSplits</code> (integer[]) Best splits times (and not splits of best lap), in milliseconds, unlike other split lists, this one is populated with zeroes for sectors without time from the start. Items start with 0. To get number of elements, use <code>#state.bestSplits</code>.</li>
+<li><code>bestLapSplits</code> (integer[]) Splits times of best lap (not necessarily best split times in itself), in milliseconds. Items start with 0. To get number of elements, use <code>#state.bestLapSplits</code>.</li>
+<li><code>wheels</code> (ac.StateWheel[]) 4 items, starts with 0.</li>
+<li><code>extrapolatedMovement</code> (boolean) If set to false and you’re adding objects moving close to cars, use ac.CarState.timestamp to estimate dt in such a way that it would match car physics time</li>
+<li><code>isActive</code> (boolean) True if car is currently active (changes to <code>false</code> for disconnected cars if server does not have them visible).</li>
+<li><code>isConnected</code> (boolean) True if car is currently connected (cars can be disconnected online), or if car is not a remote one.</li>
+<li><code>isRemote</code> (boolean) True if car is controlled by another player online.</li>
+<li><code>isAIControlled</code> (boolean) True if car is controlled by AI (or that autopilot thing).</li>
+<li><code>isUserControlled</code> (boolean) True if car is controlled by user (controls could be disabled completely).</li>
+<li><code>isLapValid</code> (boolean) True if current lap is valid. Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>isLastLapValid</code> (boolean) True if last lap is valid.</li>
+<li><code>isCameraOnBoard</code> (boolean) True if camera is inside this car.</li>
+<li><code>isInPitlane</code> (boolean) True if car is in pits area.</li>
+<li><code>isInPit</code> (boolean) True if car is parked in its pit stop place.</li>
+<li><code>isRetired</code> (boolean) </li>
+<li><code>isEngineLimiterOn</code> (boolean) </li>
+<li><code>isGearGrinding</code> (boolean) </li>
+<li><code>hasTurningLights</code> (boolean) There could be other components linked to turn signals state, but this variable is about emissives tied to turn signals.</li>
+<li><code>headlightsActive</code> (boolean) </li>
+<li><code>brakeLightsActive</code> (boolean) </li>
+<li><code>flashingLightsActive</code> (boolean) </li>
+<li><code>hornActive</code> (boolean) </li>
+<li><code>focused</code> (boolean) </li>
+<li><code>focusedOnInterior</code> (boolean) </li>
+<li><code>useInternalAudio</code> (boolean) If <code>true</code>, <code>…_int</code> variants of audio events are used.</li>
+<li><code>isHidingLabels</code> (boolean) If you’re drawing a map, don’t show cars with this flag on (those would be disconnected cars or, for example, cars acting like traffic). Flag can change during the race</li>
+<li><code>isDriftBonusOn</code> (boolean) Drift bonus flag (calculated in any racing mode).</li>
+<li><code>isDriftValid</code> (boolean) Is drift valid (calculated in any racing mode).</li>
+<li><code>isRaceFinished</code> (boolean) Car has finished the race. Since 0.2.8, non-race sessions are never marked as finished.</li>
+<li><code>isDriverVisible</code> (boolean) Driver can be hidden by apps or Lua scripts too.</li>
+<li><code>isDriverDoorOpen</code> (boolean) </li>
+<li><code>isDriverSeatbeltOn</code> (boolean) Same as <code>SEATBELT</code> input.</li>
+<li><code>hazardLights</code> (boolean) </li>
+<li><code>turningLeftLights</code> (boolean) </li>
+<li><code>turningRightLights</code> (boolean) </li>
+<li><code>turningLeftOnly</code> (boolean) </li>
+<li><code>turningRightOnly</code> (boolean) </li>
+<li><code>lowBeams</code> (boolean) <code>true</code> if low beams switch is currently active (doesn’t depend on the state of headlights, just on the switch state).</li>
+<li><code>highBeams</code> (boolean) <code>true</code> if high beams are currently active (either with headlights active, or with high beams flashing).</li>
+<li><code>extraA</code> (boolean) </li>
+<li><code>extraB</code> (boolean) </li>
+<li><code>extraC</code> (boolean) </li>
+<li><code>extraD</code> (boolean) </li>
+<li><code>extraE</code> (boolean) </li>
+<li><code>extraF</code> (boolean) </li>
+<li><code>extraG</code> (boolean) </li>
+<li><code>extraH</code> (boolean) </li>
+<li><code>extraI</code> (boolean) </li>
+<li><code>extraJ</code> (boolean) </li>
+<li><code>extraK</code> (boolean) </li>
+<li><code>extraL</code> (boolean) </li>
+<li><code>extraM</code> (boolean) </li>
+<li><code>extraN</code> (boolean) </li>
+<li><code>extraO</code> (boolean) </li>
+<li><code>extraP</code> (boolean) </li>
+<li><code>extraQ</code> (boolean) </li>
+<li><code>extraR</code> (boolean) </li>
+<li><code>extraS</code> (boolean) </li>
+<li><code>extraT</code> (boolean) </li>
+<li><code>kersCharging</code> (boolean) </li>
+<li><code>turningLightsActivePhase</code> (boolean) </li>
+<li><code>anyFlamesActive</code> (boolean) <code>true</code> if any of car flames are currently shown.</li>
+<li><code>justJumped</code> (boolean) Changes to <code>true</code> for a single frame when car jumps.</li>
+<li><code>resetCounter</code> (integer) Increases by 1 each time a car resets.</li>
+<li><code>kersCharge</code> (number) </li>
+<li><code>kersInput</code> (number) </li>
+<li><code>kersCurrentKJ</code> (number) </li>
+<li><code>kersMaxKJ</code> (number) </li>
+<li><code>kersLoad</code> (number) </li>
+<li><code>distanceDrivenTotalKm</code> (number) </li>
+<li><code>distanceDrivenSessionKm</code> (number) </li>
+<li><code>poweredWheelsSpeed</code> (number) Can be used for speedometers if they’re not using GPS and instead use powered wheels, value in km/h.</li>
+<li><code>batteryVoltage</code> (number) </li>
+<li><code>oilPressure</code> (number) </li>
+<li><code>oilTemperature</code> (number) </li>
+<li><code>exhaustTemperature</code> (number) </li>
+<li><code>wiperModes</code> (integer) Number of wiper modes, no less than 1 (wipers disabled state counts like a 0th mode, all cars would have that).</li>
+<li><code>wiperMode</code> (integer) Stores previous active mode when wipers are disabled, but still have a loop to complete.</li>
+<li><code>wiperSelectedMode</code> (integer) Actual selected mode.</li>
+<li><code>wiperSpeed</code> (number) </li>
+<li><code>wiperProgress</code> (number) </li>
+<li><code>bodyWetness</code> (number) How wet is car exterior, approximation from 0 to 1 (actual wetness is in 2D map).</li>
+<li><code>compass</code> (number) Angle of where car is heading, from 0 to 360 (0/360 for north, 90 for east, etc.)</li>
+<li><code>lapTimeMs</code> (integer) Time of current lap in milliseconds.</li>
+<li><code>bestLapTimeMs</code> (integer) Time of best lap of this session in milliseconds.</li>
+<li><code>previousLapTimeMs</code> (integer) Time of last lap in milliseconds.</li>
+<li><code>lapCount</code> (integer) Number of completed laps in this session (within connection online), including spoiled laps.</li>
+<li><code>currentSector</code> (integer) 0-based index of current track split.</li>
+<li><code>previousSectorTime</code> (integer) Time of previous split in milliseconds, or 0 if it’s a first split.</li>
+<li><code>racePosition</code> (integer) Position of a car in the race, 1 for first, 2 for second, etc.</li>
+<li><code>drivenInRace</code> (number) Distance driven in current race in meters (can be used for estimating race position, based on number of completed laps and current lap progress, in practice or qualify session resets each lap).</li>
+<li><code>estimatedLapTimeMs</code> (integer) Based on best lap and performance meter (delta of this lap time vs best lap time).</li>
+<li><code>performanceMeter</code> (number) Performance meter comparing this lap with best, seconds.</li>
+<li><code>performanceMeterSpeedDifferenceMs</code> (number) In AC performance app, there is that red/green bar, it shows this value.</li>
+<li><code>sessionLapCount</code> (integer) </li>
+<li><code>compoundIndex</code> (integer) Index of currently selected tyre compounds.</li>
+<li><code>sessionID</code> (integer) Index of a car in an online race (differs from regular car index: sessionID is an index in entry list, but car.index of your car is always zero)</li>
+<li><code>physicsAvailable</code> (boolean) Cars in replays, or remote cars online do not have regular physics component running, so some data will be missing. Such fields are marked as physics-only in comments.</li>
+<li><code>speedLimiterInAction</code> (boolean) Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>absInAction</code> (boolean) Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>tractionControlInAction</code> (boolean) Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>hasUserBrakeBias</code> (boolean) Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>hasCockpitMGUHMode</code> (boolean) </li>
+<li><code>hasCockpitERSDelivery</code> (boolean) </li>
+<li><code>hasCockpitERSRecovery</code> (boolean) </li>
+<li><code>drsPresent</code> (boolean) Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>drsAvailable</code> (boolean) Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>drsActive</code> (boolean) Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>kersPresent</code> (boolean) Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>kersHasButtonOverride</code> (boolean) Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>kersButtonPressed</code> (boolean) Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>mguhChargingBatteries</code> (boolean) </li>
+<li><code>manualPitsSpeedLimiterEnabled</code> (boolean) Returns <code>true</code> if manual pits speed limiter is currently active. Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>userSpeedLimiterEnabled</code> (boolean) Returns <code>true</code> if custom physics speed limiter is currently active. Not the same as pit limiter (or manually operated speed limiter). Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>autoShift</code> (boolean) Returns <code>true</code> if automatic shifting is active. Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>autoClutch</code> (boolean) Returns <code>true</code> if auto-clutch is active. Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>mgukDelivery</code> (integer) Starts with 0.</li>
+<li><code>mgukDeliveryCount</code> (integer) </li>
+<li><code>mgukRecovery</code> (integer) From 0 to 10 (for 100%).</li>
+<li><code>tractionControlMode</code> (integer) 0 for disabled TC. Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>absMode</code> (integer) 0 for disabled ABS. Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>engineBrakeSettingsCount</code> (integer) </li>
+<li><code>currentEngineBrakeSetting</code> (integer) </li>
+<li><code>fuelPerLap</code> (number) Uses original AC fuel estimation. Zero until value is available. Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>differentialPreload</code> (number) Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>differentialCoast</code> (number) Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>differentialPower</code> (number) Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>awdFrontShare</code> (number) Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>awdCenterLock</code> (number) Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>drivetrainTorque</code> (number) Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>drivetrainPower</code> (number) Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>brakeBias</code> (number) Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>speedLimiter</code> (number) Returns pit limiter speed in km/h (80 by default unless session specified different settings) or 0 if no limit is currently active. Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>turboBoosts</code> (number[]) Values per each turbo, up to 8 (if there are less turbos in a car, rest are zeroes). Physics-only (see <code>ac.CarState.physicsAvailable</code>) 8 items, starts with 0.</li>
+<li><code>turboWastegates</code> (number[]) Values per each turbo, up to 8 (if there are less turbos in a car, rest are zeroes). Physics-only (see <code>ac.CarState.physicsAvailable</code>) 8 items, starts with 0.</li>
+<li><code>tractionControl2</code> (number) </li>
+<li><code>fuelMap</code> (integer) Current fuel map preset.</li>
+<li><code>steerTorque</code> (number) </li>
+<li><code>ffbSteerAssist</code> (number) Value of <code>STEER_ASSIST</code> from car.ini. Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>ffbBase</code> (number) Value of <code>FFMULT</code> from car.ini. Physics-only (see <code>ac.CarState.physicsAvailable</code>)</li>
+<li><code>ffbFinal</code> (number) </li>
+<li><code>ffbPure</code> (number) </li>
+<li><code>ffbMultiplier</code> (number) For 100% FFB multiplier, this value is set to 1.</li>
+<li><code>aeroLiftFront</code> (number) Aero lift coefficient in front.</li>
+<li><code>aeroLiftRear</code> (number) Aero lift coefficient in rear.</li>
+<li><code>aeroDrag</code> (number) Aero drag coefficient.</li>
+<li><code>caster</code> (number) Caster angle in degrees.</li>
+<li><code>rideHeight</code> (number[]) 0 for front, 1 for rear. 2 items, starts with 0.</li>
+<li><code>p2pStatus</code> (integer) </li>
+<li><code>p2pActivations</code> (integer) </li>
+<li><code>altitude</code> (number) Altitude in meters above sea level.</li>
+<li><code>ambientOcclusion</code> (number) Ambient occlusion value computed from prebaked data from track’s VAO patch. 0 for car fully shadowed (in a tunnel), 1 for car outside. Affected by WeatherFX adjustments.</li>
+<li><code>rawAmbientOcclusion</code> (number) Ambient occlusion value computed from prebaked data from track’s VAO patch. 0 for car fully shadowed (in a tunnel), 1 for car outside. Not affected by WeatherFX adjustments.</li>
+<li><code>carCamerasCount</code> (integer) Number of F6 cameras.</li>
+<li><code>currentPenaltyType</code> (ac.PenaltyType) Current penalty type (set only for user car).</li>
+<li><code>currentPenaltyParameter</code> (integer) Parameter of current penalty (role depends on penalty type).</li>
+<li><code>extraIconsCount</code> (integer) Extra driver icons set with <code>ui.UserIconsLayer()</code>. To draw, use <code>carN::special::driver::X</code> texture name.</li>
+</ul>
+</details><h3><code>ac.getCarPhysics(i)</code> — fizik durumu (sadece oyuncu aracı) (16 alan)</h3>
+<p><code>isAvailable</code>, <code>gearRatio</code>, <code>finalRatio</code>, <code>airDensity</code>, <code>awd2MaxTorque</code>, <code>awd2CurrentLockTorque</code>, <code>awd2Ramp</code>, <code>engineInertia</code>, <code>drivetrainInertia</code>, <code>drivetrainVelocity</code>, <code>clutchInertia</code>, <code>clutchState</code>, <code>wheels</code>, <code>scriptControllerInputs</code>, <code>gearRatios</code>, <code>wings</code></p>
+<details><summary>Açıklamalar</summary><ul>
+<li><code>isAvailable</code> (boolean) </li>
+<li><code>gearRatio</code> (number) </li>
+<li><code>finalRatio</code> (number) </li>
+<li><code>airDensity</code> (number) Air density affected by slip stream.</li>
+<li><code>awd2MaxTorque</code> (number) </li>
+<li><code>awd2CurrentLockTorque</code> (number) </li>
+<li><code>awd2Ramp</code> (number) </li>
+<li><code>engineInertia</code> (number) </li>
+<li><code>drivetrainInertia</code> (number) </li>
+<li><code>drivetrainVelocity</code> (number) </li>
+<li><code>clutchInertia</code> (number) </li>
+<li><code>clutchState</code> (number) </li>
+<li><code>wheels</code> (ac.StateWheelPhysics[]) 4 items, starts with 0.</li>
+<li><code>scriptControllerInputs</code> (number[]) 256 items, starts with 0.</li>
+<li><code>gearRatios</code> (number[]) Items start with 0. To get number of elements, use <code>#state.gearRatios</code>.</li>
+<li><code>wings</code> (ac.StateWingPhysics[]) Items start with 0. To get number of elements, use <code>#state.wings</code>.</li>
+</ul>
+</details><h3><code>car.wheels[i]</code> — tekerlek (62 alan)</h3>
+<p><code>tyreRadius</code>, <code>tyreWidth</code>, <code>rimRadius</code>, <code>tyreDirty</code>, <code>tyreWear</code>, <code>tyreVirtualKM</code>, <code>tyreGrain</code>, <code>tyreBlister</code>, <code>tyreFlatSpot</code>, <code>tyreStaticPressure</code>, <code>tyrePressure</code>, <code>temperatureMultiplier</code>, <code>tyreCoreTemperature</code>, <code>tyreInsideTemperature</code>, <code>tyreMiddleTemperature</code>, <code>tyreOutsideTemperature</code>, <code>tyreOptimumTemperature</code>, <code>brakeTemperature</code>, <code>discTemperature</code>, <code>angularSpeed</code>, <code>slip</code>, <code>slipAngle</code>, <code>slipRatio</code>, <code>ndSlip</code>, <code>load</code>, <code>loadK</code>, <code>speedDifference</code>, <code>camber</code>, <code>toeIn</code>, <code>suspensionDamage</code>, <code>suspensionTravel</code>, <code>tyreLoadedRadius</code>, <code>waterThickness</code>, <code>dx</code>, <code>dy</code>, <code>mz</code>, <code>fx</code>, <code>fy</code>, <code>contactNormal</code>, <code>contactPoint</code>, <code>position</code>, <code>look</code>, <code>up</code>, <code>outside</code>, <code>velocity</code>, <code>transform</code>, <code>transformWheel</code>, <code>surfaceDirt</code>, <code>surfaceSectorID</code>, <code>surfaceSectionIndex</code>, <code>surfaceGrip</code>, <code>surfaceDamping</code>, <code>surfaceGranularity</code>, <code>surfaceVibrationGain</code>, <code>surfaceVibrationLength</code>, <code>surfacePitlane</code>, <code>surfaceValidTrack</code>, <code>isBlown</code>, <code>isHot</code>, <code>isSpecialSurface</code>, <code>surfaceType</code>, <code>surfaceExtendedType</code></p>
+<details><summary>Açıklamalar</summary><ul>
+<li><code>tyreRadius</code> (number) Tyre radius in meters.</li>
+<li><code>tyreWidth</code> (number) Tyre width in meters.</li>
+<li><code>rimRadius</code> (number) Rim radius in meters (older cars might not have it).</li>
+<li><code>tyreDirty</code> (number) Dirt levels for tyres, four values, from 0 to 1.</li>
+<li><code>tyreWear</code> (number) Tyre wear, from 0 to 1.</li>
+<li><code>tyreVirtualKM</code> (number) Driven distance for each tyre in km (resets when tyres change, not an actual distance, rate of change depends on wear multiplier).</li>
+<li><code>tyreGrain</code> (number) </li>
+<li><code>tyreBlister</code> (number) </li>
+<li><code>tyreFlatSpot</code> (number) </li>
+<li><code>tyreStaticPressure</code> (number) Static tyre pressure.</li>
+<li><code>tyrePressure</code> (number) Dynamic tyre pressure.</li>
+<li><code>temperatureMultiplier</code> (number) </li>
+<li><code>tyreCoreTemperature</code> (number) Core tyre temperature, in °C.</li>
+<li><code>tyreInsideTemperature</code> (number) Inside tyre temperature, in °C.</li>
+<li><code>tyreMiddleTemperature</code> (number) Middle tyre temperature, in °C.</li>
+<li><code>tyreOutsideTemperature</code> (number) Outside tyre temperature, in °C.</li>
+<li><code>tyreOptimumTemperature</code> (number) Optimum tyre temperature, in °C.</li>
+<li><code>brakeTemperature</code> (number) Brakes temperature, in °C, or 0 if it’s not available (for most cars).</li>
+<li><code>discTemperature</code> (number) </li>
+<li><code>angularSpeed</code> (number) </li>
+<li><code>slip</code> (number) </li>
+<li><code>slipAngle</code> (number) Angle between the desired direction and the actual direction of the vehicle, in degrees.</li>
+<li><code>slipRatio</code> (number) </li>
+<li><code>ndSlip</code> (number) </li>
+<li><code>load</code> (number) Tyre load in N (warning: does not have correct values for remote cars online or in replays, use <code>.loadK</code> if you want a rough but stable estimation instead)</li>
+<li><code>loadK</code> (number) </li>
+<li><code>speedDifference</code> (number) Difference in speed between tyre and ground surface in contact point.</li>
+<li><code>camber</code> (number) Camber angle in degrees.</li>
+<li><code>toeIn</code> (number) Toe angle in degrees.</li>
+<li><code>suspensionDamage</code> (number) </li>
+<li><code>suspensionTravel</code> (number) </li>
+<li><code>tyreLoadedRadius</code> (number) </li>
+<li><code>waterThickness</code> (number) Water thickness in meters.</li>
+<li><code>dx</code> (number) </li>
+<li><code>dy</code> (number) </li>
+<li><code>mz</code> (number) Self aligning torque.</li>
+<li><code>fx</code> (number) </li>
+<li><code>fy</code> (number) </li>
+<li><code>contactNormal</code> (vec3) Normal of a contact point surface.</li>
+<li><code>contactPoint</code> (vec3) Contact point position in world coordinates.</li>
+<li><code>position</code> (vec3) Wheel position in world coordinates.</li>
+<li><code>look</code> (vec3) Wheel (SUSP_…) heading vector.</li>
+<li><code>up</code> (vec3) Wheel (SUSP_…) vector directed updwards.</li>
+<li><code>outside</code> (vec3) Points outside of car (to the left of tyre for left tyres, to the right for right).</li>
+<li><code>velocity</code> (vec3) </li>
+<li><code>transform</code> (mat4x4) Wheel (SUSP_…) transformation.</li>
+<li><code>transformWheel</code> (mat4x4) Wheel (WHEEL_…) transformation.</li>
+<li><code>surfaceDirt</code> (number) Dirt additive coefficient of the surface below the wheel.</li>
+<li><code>surfaceSectorID</code> (integer) Sector ID of the surface below the wheel.</li>
+<li><code>surfaceSectionIndex</code> (integer) Index of section in “surfaces.ini” corresponding with surface the wheel is on, or -1 if it’s not available</li>
+<li><code>surfaceGrip</code> (number) Grip of the surface below the wheel.</li>
+<li><code>surfaceDamping</code> (number) Damping of the surface below the wheel.</li>
+<li><code>surfaceGranularity</code> (number) Damping of the surface below the wheel.</li>
+<li><code>surfaceVibrationGain</code> (number) Vibration gain of the surface below the wheel.</li>
+<li><code>surfaceVibrationLength</code> (number) Vibration length of the surface below the wheel.</li>
+<li><code>surfacePitlane</code> (boolean) If surface below the wheel is in pitlane.</li>
+<li><code>surfaceValidTrack</code> (boolean) If surface below the wheel is valid track.</li>
+<li><code>isBlown</code> (boolean) </li>
+<li><code>isHot</code> (boolean) </li>
+<li><code>isSpecialSurface</code> (boolean) Do not play skids audio if this value is <code>true</code>.</li>
+<li><code>surfaceType</code> (ac.SurfaceType) Basic type hint used for visuals.</li>
+<li><code>surfaceExtendedType</code> (ac.SurfaceExtendedType) Extended type hint, more types will be added later.</li>
+</ul>
+</details><h3><code>getCarPhysics(i).wheels[i]</code> — tekerlek fiziği (10 alan)</h3>
+<p><code>brakeTorque</code>, <code>handbrakeTorque</code>, <code>electricTorque</code>, <code>feedbackTorque</code>, <code>angularInertia</code>, <code>shaftVelocity</code>, <code>shaftInertia</code>, <code>tyreCarcassTemperature</code>, <code>roadTemperature</code>, <code>discCoreTemperature</code></p>
+<details><summary>Açıklamalar</summary><ul>
+<li><code>brakeTorque</code> (number) </li>
+<li><code>handbrakeTorque</code> (number) </li>
+<li><code>electricTorque</code> (number) </li>
+<li><code>feedbackTorque</code> (number) </li>
+<li><code>angularInertia</code> (number) </li>
+<li><code>shaftVelocity</code> (number) </li>
+<li><code>shaftInertia</code> (number) </li>
+<li><code>tyreCarcassTemperature</code> (number) Only available with custom physics tyres.</li>
+<li><code>roadTemperature</code> (number) Can vary from AC road temperature in shadows if option is enabled.</li>
+<li><code>discCoreTemperature</code> (number) Can vary from AC road temperature in shadows if option is enabled.</li>
+</ul>
+</details><h3><code>ac.getSim()</code> — simülasyon durumu (164 alan)</h3>
+<p><code>windowWidth</code>, <code>windowHeight</code>, <code>msaaSamples</code>, <code>worldDetailLevel</code>, <code>windowSize</code>, <code>isFullscreen</code>, <code>isVSyncActive</code>, <code>isPostProcessingActive</code>, <code>isVRMode</code>, <code>isOculusMode</code>, <code>isOpenVRMode</code>, <code>isTripleMode</code>, <code>isCustomVideoMode</code>, <code>isVRConnected</code>, <code>staticReflections</code>, <code>directMessagingAvailable</code>, <code>directUDPMessagingAvailable</code>, <code>allowTyreBlankets</code>, <code>isReplayOnlyMode</code>, <code>isOnlineRace</code>, <code>isShowroomMode</code>, <code>isPreviewsGenerationMode</code>, <code>freeCameraAllowed</code>, <code>isPitsSpeedLimiterForced</code>, <code>customAISplinesAllowed</code>, <code>isFSRActive</code>, <code>isTripleFSRActive</code>, <code>isLinearColorSpaceActive</code>, <code>allowedTyresOut</code>, <code>resultScreenTime</code>, <code>raceOverTime</code>, <code>mechanicalDamageRate</code>, <code>tyreConsumptionRate</code>, <code>fuelConsumptionRate</code>, <code>gravity</code>, <code>inputMode</code>, <code>windowHandle</code>, <code>currentVAOMode</code>, <code>neutralSunTrajectoryTimestamp</code>, <code>isMakingScreenshot</code>, <code>time</code>, <code>gameTime</code>, <code>systemTime</code>, <code>frame</code>, <code>cameraPosition</code>, <code>cameraPositionDelta</code>, <code>cameraLook</code>, <code>cameraUp</code>, <code>cameraSide</code>, <code>cameraFOV</code>, <code>cameraClipNear</code>, <code>cameraClipFar</code>, <code>cameraDOFFactor</code>, <code>cameraDOFFocus</code>, <code>cameraExposure</code>, <code>exposureMultiplier</code>, <code>carsCount</code>, <code>closelyFocusedCar</code>, <code>focusedCar</code>, <code>dt</code>, <code>isPaused</code>, <code>isInMainMenu</code>, <code>isLookingAtSessionResults</code>, <code>needsDPad</code>, <code>isLive</code>, <code>isFreeCameraOutside</code>, <code>isReplayActive</code>, <code>isFocusedOnInterior</code>, <code>isTripleScreenAvailable</code>, <code>controlsWithShifter</code>, <code>isVirtualMirrorActive</code>, <code>hideSteeringWheel</code>, <code>hideArmsInCockpit</code>, <code>isVirtualMirrorForced</code>, <code>isWindowForeground</code>, <code>isWeatherFXActive</code>, <code>isVAOPatchLoaded</code>, <code>orbitOnboardCamera</code>, <code>cameraJumped</code>, <code>isMouseSteeringActive</code>, <code>ambientLightingMultiplier</code>, <code>ambientTemperature</code>, <code>roadTemperature</code>, <code>lightSuggestion</code>, <code>roadGrip</code>, <code>windSpeedKmh</code>, <code>windVelocityKmh</code>, <code>windDirectionDeg</code>, <code>rainIntensity</code>, <code>rainWetness</code>, <code>rainWater</code>, <code>bestLapTimeMs</code>, <code>timeTotalSeconds</code>, <code>timeHours</code>, <code>timeMinutes</code>, <code>timeSeconds</code>, <code>timeMultiplier</code>, <code>timestamp</code>, <code>dayOfYear</code>, <code>raceFlagType</code>, <code>raceFlagCause</code>, <code>isSessionStarted</code>, <code>isSessionFinished</code>, <code>raceSessionType</code>, <code>timeToSessionStart</code>, <code>sessionTimeLeft</code>, <code>currentSessionIndex</code>, <code>sessionsCount</code>, <code>leaderLapCount</code>, <code>trackLengthM</code>, <code>speedLimitKmh</code>, <code>fps</code>, <code>fpsCapped</code>, <code>physicsLate</code>, <code>cpuOccupancy</code>, <code>cpuTime</code>, <code>firstPersonCameraFOV</code>, <code>cameraMode</code>, <code>driveableCameraMode</code>, <code>carCameraIndex</code>, <code>trackCamerasSetsCount</code>, <code>trackCamerasSet</code>, <code>audioMasterVolume</code>, <code>whiteReferencePoint</code>, <code>specialEvent</code>, <code>isTimedRace</code>, <code>penaltiesEnabled</code>, <code>fixedSetup</code>, <code>leaderLastLap</code>, <code>timeRaceEnded</code>, <code>timeRaceLastLap</code>, <code>timeRaceAdditionalLap</code>, <code>idealLineShown</code>, <code>damageDisplayerShown</code>, <code>driverNamesShown</code>, <code>isAdmin</code>, <code>sentAdminCommand</code>, <code>pitsSpeedLimit</code>, <code>pitWindowStartTime</code>, <code>pitWindowEndTime</code>, <code>replayFrameMs</code>, <code>timeSinceLastUDPPacket</code>, <code>replayFrames</code>, <code>replayCurrentFrame</code>, <code>replayPlaybackRate</code>, <code>weatherType</code>, <code>weatherSkyOcclusion</code>, <code>baseAltitude</code>, <code>currentQuickPitPreset</code>, <code>connectedCars</code>, <code>randomSeed</code>, <code>equinoxSunTrajectory</code>, <code>explicitDateSet</code>, <code>lapSplits</code>, <code>handshakeServerTime</code>, <code>currentServerTime</code>, <code>currentSessionTime</code>, <code>skyColor</code>, <code>horizonColor</code>, <code>fogColor</code>, <code>lightColor</code>, <code>lightDirection</code>, <code>originShift</code>, <code>weatherConditions</code></p>
+<h2>5. <code>ac.*</code> fonksiyonları (577 adet, konuya göre)</h2>
+<h3>Kamera / görüntü (53)</h3>
+<ul>
+<li><code>ac.getCameraPosition()</code></li>
+<li><code>ac.getCameraUp()</code></li>
+<li><code>ac.getCameraSide()</code></li>
+<li><code>ac.getCameraForward()</code></li>
+<li><code>ac.getCameraDirection()</code> — This vector is pointing backwards! Only kept for compatibility. For proper one, use <code>ac.getCameraForward()</code>.</li>
+<li><code>ac.getCameraFOV()</code> — Value in degrees.</li>
+<li><code>ac.getCameraPositionTo(r)</code></li>
+<li><code>ac.getCameraUpTo(r)</code></li>
+<li><code>ac.getCameraSideTo(r)</code></li>
+<li><code>ac.getCameraForwardTo(r)</code></li>
+<li><code>ac.getCameraDirectionTo(r)</code></li>
+<li><code>ac.getCameraPositionRelativeToCar()</code> — Returns camera position in car coordinates system.</li>
+<li><code>ac.isVisibleInMainCamera(pos, radius, gSpace, includeFarPlane)</code> — Can be called from anywhere. Checks if given point is within main camera frustum (or several, in triple screen mode) or not. For checking if something is within current c</li>
+<li><code>ac.onScreenshot(callback)</code> — Sets a callback which will be called when a new screenshot is made.</li>
+<li><code>ac.setAppWindowVisible(appID, windowFilter, visible)</code> — Shows a hidden app window or few while current script is alive (temporarily removing “HIDDEN” window flag).</li>
+<li><code>ac.setCurrentCamera(mode)</code> — Sets current camera mode.</li>
+<li><code>ac.setCurrentDrivableCamera(mode)</code> — Sets current drivable camera mode.</li>
+<li><code>ac.setCurrentCarCamera(mode)</code> — Sets current car camera index.</li>
+<li><code>ac.setCurrentTrackCamera(set)</code> — Sets current track cameras set.</li>
+<li><code>ac.focusCar(index)</code> — Focus on a certain car.</li>
+<li><code>ac.setCameraPosition(pos)</code> — Moves free camera to a certain position. Note: if you want to control camera fully, consider grabbing camera instead.</li>
+<li><code>ac.setCameraDirection(look, up)</code> — Orients free camera. Note: if you want to control camera fully, consider grabbing camera instead.</li>
+<li><code>ac.setCameraFOV(fov)</code> — Sets FOV of a free camera. Note: if you want to control camera fully, consider grabbing camera instead.</li>
+<li><code>ac.setCameraExposure(exposure)</code> — Sets exposure of a free camera. Note: if you want to control camera fully, consider grabbing camera instead.</li>
+<li><code>ac.setCameraDOF(distance)</code> — Sets DOF distance of a free camera. Note: if you want to control camera fully, consider grabbing camera instead.</li>
+<li><code>ac.setAppsHidden(hidden)</code> — Hides or shows any apps.</li>
+<li><code>ac.setOrbitOnboardCamera(orbit)</code></li>
+<li><code>ac.setCameraCPLSettings(intensity, rotation, offset, iridescenceBoost)</code> — Override camera CPL settings.</li>
+<li><code>ac.overrideCameraClipPlanes(nearPlane, farPlane)</code> — Override camera clip planes. Pass distances in meters, or <code>nil</code> to disable the override.</li>
+<li><code>ac.setOnboardCameraFOV(fovDeg)</code> — Use <code>ac.setFirstPersonCameraFOV()</code></li>
+<li><code>ac.resetOnboardCameraFOV()</code> — Use <code>ac.resetFirstPersonCameraFOV()</code></li>
+<li><code>ac.setFirstPersonCameraFOV(fovDeg)</code> — Changes FOV for first person camera. To get current value, use <code>ac.getSim().firstPersonFOV</code>.</li>
+<li><code>ac.resetFirstPersonCameraFOV()</code> — Resets FOV for first person camera to 56° (which is a default, but actual value is loaded from “assettocorsa/cfg/camera_onboard.ini”). To get current value, use `ac.getSi</li>
+<li><code>ac.getOnboardCameraParams(carIndex)</code> — Gets onboard camera parameters for a specific car.</li>
+<li><code>ac.getOnboardCameraDefaultParams(carIndex)</code> — Gets default onboard camera parameters for a specific car (loading them from “car.ini” from car data).</li>
+<li><code>ac.setOnboardCameraParams(carIndex, params, save)</code> — Sets onboard camera parameters for a specific car. Optional saving works for the first car only.</li>
+<li><code>ac.areOnboardCameraParamsNeedSaving()</code> — Returns <code>true</code> if current camera parameters need saving (when default camera positioning app shows a “Save needed” label).</li>
+<li><code>ac.makeScreenshot(filename, format, callback)</code> — Runs asyncronously.</li>
+<li><code>ac.makeSimpleScreenshot(format, callback)</code> — Returns a binary image JPG data containing stuff on the screen (with HUD and everything). Asynchronous version.</li>
+<li><code>ac.isWindowOpen(windowID)</code> — Returns <code>true</code> if window with given ID is opened.</li>
+<li><code>ac.isWindowCollapsed(windowID)</code> — Returns <code>true</code> if window with given ID is in collapse state.</li>
+<li><code>ac.setWindowSizeConstraints(windowID, minSize, maxSize)</code> — Changes window size constraints, can be used to update window size live.</li>
+<li><code>ac.isWindowPinned(windowID)</code> — Returns <code>true</code> if window with given ID is pinned.</li>
+<li><code>ac.setWindowOpen(windowID, opened)</code> — Opens or closes a window.</li>
+<li><code>ac.setWindowIcon(windowID, iconID)</code> — Changes window icon. If your icon doesn’t change every frame, use this function instead of a live icon.</li>
+<li><code>ac.setWindowTitle(windowID, title)</code> — Sets window title.</li>
+<li><code>ac.setWindowBackground(windowID, color, darkHeader)</code> — Sets window background color.</li>
+<li><code>ac.setWindowNotificationCounter(windowID, counter)</code> — Adds notifications counter to a window for something like amount of unread messages. Make sure to set it back to 0 when things have been seen.</li>
+<li><code>ac.windowFading()</code> — If current window fades (has “FADING” flag), this value would store fading value. If background is fully opaque, value is 0.</li>
+<li><code>ac.grabCamera(reason)</code> — Tries to grabs camera for script to control it. If successfull, returns instance of <code>ac.GrabbedCamera</code> which you can then use to move camera, rotate it and alter some of </li>
+<li><code>ac.getAppWindows()</code> — Collect information about available windows.</li>
+<li><code>ac.accessAppWindow(windowName)</code> — Looks for a certain window of either an original AC app, a Python or a Lua app. Use <code>ac.getAppWindows()</code> to get a list of available apps. If found, this wrapper can be us</li>
+<li><code>ac.accessCarCamera(cameraIndex)</code></li>
+</ul>
+<h3>Hava / ışık / gökyüzü (37)</h3>
+<ul>
+<li><code>ac.getTrackTimezoneBaseDst(time)</code> — Returns timezone offset for the track in seconds.</li>
+<li><code>ac.lapTimeToString(time, allowHours)</code> — Turns time in milliseconds into common lap time presentation, like 00:00.123. If minutes exceed 60, hours will also be added, but only if <code>allow_hours</code> is <code>true</code> (default</li>
+<li><code>ac.getSunAngle()</code> — Value in degrees.</li>
+<li><code>ac.getSunPitchAngle()</code> — Value in degrees.</li>
+<li><code>ac.getSunHeadingAngle()</code> — Value in degrees.</li>
+<li><code>ac.getConditionsTimeScale()</code> — Returns current time multiplier.</li>
+<li><code>ac.getWindVelocity()</code> — Value is in m/s.</li>
+<li><code>ac.getWindVelocityTo(r)</code> — Value is in m/s.</li>
+<li><code>ac.isWeatherFxActive()</code></li>
+<li><code>ac.getCarRealTimeLeaderboardPosition(carIndex)</code> — Returns real time car position, same as Python function with the same name. Does not work online. For an alternative solution, get position calculated by CSP via `ac.getC</li>
+<li><code>ac.getSkyFeatureDirection(skyFeature, distance, time)</code> — Get direction to a sky feature in world-space (corrected for track heading). If feature is not available, returns a zero vector.</li>
+<li><code>ac.getSkyStarDirection(declRad, rightAscRad)</code> — Get direction to a star in the sky in world-space (corrected for track heading). If feature is not available, returns a zero vector.</li>
+<li><code>ac.getPerformanceCPUAndGPUTime()</code></li>
+<li><code>ac.getTimeZoneOffset()</code></li>
+<li><code>ac.getTimeZoneDstOffset()</code></li>
+<li><code>ac.getTimeZoneBaseOffset()</code></li>
+<li><code>ac.getTrackDateTime()</code> — Returns floading point number of seconds since 1970/01/01 that can be used for driving track animations in such a way that if time multiplier is set to 0 or above 1, thin</li>
+<li><code>ac.evaluateLapTime()</code> — Estimates lap time and sector times for main car using AC function originally used by Time Attack mode. Could be helpful in creating custom time attack modes. Uses “ideal</li>
+<li><code>ac.TemperatureParams(ambient, road)</code></li>
+<li><code>ac.WindParams(direction, speedFrom, speedTo)</code></li>
+<li><code>ac.setNeutralSunTrajectoryTimestamp(value)</code></li>
+<li><code>ac.forceSnow()</code></li>
+<li><code>ac.highlightCar(carIndex, highlightColor)</code> — Add fake light to a car (not realistic at all, can be used for something like bringing an attention to a recently teleported car with its collisions disabled).  When scri</li>
+<li><code>ac.debugLights(filter, count, mode, distance)</code> — Enables and disables lights debugging outlines. Parameters can be used to tune which lights would generate those outlines.</li>
+<li><code>ac.debugRainRacingLine(active)</code> — Enables and disables racing line debug view. Racing line is used to keep track of dynamic wetness offset caused by cars drying up the track when driving by.</li>
+<li><code>ac.setWeatherExactUTC0Timestamp(time, explicitDate)</code> — Replace current time entirely. Also alters timezone if new time would have different DST. Note: <code>time</code> here is a global timestamp with no timezone correction! Can’t be re</li>
+<li><code>ac.setWeatherTimeMultiplier(multiplier)</code> — Sets current time multiplier used by WeatherFX. Affects offline races only.</li>
+<li><code>ac.setWeatherTimeOffset(offset, instant)</code> — Adds or subtracts time offset, useful for debugging. Affects offline races only. Offset above 24 hours counts as race date being set, so if it wasn’t set in session setti</li>
+<li><code>ac.setTrackTimezoneOffset(offset)</code> — Sets timezone offset for the track in seconds. Not available online. Be careful: unlike with configs, this method does not have any coordinate-related sanity checks.</li>
+<li><code>ac.setHeadlights(active)</code></li>
+<li><code>ac.flashLights()</code> — Activates flashing lights for a bit.</li>
+<li><code>ac.setDaytimeLights(active)</code></li>
+<li><code>ac.setBrakingLightsThreshold(threshold)</code></li>
+<li><code>ac.setTurningLights(mode)</code></li>
+<li><code>ac.timeToNextVote(voteType)</code> — If <code>ac.canCastVote()</code> returns <code>false</code> due to cooldown, this option will return time in seconds until the next vote will become available.</li>
+<li><code>ac.exportLapTimesToCSV(destination)</code> — Asks AC to do the thing it does when “Print” button in original menu was pressed, saving lap times in a CSV file.</li>
+<li><code>ac.LightSource(lightType)</code> — Light source on the scene. Starts working immediately after creation. Use <code>:dispose()</code> to remove it.</li>
+</ul>
+<h3>Pist / yüzey / konum (56)</h3>
+<ul>
+<li><code>ac.hasTrackSpline()</code> — Refers to AI spline.</li>
+<li><code>ac.worldCoordinateToTrackProgress(v)</code> — Finds nearest point on track AI spline (fast_lane) and returns its normalized position. If there is no track spline, returns -1.</li>
+<li><code>ac.getTrackAISplineSides(v)</code> — Returns distance from AI spline to left and right track boundaries.</li>
+<li><code>ac.trackProgressToWorldCoordinate(v, linear)</code></li>
+<li><code>ac.trackProgressToWorldCoordinateTo(v, r, linear)</code></li>
+<li><code>ac.worldCoordinateToTrack(v)</code> — Converts world coordinates into track coordinates. Track coordinates:  - X for normalized position (0 — right in the middle, -1 — left side of the track, 1 — right size);</li>
+<li><code>ac.trackCoordinateToWorld(v)</code> — Converts track coordinates into world coordinates. Track coordinates:  - X for normalized position (0 — right in the middle, -1 — left side of the track, 1 — right size);</li>
+<li><code>ac.getTrackCoordinatesDeg(worldPos)</code> — Returns track world coordinates in degrees.</li>
+<li><code>ac.getTrackSectorName(trackProgress)</code> — Name of a sector.</li>
+<li><code>ac.getTrackId()</code> — Use <code>ac.getTrackID()</code> instead.</li>
+<li><code>ac.getTrackID()</code> — Returns track ID (name of its folder).</li>
+<li><code>ac.getTrackLayout()</code> — Returns track layout ID (name of layout folder, without name of track folder), or empty string if there is no layout.</li>
+<li><code>ac.getTrackFullID(separator)</code> — Returns full track ID (name of track folder and layout folder joined by some string, or just name of track folder if there is no layout).</li>
+<li><code>ac.getTrackName()</code> — Returns track name (as set in its JSON file).</li>
+<li><code>ac.getTrackDataFilename(fileName)</code> — Given name, returns a path like …/assettocorsa/content/tracks/[track ID]/data/[name], taking into account layout as well.</li>
+<li><code>ac.getTrackUpcomingTurn(carIndex)</code> — Distance and turn angle (in degrees) for the upcoming turn. If failed to compute, both would be -1. If car is facing wrong way, turn angle is either 180° or -180° dependi</li>
+<li><code>ac.forceVisibleHeadNodes(carIndex, force)</code> — Forces driver head to be visible even with cockpit camera.</li>
+<li><code>ac.onTrackPointCrossed(carIndex, progress, callback)</code> — Sets a callback which will be called when car crosses a certain point on a track. Won’t be triggered if car is in pitlane or recently jumped. Time is relative to the same</li>
+<li><code>ac.mediaNextTrack()</code> — Switches to the next track in currently active music player (by simulating media key press).</li>
+<li><code>ac.mediaPreviousTrack()</code> — Switches to the previous track in currently active music player (by simulating media key press).</li>
+<li><code>ac.getRealTrackHeadingAngle()</code></li>
+<li><code>ac.getTrackIR()</code> — Returns reference to a structure with TrackIR-related values. Very cheap to use.</li>
+<li><code>ac.INIConfig.trackData(fileName)</code> — Load track data INI file. Can be used by track scripts which might not always  have access to those files directly. Returned file can’t be saved.</li>
+<li><code>ac.INIConfig.trackConfig()</code> — Returns CSP config for a track. Might be slow: some of those configs are huge. Make sure to cache the resulting value if you need to reuse it. Returned file can’t be save</li>
+<li><code>ac.TrackConditions(sessionStart, sessionTransfer, randomness, lapGain)</code> — State of the track surface.</li>
+<li><code>ac.getTrackConfig(section, key, defaultValue)</code> — Reads a value from the config of currently loaded track. To use it, you need to specify <code>defaultValue</code> value, it would be used to determine the type of the value you need</li>
+<li><code>ac.MeshVertex(pos, normal, uv)</code> — Mesh vertex.</li>
+<li><code>ac.MeshVertex.new(pos, normal, uv)</code> — Creates new mesh vertex.</li>
+<li><code>ac.emptySceneReference()</code></li>
+<li><code>ac.findNodes(s)</code> — Creates a new scene reference containing nodes collected with a filter from root node associated with current script. For most scripts it would be an AC root node. For tr</li>
+<li><code>ac.findMeshes(s)</code> — Creates a new scene reference containing meshes collected with a filter from root node associated with current script. For most scripts it would be an AC root node. For t</li>
+<li><code>ac.findSkinnedMeshes(s)</code> — Creates a new scene reference containing skinned meshes collected with a filter from root node associated with current script. For most scripts it would be an AC root nod</li>
+<li><code>ac.onTrackPhysicsObjectCarCollision(name, carIndex, callback)</code> — Adds a listener that will be called once a car touches an track physics object for first time, or after touching another object. State resets once object is reset (with n</li>
+<li><code>ac.setExtraTrackLODMultiplier(multiplier)</code> — Might be helpful if you’re moving camera really far away and not grabbing it for some reason. Nice Screenshots module sets it to 10 when starting to make a screenshot.</li>
+<li><code>ac.overrideTrackTrees(listName, data, alignSurface)</code> — Replace track trees with a custom list. Use <code>listKey</code> not set in “ext_config.ini” to add new lists. Feel free to call this function each frame if amount of data is small.</li>
+<li><code>ac.configureSceneTweaks()</code> — Override scene tweaks.</li>
+<li><code>ac.setTrackCoordinatesDeg(coords, headingDeg)</code> — Sets track world coordinates in degrees. Not available online.</li>
+<li><code>ac.isAISplineRecorderPresent()</code> — Returns <code>true</code> if AI spline recorder is present and ready to do some recording.</li>
+<li><code>ac.isAISplineRecorderActive()</code></li>
+<li><code>ac.isAISplineRecorderRecordingPitLane()</code></li>
+<li><code>ac.getAISplineRecordedFrames()</code></li>
+<li><code>ac.startAISplineRecorder(recordPitLane)</code></li>
+<li><code>ac.stopAISplineRecorder(saveResult, callback)</code></li>
+<li><code>ac.setTrackCondition(key, value)</code> — Sets custom track condition input.</li>
+<li><code>ac.setTrackConditionInput(conditionInput, value)</code> — Use <code>ac.setTrackCondition()</code> instead.</li>
+<li><code>ac.SimpleMesh.carShape(carIndex, includeDriver)</code> — Creates a description of a simple mesh with a car shape. Usually is generated from LOD D if present and not too large, otherwise uses collider mesh.</li>
+<li><code>ac.SimpleMesh.carCollider(carIndex, actualCollider)</code> — Creates a description of a simple mesh with a car collider.</li>
+<li><code>ac.SimpleMesh.trackLine(lineType, absolute, relative)</code> — Creates a description of a simple mesh with a track line.</li>
+<li><code>ac.TrackPaint()</code></li>
+<li><code>ac.SceneTweaks()</code> — Driver seat parameters.</li>
+<li><code>ac.TrackCondition(expression, offset, defaultValue)</code> — Creates a wrapper to access track condition. If you want to get the value often, consider caching and reusing the wrapper.</li>
+<li><code>ac.TrackCondition.count()</code> — Returns number of conditions defined on the current track.</li>
+<li><code>ac.TrackCondition.name(index)</code> — Returns name of a condition with certain index.</li>
+<li><code>ac.TrackCondition.input(index)</code> — Returns input of a condition with certain index.</li>
+<li><code>ac.TrackCondition.get(index, offset)</code> — Returns value of a condition with certain index.</li>
+<li><code>ac.TrackCondition.getColor(index, offset)</code> — Returns RGB value of a condition with certain index.</li>
+</ul>
+<h3>Ses (27)</h3>
+<ul>
+<li><code>ac.getSoundSpeedMs()</code> — Returns precalculated sound speed in m/s taking into account humidity, altitude, pressure, etc.</li>
+<li><code>ac.getAudioVolume(audioChannelKey, carIndex, fallbackValue)</code> — Returns audio volume for given channel, value from 0 to 1. If channel is not recognized, returns <code>fallbackValue</code> if specified, unless (since 0.2.4) you specify key in a `</li>
+<li><code>ac.getAudioOutputDevice()</code> — Returns name of output audio device.</li>
+<li><code>ac.loadSoundbank(soundbank, guids)</code> — Loads FMOD soundbank. After soundbank is loaded, new audio events can be created which would refer to events in the soundbank. If soundbank is missing, new audio events c</li>
+<li><code>ac.isAudioReady()</code> — Checks if audio engine is initialized and ready to work. Until then, all created audio events would return <code>false</code> in their <code>:isValid()</code> methods, it doesn’t mean that the</li>
+<li><code>ac.setAudioEventMultiplier(surfaceWav, mult)</code> — Set volume multiplier for audio associated with a certain surface. Returns <code>false</code> if there are no events associated with this type of surface.</li>
+<li><code>ac.AudioEvent.keepAlive()</code> — Deprecated, now all events are alive until <code>:dispose()</code> is called.</li>
+<li><code>ac.setAudioVolume(audioChannelKey, value, carIndex)</code> — Sets audio volume for given channel, value from 0 to 1. If channel is not recognized, does nothing, unless (since 0.2.4) you specify key in a `&#39;your.namespace/Readable na</li>
+<li><code>ac.onAudioVolumeCalculation(callback)</code> — Sets a callback which will be called each frame when computing overall audio volume level. Callback returns a number which is used as volume multiplier. Use this function</li>
+<li><code>ac.setExteriorAudioMix(value)</code> — Mix exterior audio for interior views. If your car has something like rolling down windows, might be a good idea to set it to 1 then.</li>
+<li><code>ac.AudioEvent(event, reverbResponse, useOcclusion)</code> — Create a new audio event from previously loaded soundbank.</li>
+<li><code>ac.AudioEvent.fromFile(params, reverbResponse)</code> — Create a new audio event from a file. Consequent calls with the same parameters would reuse previously loaded audio file. Note: if <code>loop</code> is set to <code>false</code> when used with</li>
+<li><code>ac.AudioEvent.group(params, reverbResponse)</code> — Create a new audio event group for audio events created from files.</li>
+<li><code>ac.CarAudioTweak.setVolume(eventID, value)</code> — Set volume multiplier. Overrides <code>[AUDIO_VOLUME]</code> value from car config.</li>
+<li><code>ac.CarAudioTweak.getVolume(eventID)</code> — Get current volume multiplier set by <code>[AUDIO_VOLUME]</code> or a Lua script.</li>
+<li><code>ac.CarAudioTweak.setPitch(eventID, value)</code> — Set pitch multiplier. Overrides <code>[AUDIO_PITCH]</code> value from car config.</li>
+<li><code>ac.CarAudioTweak.getPitch(eventID)</code> — Get current pitch multiplier set by <code>[AUDIO_PITCH]</code> or a Lua script.</li>
+<li><code>ac.CarAudioTweak.setDistanceMin(eventID, value)</code> — Set attenuation start distance (at this distance volume will start decreasing). Overrides <code>[AUDIO_3D_DISTANCE] …_MIN</code> value from car config.</li>
+<li><code>ac.CarAudioTweak.getDistanceMin(eventID)</code> — Get current attenuation start distance set by audio event properties, <code>[AUDIO_3D_DISTANCE]</code> or a Lua script.</li>
+<li><code>ac.CarAudioTweak.setDistanceMax(eventID, value)</code> — Set attenuation end distance (at this distance volume will stops decreasing, but sound might still be heard,  depending on FMOD audio event configuration). Overrides `[AU</li>
+<li><code>ac.CarAudioTweak.getDistanceMax(eventID)</code> — Get current attenuation end distance set by audio event properties, <code>[AUDIO_3D_DISTANCE]</code> or a Lua script.</li>
+<li><code>ac.CarAudioTweak.setTransform(eventID, value)</code> — Set audio transformation (position and rotation) relative to car. Overrides <code>[AUDIO_TRANSFORM]</code> value from car config.</li>
+<li><code>ac.CarAudioTweak.setParameterTransform(eventID, key, value)</code> — Set LUT used for converting parameter values computed by AC into something else. Overrides <code>[AUDIO_PARAMETER_TRANSFORM]</code> value from car config.</li>
+<li><code>ac.CarAudioTweak.setParameter(eventID, key, value, override)</code> — Set value of an FMOD audio event parameter. Feel free to call it every frame if you want to update it live.</li>
+<li><code>ac.CarAudioTweak.setDSP(eventID, dsp, key, value)</code> — Set value of a custom DSP for the audio event. If DSP is missing, create and add it at the front.</li>
+<li><code>ac.CarAudioTweak.getParameter(eventID, key)</code> — Get value of an FMOD audio event parameter.</li>
+<li><code>ac.CarAudioTweak.replaceAudioEvent(eventID, newEventKey)</code> — Replaces entire audio event with a different one.</li>
+</ul>
+<h3>Girdi / kontroller (21)</h3>
+<ul>
+<li><code>ac.getControllerSteerValue()</code> — Returns steering input from -1 to 1.</li>
+<li><code>ac.isControllerGasPressed()</code> — Is gas input pressed (pedal, gamepad axis, keyboard button but not mouse button).</li>
+<li><code>ac.isControllerGearUpPressed()</code> — Is gear up input pressed (pedal, gamepad button, keyboard button).</li>
+<li><code>ac.isControllerGearDownPressed()</code> — Is gear down input pressed (pedal, gamepad button, keyboard button).</li>
+<li><code>ac.isGamepadButtonPressed(gamepadIndex, gamepadButtonID)</code> — Checks if a certain gamepad button is pressed.</li>
+<li><code>ac.getGamepadAxisValue(gamepadIndex, gamepadAxisID)</code> — Returns value of a certain gamepad axis.</li>
+<li><code>ac.getJoystickButtonsCount(joystick)</code> — Returns number of buttons of a DirectInput device (ignore misleading name).</li>
+<li><code>ac.isJoystickButtonPressed(joystick, button)</code> — Checks if a button of a DirectInput device is currently held down (ignore misleading name).</li>
+<li><code>ac.onControlSettingsChanged(callback)</code> — Sets a callback which will be called when control settings change live.</li>
+<li><code>ac.INIConfig.controlsConfig()</code> — Returns controls config (<code>cfg/controls.ini</code>). Returned file can’t be saved.</li>
+<li><code>ac.getDualSenseControllers()</code> — Return table with gamepad indices for keys and 0-based indices of associated cars for values.</li>
+<li><code>ac.getDualShockControllers()</code> — Return table with gamepad indices for keys and 0-based indices of associated cars for values.</li>
+<li><code>ac.blockEscapeButton()</code> — Block Escape button from pausing AC for a few frames.</li>
+<li><code>ac.onConsoleInput(callback)</code> — Sets a callback which will be called each time a new command is entered in AC console. If callback would return <code>true</code>, AC wouldn’t process command (return it if your scr</li>
+<li><code>ac.reloadControlSettings()</code> — Reload control settings.</li>
+<li><code>ac.overrideCarControls(carIndex)</code> — Access car controls overwriting. Easier than simulating inputs with fake gamepads and keypresses.</li>
+<li><code>ac.loadCarControlsConfiguration(carIndex, relativeConfigName)</code> — Use carefully and in limited amount: currently each loaded configuration stays in memory, expects to override controls of an AI driver.</li>
+<li><code>ac.setMousePosition(posPixels)</code> — Move mouse to a certain position.</li>
+<li><code>ac.setMouseLeftButtonDown(isDown)</code> — Can be used for simulating mouse clicks.</li>
+<li><code>ac.setMouseWheel(scroll)</code> — Can be used for simulating mouse wheel.</li>
+<li><code>ac.ControlButton(id, defaults)</code></li>
+</ul>
+<h3>Araç özellikleri / ayarlar (89)</h3>
+<ul>
+<li><code>ac.getTyresName(carIndex, compoundIndex)</code> — Get short name of a tyre set, either currently selected or with certain index. If there is no such car, returns <code>nil</code>.</li>
+<li><code>ac.getTyresIndex(carIndex, tyresShortName)</code> — Get 0-based index of a tyres set with a given short name, or -1 if there is no such tyres set (or such car).</li>
+<li><code>ac.getTyresLongName(carIndex, compoundIndex, includePostfix)</code> — Returns long name of a tyre set with certain index. If there is no such car, returns <code>nil</code>.</li>
+<li><code>ac.getCarID(carIndex)</code> — Get car ID (name of its folder) of a certain car. If there is no such car, returns <code>nil</code>.</li>
+<li><code>ac.getCarName(carIndex, includeYearPostfix)</code> — Get car name (from its JSON file) of a certain car. If there is no such car, returns <code>nil</code>.</li>
+<li><code>ac.getCarSkinID(carIndex)</code> — Get selected skin ID of (name of skin’s folder) of a certain car. If there is no such car, returns <code>nil</code>.</li>
+<li><code>ac.getCarBrand(carIndex)</code> — Get name of a manufacturer of a certain car. If there is no such car, returns <code>nil</code>.</li>
+<li><code>ac.getCarCountry(carIndex)</code> — Get name of manufactoring country of a certain car. If there is no such car, returns <code>nil</code>.</li>
+<li><code>ac.getCarTags(carIndex)</code> — Get car tags. If there is no such car, returns <code>nil</code>. @nodiscard</li>
+<li><code>ac.getCarDataFiles(carIndex)</code> — Returns ordered list of data file names (not full paths, just the names) of a certain car. Works for both packed and unpacked cars. If failed, returns empty list. @nodisc</li>
+<li><code>ac.getCarColliders(carIndex, actualColliders)</code> — Returns list of car colliders. @nodiscard</li>
+<li><code>ac.getCarSpeedKmh(carIndex)</code> — Consider using <code>ac.getCar(carIndex).speedKmh</code> instead.</li>
+<li><code>ac.getCarGearLabel(carIndex)</code> — Returns &#39;R&#39;, &#39;N&#39;, number of engaged gear or value set by <code>ac.setGearLabel()</code> if used (for implementing automatic gearboxes). If your code is displaying current gear, this</li>
+<li><code>ac.getDriverName(carIndex)</code> — Get full driver name of a driver of a certain car. If there is no such car, returns <code>nil</code>.</li>
+<li><code>ac.getDriverNationCode(carIndex)</code> — Get three character nation code of a driver of a certain car. Nation code is a three-letter uppercase country identifier. If nationality is not set, a value from JSON is </li>
+<li><code>ac.getDriverNationality(carIndex)</code> — Get full nationality of a driver of a certain car. Usually, it’s a full country name. If nationality is not set, a value from JSON is returned. If it’s missing there, a f</li>
+<li><code>ac.getDriverTeam(carIndex)</code> — Get name of a team of a driver of a certain car. Team names can be configured in entry list online. If nationality is not set, a value from JSON is returned. If it’s miss</li>
+<li><code>ac.getDriverNumber(carIndex)</code> — Get number of a driver of a certain car. If number is set in skin JSON, it will be returned, otherwise it’s a unique 1-based number. If there is no car with such index, 0</li>
+<li><code>ac.getCarByDriverName(driverName)</code> — Returns index of a car with a driver with a certain name, or -1 if there is no such car.</li>
+<li><code>ac.getCarLeaderboardPosition(carIndex)</code> — Returns leaderboard car position, same as Python function with the same name. Does not work online. For an alternative solution, get position calculated by CSP via `ac.ge</li>
+<li><code>ac.refreshCarShape(carIndex)</code> — Call this function if your script caused car shape to change and CSP would refresh interior masking, car heightmap and more.</li>
+<li><code>ac.refreshCarColor(carIndex)</code> — Call this function if your script caused car color to change and CSP would refresh color map for bounced light and more.</li>
+<li><code>ac.updateDriverModel(carIndex, forceVisible)</code> — Updates state of high-res driver model. Use it before moving driver nodes manually for extra animations: if called,  next model update possibly overwriting your custom po</li>
+<li><code>ac.getDriverHeadTransformTo(ret, carIndex)</code></li>
+<li><code>ac.onTyresSetChange(carIndex, callback)</code> — Sets a callback which will be called when selected tyres change for some car. For car scripts to track changes in their own car, use <code>car.index</code> as first argument.  Note:</li>
+<li><code>ac.getCarOptimalBrakingAmount(carIndex)</code> — Returns an estimate of optimal braking amount based on current grip level, or -1 if it can’t be computed for a given car.</li>
+<li><code>ac.getCarMaxSpeedWithGear(carIndex, gearIndex)</code> — Returns an estimate of maximum speed for a given gear in km/h, -1 if it can’t be computed for a given car, or 0 if there is no such gear. Returns negative speed for the r</li>
+<li><code>ac.getCarIndexInFront(carMainIndex, distance)</code> — Returns index of a car in front of other car (within 100 m), or -1 if there is no such car. Broken, not sure why is it even here, kept for compatibility.</li>
+<li><code>ac.getGapBetweenCars(carMainIndex, carComparingToIndex)</code> — Calculates time gap between two cars in seconds. In race sessions uses total driven distance and main car speed, in other sessions simply compares best lap times. If main</li>
+<li><code>ac.getCarSetupState()</code> — Returns player’s car setup state.</li>
+<li><code>ac.areTyresLegal(name)</code> — Returns <code>false</code> if tyres with this short name are illegal in this race. Note: if all of car tyres are illegal, all of them will be legal.</li>
+<li><code>ac.getCarBlindSpot(carIndex)</code> — Return distances to the nearest left and right cars in meters within 20 meters, or <code>nil</code> if there are no cars nearby or blind spot detection is not available for this car</li>
+<li><code>ac.onCarJumped(carIndex, callback)</code> — Sets a callback which will be called when a car teleports somewhere or its state gets reset.</li>
+<li><code>ac.onCarColorChanged(carIndex, callback)</code> — Sets a callback which will be called when a car’s color changes.</li>
+<li><code>ac.onCarCollision(carIndex, callback)</code> — Sets a callback which will be called when a car collides with a wall or another car. Note: collisions in AC are usually lasting a few frames, but this callback will only </li>
+<li><code>ac.onSetupsListRefresh(callback)</code> — Sets a callback which will be called when list of setups changes.</li>
+<li><code>ac.onSetupFile(callback)</code> — Sets a callback which will be called when setup is loaded or saved. Use <code>ac.INIConfig.currentSetup()</code> to load the setup.</li>
+<li><code>ac.areCarsColliding(car0, car1)</code> — Works even if collisions are disabled, actually checks collider state live. Invokes ODE OPCODE computation, so don’t use too much.</li>
+<li><code>ac.getCarState(index)</code> — Use <code>ac.getCar()</code> instead. Here, index starts with 1! With <code>ac.getCar()</code> index starts with 0, to match the rest of API functions</li>
+<li><code>ac.getCarPhysics(index)</code> — Returns additional details on physics state of a car. Not available in replays or for remote cars. Updates once a frame at graphics rate. If you’re writing a physics scri</li>
+<li><code>ac.INIConfig.carData(carIndex, fileName)</code> — Load car data INI file. Supports “data.acd” files as well. Returned files might be tweaked by things like custom physics virtual tyres. To get original file, use `ac.INIC</li>
+<li><code>ac.INIConfig.carConfig(carIndex)</code> — Returns CSP config for a car. Might be slow: some of those configs are huge. Make sure to cache the resulting value if you need to reuse it. Returned file can’t be saved.</li>
+<li><code>ac.INIConfig.currentSetup()</code> — Returns current setup INI file (either previously loaded or saved). Any changes in actual setup in pits won’t be reflected in the returned data unless file was saved. Ret</li>
+<li><code>ac.DataLUT11.carData(carIndex, fileName)</code> — Load car data 1D-to-1D LUT file. Supports “data.acd” files as well.</li>
+<li><code>ac.DataLUT21.carData(carIndex, fileName)</code> — Load car data 2D-to-1D LUT file. Supports “data.acd” files as well.</li>
+<li><code>ac.DriverTags(driverName)</code> — Faster way to deal with driver tags. Any request of unsupported fields will return <code>false</code> for further extendability. Scripts with access to I/O can also alter fields.</li>
+<li><code>ac.DriverTags(driverName)</code></li>
+<li><code>ac.getCar(index)</code> — Returns reference to a structure with various information about the state of a car. Very cheap to use. This is a new version with shorter name and 0-based indexing (to ma</li>
+<li><code>ac.getCar.ordered(index)</code> — Returns Nth closest to camera car (pass 0 to get an ID of the nearest car). Inactive cars don’t count, so the number of cars here might be smaller than total number of ca</li>
+<li><code>ac.getCar.leaderboard(index)</code> — Returns Nth car in the race leaderboard (uses lap times in practice and qualify sessions). Pass 0 to get the top one.</li>
+<li><code>ac.getCar.serverSlot(index)</code> — Returns Nth car in server entry list. Pass 0 to get the first one. In offline races returns <code>nil</code>.</li>
+<li><code>ac.iterateCars()</code> — Iterates over all the cars from one with 0th index to the last one. Use in a for-loop. To get a Nth car, use <code>ac.getCar()</code>. Example: for i, c in ac.iterateCars() do   ac.</li>
+<li><code>ac.iterateCars.ordered(inverse)</code> — Iterates over active cars (excluding disconnected ones online) from nearest to furthest. Use in a for-loop. To get a Nth car, use <code>ac.getCar.ordered()</code>. Example: for i, c</li>
+<li><code>ac.iterateCars.leaderboard()</code> — Iterates over cars from first to last in the race leaderboard (uses lap times in practice and qualify sessions). Use in a for-loop. To get a Nth car, use `ac.getCar.leade</li>
+<li><code>ac.iterateCars.serverSlots()</code> — Iterates over cars based on their <code>sessionID</code> (index of a session slot). Use in a for-loop. To get a Nth car, use <code>ac.getCar.serverSlot()</code>. In offline races returns an em</li>
+<li><code>ac.getCarConfig(carIndex, section, key, defaultValue)</code> — Reads a value from the config of a car. To use it, you need to specify <code>defaultValue</code> value, it would be used to determine the type of the value you need (and would be re</li>
+<li><code>ac.setDriverChatNameColor(carIndex, color)</code> — Sets or resets custom driver color for CSP chat app.</li>
+<li><code>ac.hideCarLabels(carIndex, hide)</code> — Toggles visibility of car labels.</li>
+<li><code>ac.setDriverVisible(carIndex, isVisible)</code> — Toggles visibility of driver model. Meant to be used for debugging, but could also be used for screenshots, for example.</li>
+<li><code>ac.setDriverMouthOpened(carIndex, amount)</code> — Sets how much driver mouth is opened. Requires properly configured human surface shader to have an effect.</li>
+<li><code>ac.setDriverDoorOpen(carIndex, isOpen, instant)</code> — Toggles driver door animation.</li>
+<li><code>ac.disableCarRecovery(disable)</code> — Disables car recovery (happens if car is flipped or falling through ground, use if for your mode or logic car might purposely end up in strange places and you don’t need </li>
+<li><code>ac.isCarResetAllowed()</code> — Returns <code>true</code> if resetting car is allowed in current session, invalidates lap.</li>
+<li><code>ac.resetCar()</code> — Resets car back to the track. Available in few basic modes in offline only (such as practice with a single car), invalidates lap.</li>
+<li><code>ac.saveCarStateAsync(callback)</code> — Save car state. Saves a lot of stuff, including velocities, momentum, engine and gearbox state, damage levels. Because of that save from one car can’t be applied to a dif</li>
+<li><code>ac.loadCarState(data, dataNext, blend, iterations)</code> — Load car state. Available in few basic modes in offline only (such as practice with a single car), invalidates lap.</li>
+<li><code>ac.setCarActive(carIndex, active)</code> — Toggles car visibility.</li>
+<li><code>ac.configureCarForceFeedback(carIndex, ffbBase, ffbSteerAssist)</code> — Alter <code>FFMULT</code> and <code>STEER_ASSIST</code> from car.ini. Original values are available in car state.</li>
+<li><code>ac.replaceDriverModel(carIndex, data)</code> — Replace driver model with a custom one asynchronously. For method to work current and new driver models should have common skeleton.</li>
+<li><code>ac.packDriverModel(destination, lodAData, lodBData, configData)</code> — Packs driver model into a replacement package.</li>
+<li><code>ac.overrideTyreSmoke(tyreIndex, intensity, thickness, surfaceHeat)</code> — Changes behaviour of smoke going off a tyre (won’t affect dust or water splashes). Actual movement of smoke might change with CSP updates.</li>
+<li><code>ac.setGearLabel(c)</code> — Changes label used to display current gear. Label can be up to four symbols long. If label is 2 characters or less, it’ll be stored in a replay as well (do any gearboxes </li>
+<li><code>ac.setBrakeBias(balance)</code></li>
+<li><code>ac.setEngineBrakeSetting(settingIndex)</code></li>
+<li><code>ac.switchToNeutralGear()</code></li>
+<li><code>ac.setTargetCar(carIndex)</code> — Changes index of a target car. Target car is used by car controlling API functions which don’t receive car index, such as <code>ac.setDRS()</code>. Originally those functions were i</li>
+<li><code>ac.redirectDamageDisplayer(active)</code></li>
+<li><code>ac.redirectFuelWarningIndicator(active)</code></li>
+<li><code>ac.getSetupSpinners()</code> — Get information about available spinners in setup menu. Names match section names of setup INI files. Value <code>label</code> might contain localized setup items. Array `itemValues</li>
+<li><code>ac.isSetupAvailableToEdit()</code></li>
+<li><code>ac.getSetupSpinnerValue(setupValueID, fallbackValue)</code></li>
+<li><code>ac.setSetupSpinnerValue(setupValueID, value)</code> — Returns <code>false</code> if there is no such element or it can’t be edited now.</li>
+<li><code>ac.refreshSetups()</code> — Refreshes list of setups. Any listeners set with <code>ac.onSetupsListRefresh()</code> will be called as well.</li>
+<li><code>ac.saveCurrentSetup(setupFilename)</code> — Saves current setup into a file. If successful, refreshes setups list and calls any listeners set with <code>ac.onSetupsListRefresh()</code> as well.</li>
+<li><code>ac.setActiveSetupName(setupName, trackID, changed)</code> — Change currently active setup name used for saving setups.</li>
+<li><code>ac.loadSetup(setupFilename)</code> — Loads car setup from a file. Works only from setup menu, and only if setup is not fixed.</li>
+<li><code>ac.resetSetupToDefault()</code> — Resets car setup to default values. Works only from setup menu, and only if setup is not fixed.</li>
+<li><code>ac.stringifyCurrentSetup()</code> — Exports current setup into a string.</li>
+<li><code>ac.DriverWeightShift(carIndex)</code> — Access driver weight shift.</li>
+</ul>
+<h3>Oturum / yarış / ağ (42)</h3>
+<ul>
+<li><code>ac.isInReplayMode()</code></li>
+<li><code>ac.getSessionName(sessionIndex)</code> — Get session name for a session with given index. Use <code>ac.getSim()</code> to check number of sessions and more information about them. If there is no such session, returns <code>nil</code></li>
+<li><code>ac.getSessionSpawnSet(sessionIndex)</code> — Get session spawn set (<code>&#39;START&#39;</code>, <code>&#39;PIT&#39;</code>, <code>&#39;HOTLAP_START&#39;</code>, <code>&#39;TIME_ATTACK&#39;</code>, etc.) for a session with given index. Use <code>ac.getSim()</code> to check number of sessions and more</li>
+<li><code>ac.getServerName()</code> — Returns name of the current online server, or <code>nil</code> if it’s not available.</li>
+<li><code>ac.getServerIP()</code> — Returns IP address of the current online server, or <code>nil</code> if it’s not available.</li>
+<li><code>ac.getServerPortHTTP()</code> — Returns HTTP post of the current online server, or -1 if it’s not available.</li>
+<li><code>ac.getServerPortTCP()</code> — Returns TCP post of the current online server, or -1 if it’s not available.</li>
+<li><code>ac.getServerPortUDP()</code> — Returns UDP post of the current online server, or -1 if it’s not available.</li>
+<li><code>ac.blockSystemMessages(regex)</code> — Block system messages based on a given regular expression.</li>
+<li><code>ac.onSessionStart(callback)</code> — Sets a callback which will be called when a new session starts (or restarts). Doesn’t get triggered at the start of the race (Lua scripts load when the first session is a</li>
+<li><code>ac.setMessage(title, description, type, time)</code> — Show message using AC system messages UI. Pass empty <code>title</code> and <code>description</code> to hide currently shown message, if any.  Types:  - Default: regular message shown on top i</li>
+<li><code>ac.onMessage(callback)</code> — Listen to messages, including the ones shown by <code>ac.setMessage()</code> and <code>ac.setIllegalMessage()</code>.</li>
+<li><code>ac.setSystemMessage(title, description)</code> — Use <code>ac.setMessage()</code> instead.</li>
+<li><code>ac.getUnreadChatMessages()</code> — Return the number of unread chat messages, or 0 in an offline race.</li>
+<li><code>ac.onLapCompleted(carIndex, callback)</code> — Sets a callback which will be called when a car completes a lap. Should work for remote cars as well.</li>
+<li><code>ac.getSession(index)</code> — Returns reference to a structure with various information about certain session. Very cheap to use. Note: not all data  might be available online.</li>
+<li><code>ac.onOnlineWelcome(callback)</code> — Sets a callback which will be called when server welcome message and extended config arrive.</li>
+<li><code>ac.INIConfig.onlineExtras()</code> — Returns config with extra online options, the ones that can be set with Content Manager. Returned file can’t be saved.</li>
+<li><code>ac.INIConfig.raceConfig()</code> — Returns race config (<code>cfg/race.ini</code>). Password and online GUID won’t be included. Returned file can’t be saved.</li>
+<li><code>ac.OnlineEvent(layout, callback, namespace, udp, params)</code> — Creates a new type of online event to exchange between scripts running on different clients in an online race. Example: local chatMessageEvent = ac.OnlineEvent({   -- mes</li>
+<li><code>ac.writeReplayBlob(key, data)</code> — Writes additional data to replay. Use <code>ac.readReplayBlob()</code> to extract data later in replay mode. Data written this way is not tied to frames. Don’t bother compressing da</li>
+<li><code>ac.readReplayBlob(key)</code> — Reads additional data from replay if recorded with <code>ac.writeReplayBlob()</code>.</li>
+<li><code>ac.ReplayStream(layout, callback, frameDivisor)</code> — Create a new stream for recording data to replays. Write data in returned structure if not in replay mode, read data if in replay mode (use <code>sim.isReplayActive</code> to check </li>
+<li><code>ac.checkIfServerRequiresPasswordAsync(callback)</code> — Checks if server requires a password to join. Asyncronous version. Returns error (via <code>err</code> callback parameter) if this is not an online race.</li>
+<li><code>ac.disableQuickMenuPitstop(disable)</code> — Disables quick pitstop menu.</li>
+<li><code>ac.setRaceScore(carIndex, score)</code> — Override race score used for leaderboard sorting.</li>
+<li><code>ac.sendChatMessage(command)</code> — Sends a new chat message. Not available to scripts without I/O access.</li>
+<li><code>ac.onChatMessage(callback)</code> — Sets a callback which will be called each time a new chat message arrives. Return <code>true</code> from callback to handle chat message and stop it from showing in chat apps. Secon</li>
+<li><code>ac.markLapAsSpoiled(silent)</code> — Marks current lap done by player as spoiled. Works only during the race</li>
+<li><code>ac.tryToRestartSession()</code> — Attempts to restart current session (for offline racing only).</li>
+<li><code>ac.tryToSkipSession()</code> — Attempts to restart current session (for offline racing only).</li>
+<li><code>ac.tryToOpenRaceMenu(tab)</code> — Attempts to open race menu (only available if car is in pits).</li>
+<li><code>ac.tryToTeleportToPits()</code> — Teleports car to pits.</li>
+<li><code>ac.overrideReplayConditions(set)</code> — Override weather conditions in replay. Can be called each frame for smooth transition.</li>
+<li><code>ac.tryToToggleReplay(active, rewindS)</code> — Starts or stops instant replay.</li>
+<li><code>ac.setReplayPosition(frameIndex, playCounter)</code> — Sets index of a current replay frame.</li>
+<li><code>ac.accessOverlayLeaderboardParams()</code></li>
+<li><code>ac.teleportToServerPoint(pointIndex)</code> — Teleports car to a point defined by a server. Available online and only with servers with custom teleport destinations. Usual restrictions still apply. Meant for creating</li>
+<li><code>ac.canTeleportToServerPoint(pointIndex)</code> — Checks if it’s possible to teleport to a custom server teleport destination. Meant for creating custom UI for that function. Use <code>ac.INIConfig.onlineExtras()</code> to get serv</li>
+<li><code>ac.getPitstopSpinners()</code> — Added in CSP 0.2.7, collects information about spinners in Quick Pitstop menu. Entries are listed in order they’re shown in UI. Each entry has <code>value</code> storing value set i</li>
+<li><code>ac.setPitstopSpinnerValue(valueName, value, presetIndex)</code> — Returns <code>false</code> if there is no such element or it can’t be edited now.</li>
+<li><code>ac.setCurrentQuickPitPreset(preset)</code> — Change currently selected Quick Pit preset. Use <code>ac.getSim().currentQuickPitPreset</code> to get the currently selected presets index (0-based).</li>
+</ul>
+<h3>Depolama / dosya / yapılandırma (36)</h3>
+<ul>
+<li><code>ac.loadINIppFile(iniFilename, includeDirs)</code> — Load and parse INIpp configuration file (supports includes and such), return it as JSON. Deprecated, use <code>ac.INIConfig.load()</code> instead.</li>
+<li><code>ac.findFile(fileName)</code> — If <code>fileName</code> is not an absolute path, looks for a file in script directory, then relative to CSP folder, then relative to AC root folder. If anything is found, returns a</li>
+<li><code>ac.getFolder(folderID)</code> — Returns full path to one of known folders. Some folders might not exist, make sure to create them before writing.</li>
+<li><code>ac.readDataFile(filename)</code> — Can be used to access files in “data.acd” and, for example, read car specs.</li>
+<li><code>ac.parseINIppFile(iniData)</code> — Parse INIpp configuration file, return it as JSON. Deprecated, use <code>ac.INIConfig.parse()</code> instead.</li>
+<li><code>ac.onClientConnected(callback)</code> — Sets a callback which will be called when new user connects the server and their car appears (doesn’t do anything outside of online race).</li>
+<li><code>ac.onClientDisconnected(callback)</code> — Sets a callback which will be called when a user disconnects (doesn’t do anything outside of online race).</li>
+<li><code>ac.onTripleConfigurationChanged(callback)</code> — Sets a callback which will be called when triple screen configuration changes.</li>
+<li><code>ac.storageSetPath(relativePath, prefix)</code> — Changes location of script storage. Scripts without I/O access will have “shared-” appended to their relative path and can’t use “.” or slashes in it to ensure configs ar</li>
+<li><code>ac.store(key, value)</code> — Stores value in session shared Lua/Python storage. This is not a long-term storage, more of a way for different scripts to exchange data. Note: if you need to exchange a </li>
+<li><code>ac.load(key)</code> — Reads value from session shared Lua/Python storage. This is not a long-term storage, more of a way for different scripts to exchange data. Note: if you need to exchange d</li>
+<li><code>ac.onFileChanged(filename, callback)</code> — Sets a callback which will be called when a file changes. Not available to scripts without I/O access.</li>
+<li><code>ac.onFolderChanged(folder, filter, recursive, callback)</code> — Sets a callback which will be called when folder contents change. Not available to scripts without I/O access.</li>
+<li><code>ac.onCSPConfigChanged(cspModuleID, callback)</code> — Sets a callback which will be called when config for certain CSP module has changed.</li>
+<li><code>ac.getTripleConfiguration()</code> — Returns data regarding current triple screen configuration. If AC is not launched in triple screen mode, returns <code>nil</code> instead.</li>
+<li><code>ac.INIConfig(format, sections)</code> — A wrapper for data parsed from an INI files, supports different INI formats. Parsing is done on CSP side, rest is on CSP side. Use <code>:get()</code> and <code>:set()</code> methods to operat</li>
+<li><code>ac.INIConfig.parse(data, format, includeFolders)</code> — Parse INI config from a string.</li>
+<li><code>ac.INIConfig.load(filename, format, includeFolders)</code> — Load INI file, optionally with includes.</li>
+<li><code>ac.INIConfig.videoConfig()</code> — Returns video config (<code>cfg/video.ini</code>). Returned file can’t be saved.</li>
+<li><code>ac.INIConfig.cspModule(cspModuleID)</code> — Load config of a CSP module by its name.</li>
+<li><code>ac.INIConfig.scriptSettings()</code> — Load config of the current Lua script (“settings.ini” in script directory and settings overriden by user, meant to be customizable with Content Manager).</li>
+<li><code>ac.DataLUT11.load(filename)</code> — Load 1D-to-1D LUT file.</li>
+<li><code>ac.DataLUT21.load(filename)</code> — Load 2D-to-1D LUT file.</li>
+<li><code>ac.connect(layout, keepLive, namespace)</code> — Creates a new shared structure to quickly exchange data between different Lua scripts within a session. Example: local sharedData = ac.connect{   ac.StructItem.key(&#39;myCha</li>
+<li><code>ac.readMemoryMappedFile(filename, layout, persist)</code> — Opens shared memory file for reading. Do not attempt to modify any of its contents: doing so pretty much always would result in Assetto Corsa just straight up crashing.</li>
+<li><code>ac.writeMemoryMappedFile(filename, layout, persist)</code> — Opens shared memory file for writing. Note: if the file would exist at the moment of opening (for example, created before by a different Lua script, or by a separate proc</li>
+<li><code>ac.disposeMemoryMappedFile(reference)</code> — Forcefully closes memory mapped file opened either for reading or writing without waiting for GC to pick it up.</li>
+<li><code>ac.storage(layout, keyPrefix)</code> — Storage function. Easiest way to use is to pass it a table with default values — it would give you a table back which would load values on reads and save values on writes</li>
+<li><code>ac.storageHasKey(storage, key)</code> — Checks if storage table created by <code>ac.storage(table)</code> has a certain key or not.</li>
+<li><code>ac.storageChanged()</code> — Returns <code>true</code> if any storage value has changed since the previous call.</li>
+<li><code>ac.applyContentConfig(targetIndex, data, flags)</code> — Similar to <code>ac.ext_applyTrackConfig()</code> from CSP Python API, reload a track config live. Works even if live updates are disabled. Use carefully, might cause a freeze or cr</li>
+<li><code>ac.pauseFilesWatching(pause)</code> — Pauses or un-pauses file system monitoring used for live reloading. Might be useful to pause it if you’re about to update a lot of configs, for example. Make sure to alwa</li>
+<li><code>ac.reloadPythonApp(appName, withoutDisposing)</code> — Tries to reload a Python app with given name (name of its folder).</li>
+<li><code>ac.applyLiveConfigEdit(config, data)</code> — Applies an edit to AC config, such as “video.ini”, live without actually altering file on a disk. Only a very few values are currently supported.</li>
+<li><code>ac.setVRSConfigurationForVR(active, rateOuter, rateMiddle, rateInner, areaOuter, areaMiddle, areaInner)</code></li>
+<li><code>ac.unloadApp()</code> — Fully unloads and terminates current app if possible. Execution will continue after this function, unloading will be attempted in the next frame. Only apps with no visibl</li>
+</ul>
+<h3>Diğer (216)</h3>
+<ul>
+<li><code>ac.getPatchVersion()</code></li>
+<li><code>ac.getPatchVersionCode()</code> — Increments with every CSP build.</li>
+<li><code>ac.getMGUKDeliveryName(carIndex, programIndex)</code> — Returns name of MGUK delivery program. If there is no such car or program, returns <code>nil</code>.</li>
+<li><code>ac.dirname()</code> — Returns directory of the script.</li>
+<li><code>ac.getCountryName(nationCode)</code> — Returns country name based on nation code (three symbols for country ID).</li>
+<li><code>ac.uniqueMachineKey()</code> — A key unique for each individual PC (uses serial numbers of processor and motherboard). Use <code>ac.uniqueMachineKeyAsync()</code> instead.</li>
+<li><code>ac.uniqueMachineKeyAsync(callback)</code> — A key unique for each individual PC (uses serial numbers of processor and motherboard). Asynchronous version. Returned value is in binary, use something like `ac.encodeBa</li>
+<li><code>ac.distanceToRenderSquared(pos)</code> — Returns squared distance to main camera. In splitscreen mode, returns smallest distance between to cameras. In the future, might be altered by more entities, such as addi</li>
+<li><code>ac.distanceToRender(pos)</code> — Returns distance to main camera. In splitscreen mode, returns smallest distance between to cameras. In the future, might be altered by more entities, such as additional O</li>
+<li><code>ac.closerToRenderThan(pos, distance)</code> — Returns <code>true</code> if position is closer to main camera than the threshold. In splitscreen mode, considers secondary camera. In the future, might be altered by more entities,</li>
+<li><code>ac.encodeHalf(v)</code> — Encodes float into FP16 format and returns it as uint16.</li>
+<li><code>ac.encodeHalf2(v)</code> — Encodes two floats from a vector into FP16 format and returns it as uint32.</li>
+<li><code>ac.decodeHalf(v)</code> — Decodes float from FP16 format (represented as uint16) and returns a regular number.</li>
+<li><code>ac.decodeHalf2(v)</code> — Decodes two floats from FP16 format (represented as uint32) and returns a vector.</li>
+<li><code>ac.checksumSHA256(data)</code> — Computes SHA-256 checksum for given binary data. Very secure, but might be slow with large amounts of data. Data string can contain zero bytes.</li>
+<li><code>ac.checksumXXH(data)</code> — Computes 64-bit xxHash checksum for given binary data. Very fast, not that great for encryption purposes. Use <code>bit.tohex()</code> to turn result into a hex representation. Data</li>
+<li><code>ac.compress(data, type, level)</code> — Compresses data. First byte of resulting data is compression type, next four are uncompressed data size, rest is compressed data itself. If data is failed to compress, re</li>
+<li><code>ac.decompress(data)</code> — Decompresses data. First byte of input data is compression type, next four are uncompressed data size. If data is damaged, returns <code>nil</code>. Data string can contain zero byt</li>
+<li><code>ac.encodeBase64(data, trimResult)</code> — Encodes data in base64 format. Data string can contain zero bytes.</li>
+<li><code>ac.decodeBase64(data)</code> — Decodes data from base64 format (ending “=” are not needed).</li>
+<li><code>ac.utf8To16(data)</code> — Converts string from UTF-8 to UTF-16 format (two symbols per character). All strings Lua operates with regularly are consired UTF-8. UTF-16 strings can’t be used in any C</li>
+<li><code>ac.utf16To8(data)</code> — Converts string from UTF-16 (two symbols per character) to common Lua UTF-8. All strings Lua operates with regularly are consired UTF-8. UTF-16 strings can’t be used in a</li>
+<li><code>ac.structBytes(data)</code> — Given an FFI struct, returns bytes with its content. Resulting string may contain zeroes.</li>
+<li><code>ac.memoryBarrier()</code></li>
+<li><code>ac.perfBegin(value)</code> — Simple helper to measure time and analyze performance. Call <code>ac.perfBegin(&#39;someKey&#39;)</code> to start counting time and  <code>ac.perfEnd(&#39;someKey&#39;)</code> to stop. Measured time will be s</li>
+<li><code>ac.perfEnd(value)</code> — Simple helper to measure time and analyze performance. Call <code>ac.perfBegin(&#39;someKey&#39;)</code> to start counting time and  <code>ac.perfEnd(&#39;someKey&#39;)</code> to stop. Measured time will be s</li>
+<li><code>ac.perfFrameBegin(value)</code> — Unlike <code>ac.perfBegin(&#39;someKey&#39;)/ac.perfEnd(&#39;someKey&#39;)</code>, <code>ac.perfFrameBegin(0)/ac.perfFrameEnd(0)</code> will accumulate time  between calls as frame progresses and then use the</li>
+<li><code>ac.perfFrameEnd(value)</code> — Unlike <code>ac.perfBegin(&#39;someKey&#39;)/ac.perfEnd(&#39;someKey&#39;)</code>, <code>ac.perfFrameBegin(0)/ac.perfFrameEnd(0)</code> will accumulate time  between calls as frame progresses and then use the</li>
+<li><code>ac.getCompassAngle(dir)</code> — Returns compass angle for given directory.</li>
+<li><code>ac.isInteriorView()</code> — Returns true if camera is focused on interior (interior audio is playing).</li>
+<li><code>ac.compressTexture(filename, outputFilename)</code></li>
+<li><code>ac.getAirPressure(p)</code> — Returns air pressure in kPa.</li>
+<li><code>ac.getAirHumidity(p)</code> — Returns air humidity in 0…1 range. Currently doesn’t use position parameter, but it might change later.</li>
+<li><code>ac.getLastError()</code> — Returns string with last error thrown by this script, or <code>nil</code> if there wasn’t an error. Use it in case you would want to set some nicer error reporting.</li>
+<li><code>ac.getGroundYApproximation()</code> — Returns approximate Y coordinate of ground, calculated by using depth from reflection cubemap. Does not have a performance impact (that value  will be calculated anyway f</li>
+<li><code>ac.getDeltaT()</code> — Returns current delta time associated with UI (so values are non-zero if sim or replay are paused).</li>
+<li><code>ac.getGameDeltaT()</code> — Returns current delta time associated with simulation (so values are zero if sim or replay are paused).</li>
+<li><code>ac.getScriptDeltaT()</code> — Returns delta time for current script. If script only runs every N frames (like car display scripts by default), this value will be greater than regular <code>dt</code> from simulat</li>
+<li><code>ac.getPpFilter()</code> — Returns name of current PP filter with “.ini”.</li>
+<li><code>ac.isCustomIconSet(carIndex)</code> — Returns <code>true</code> if a certain driver is using custom icon. Use <code>&#39;carN::special::driver&#39;</code> as image filename to draw it (when not custom, will give you a livery icon or a fal</li>
+<li><code>ac.isKeyDown(keyIndex)</code> — Is keyboard button being held.</li>
+<li><code>ac.isKeyPressed(keyIndex)</code> — Is keyboard button just moved from not held to held in the last graphics frame (or, for physics scripts since 0.2.7, physics frame). Still, if you’re working on car physi</li>
+<li><code>ac.isKeyReleased(keyIndex)</code> — Is keyboard button just moved from held to not held in the last graphics frame (or, for physics scripts since 0.2.7, physics frame). If you’re working on car physics scri</li>
+<li><code>ac.getJoystickCount()</code> — Returns number of DirectInput devices (ignore misleading name).</li>
+<li><code>ac.getJoystickName(joystick)</code> — Returns name of a DirectInput device (ignore misleading name). If there is no such device, returns <code>nil</code>.</li>
+<li><code>ac.getJoystickInstanceGUID(joystick)</code> — Returns instance GUID of a DirectInput device (ignore misleading name). If there is no such device, returns <code>nil</code>.</li>
+<li><code>ac.getJoystickProductGUID(joystick)</code> — Returns product GUID of a DirectInput device (ignore misleading name). If there is no such device, returns <code>nil</code>.</li>
+<li><code>ac.getJoystickIndexByInstanceGUID(guid)</code> — Returns index of a DirectInput device by its instance GUID, or <code>nil</code> if there is no such device (ignore misleading name).</li>
+<li><code>ac.getJoystickAxisCount(joystick)</code> — While this function returns accurate number of device axis, consider using 8 instead if you need to iterate over them. Actual axis can be somewhere within those 8. For ex</li>
+<li><code>ac.getJoystickDpadsCount(joystick)</code> — Returns number of D-pads (aka POVs) of a DirectInput device (ignore misleading name).</li>
+<li><code>ac.getJoystickAxisValue(joystick, axis)</code> — Returns axis value of a DirectInput device (ignore misleading name).</li>
+<li><code>ac.isJoystickAxisValue(joystick, axis)</code> — Use <code>ac.getJoystickAxisValue()</code> instead.</li>
+<li><code>ac.getJoystickDpadValue(joystick, dpad)</code> — Returns D-pad (aka POV) value of a DirectInput device (ignore misleading name).</li>
+<li><code>ac.isJoystickDpadValue(joystick, dpad)</code> — Use <code>ac.getJoystickDpadValue()</code> instead.</li>
+<li><code>ac.getPenPressure()</code> — Checks current stylus/pen/mouse using RealTimeStylus API (compatible with Windows Ink). Should support things like Wacom tables (if drivers are installed and Windows Ink </li>
+<li><code>ac.getMoonFraction()</code> — How much of moon area is currently lit up.</li>
+<li><code>ac.getAltitude()</code></li>
+<li><code>ac.onResolutionChange(callback)</code> — Sets a callback which will be called when AC resolution changes. Happens when window size changes, or when making a screenshot. Note: some scripts, such as WeatherFX styl</li>
+<li><code>ac.isLuaAppRunning(appID)</code> — Returns <code>true</code> if a Lua app with given ID is loaded and currently active (not countring background services).</li>
+<li><code>ac.broadcastSharedEvent(key, data)</code> — Broadcasts a shared event. With shared events, different Lua scripts can exchange messages and data. Make sure to come up with a unique name for your events to avoid coll</li>
+<li><code>ac.onSharedEvent(key, callback, processPostponed)</code> — Subscribes to a shared event. With shared events, different Lua scripts can exchange messages and data. Make sure to come up with a unique name for your events to avoid c</li>
+<li><code>ac.onLuaScriptDisposal(callback)</code></li>
+<li><code>ac.setVRHandBusy(hand, busy)</code></li>
+<li><code>ac.setVRHandVibration(hand, frequency, amplitude, duration)</code></li>
+<li><code>ac.isModuleActive(cspModuleID)</code></li>
+<li><code>ac.mediaCurrentPeak(output)</code> — Returns audio peak level for the system, for left and right channels. Careful: AC audio is also included, but it still might be used to fake some audio visualization.</li>
+<li><code>ac.setTextureKey(key)</code> — Set texture key to load encoded textures.</li>
+<li><code>ac.encodeTexture(filename, outputFilename, key, applyLz4Compression)</code> — Encode texture. To load texture later, first call <code>ac.setTextureKey()</code>.</li>
+<li><code>ac.onAlbumCoverUpdate(callback)</code> — Sets a callback which will be called when album cover changes.</li>
+<li><code>ac.mediaPlayPause()</code> — Pauses or unpauses current track in currently active music player (by simulating media key press).</li>
+<li><code>ac.console(message, withoutPrefix)</code> — Prints message to AC console.</li>
+<li><code>ac.setClipboardText(text)</code> — Sets given text to the clipboard.</li>
+<li><code>ac.onOpenMainMenu(callback)</code> — Sets a callback which will be called when a command opening a certain section in main menu has been called. More types of pages might be added later.</li>
+<li><code>ac.areShapesColliding(shape1, transform1, shape2, transform2)</code> — Check collisions between two shapes. Note: if you want to do something like check a car against a million of powerups on a track, consider doing some prefiltering to spee</li>
+<li><code>ac.setLogSilent(value)</code> — Stops functions like <code>ac.log()</code> from logging things into CSP log file, in case you need to log a lot. With it, you  can use Lua Debug app to see latest log entries.</li>
+<li><code>ac.clearDebug(filter)</code> — Removes <code>ac.debug()</code> entries matching filter.</li>
+<li><code>ac.getConditionsSet()</code> — Returns original weather conditions without any filtering or sanity checks. For a faster and more filtered data check <code>ac.getSim().weatherConditions</code>.</li>
+<li><code>ac.getConditionsSetTo(r)</code> — Returns original weather conditions without any filtering or sanity checks. For a faster and more filtered data check <code>ac.getSim().weatherConditions</code>.</li>
+<li><code>ac.getSimState()</code> — Use <code>ac.getSim()</code> instead</li>
+<li><code>ac.getUiState()</code> — Use <code>ac.getUI()</code> instead</li>
+<li><code>ac.getSim()</code> — Returns reference to a structure with various information about the state of Assetto Corsa. Very cheap to use.  This is a new version with shorter name. Updates once per </li>
+<li><code>ac.getUI()</code> — Returns reference to a structure with various information about the state of the UI. Very cheap to use. This is a new version with shorter name. Updates once per graphics</li>
+<li><code>ac.getVR()</code> — Returns reference to a structure with VR-related values, like hands and head positions. Very cheap to use. Note: currently, accurate values are available with Oculus only</li>
+<li><code>ac.getDualSense(gamepadIndex)</code> — Returns extras of PS5 DualSense gamepad, such as accelerometer, gyroscope or battery state. Accelerometer and gyroscope values might be different from values reported by </li>
+<li><code>ac.setDualSense(gamepadIndex, priority, holdFor)</code> — Returns a structure with state of PS5 DualSense LEDs, change it to alter its state. Changes remain for some time, keep calling it for continuos adjustments. Note: if you’</li>
+<li><code>ac.getDualShock(gamepadIndex)</code> — Returns extras of PS4 DualShock gamepad (or Nintendo gamepads), such as accelerometer, gyroscope or battery state. Accelerometer and gyroscope values might be different f</li>
+<li><code>ac.setDualShock(gamepadIndex, priority, holdFor)</code> — Returns a structure with state of PS4 DualShock (or Nintendo) LEDs, change it to alter its state. Changes remain for some time, keep calling it for continuos adjustments.</li>
+<li><code>ac.setXbox(gamepadIndex, priority, holdFor)</code> — Returns a structure with state of Xbox One gamepad, change it to alter its state. Changes remain for some time, keep calling it for continuos adjustments. Note: if you’re</li>
+<li><code>ac.debug(key, value)</code> — Displays value in Lua Debug app, great for tracking state of your values live.</li>
+<li><code>ac.log(...)</code> — Prints a message to a CSP log and to Lua App Debug log. To speed things up and only use Lua Debug app, call <code>ac.setLogSilent()</code>.</li>
+<li><code>ac.warn(...)</code> — Prints a warning message to a CSP log and to Lua App Debug log. To speed things up and only use Lua Debug app, call <code>ac.setLogSilent()</code>.</li>
+<li><code>ac.error(...)</code> — Prints an error message to a CSP log and to Lua App Debug log. To speed things up and only use Lua Debug app, call <code>ac.setLogSilent()</code>.</li>
+<li><code>ac.fillStructWithBytes(destination, data)</code> — Given an FFI struct and a string of data, fills struct with that data. Works only if size of struct matches size of data. Data string can contain zeroes.</li>
+<li><code>ac.stringToFFIStruct(src, dst, size)</code> — Fills a string of an FFI struct with data up to a certain size. Make sure to not overfill the data.</li>
+<li><code>ac.onRelease(callback, item)</code> — Adds a callback which might be called when script is unloading. Use it for some state reversion, but don’t rely on it too much. For example, if Assetto Corsa would crash </li>
+<li><code>ac.DataLUT11()</code> — Creates a new empty 1D-to-1D LUT. Use <code>ac.DataLUT11:add(input, output)</code> to fill it with data.</li>
+<li><code>ac.DataLUT11.parse(data)</code> — Parse 1D-to-1D LUT from a string in “(|Input1=Output1|Input2=Output2|…|)” format.</li>
+<li><code>ac.DataLUT21()</code> — Creates a new empty 2D-to-1D LUT. Use <code>ac.DataLUT21:add(input, output)</code> to fill it with data.</li>
+<li><code>ac.DataLUT21.parse(data)</code> — Parse 2D-to-1D LUT from a string in “(|X1,Y1=Output1|X2,Y2=Output2|…|)” format.</li>
+<li><code>ac.StructItem.combine(layout, compact)</code> — Create a new struct from a given layout. Could be used in calls like <code>ac.structBytes()</code> and <code>ac.fillStructWithBytes()</code>. Each call defines and creates a new struct, so don</li>
+<li><code>ac.StructItem.key(key)</code> — Adds a key to a structure to ensure its uniqueness. Consider using something like “yourUsername.yourContentID” or something like that for a key, so that your data would n</li>
+<li><code>ac.StructItem.explicit(alignment, packing)</code> — Enables explicit ordering for your structures. By default, CSP will reorder fields in your structures for optimal data packing. Because all scripts written in Lua share t</li>
+<li><code>ac.StructItem.half()</code></li>
+<li><code>ac.StructItem.float()</code></li>
+<li><code>ac.StructItem.double()</code></li>
+<li><code>ac.StructItem.norm8()</code></li>
+<li><code>ac.StructItem.unorm8()</code></li>
+<li><code>ac.StructItem.norm16()</code></li>
+<li><code>ac.StructItem.unorm16()</code></li>
+<li><code>ac.StructItem.int16()</code></li>
+<li><code>ac.StructItem.uint16()</code></li>
+<li><code>ac.StructItem.int32()</code></li>
+<li><code>ac.StructItem.uint32()</code></li>
+<li><code>ac.StructItem.int64()</code></li>
+<li><code>ac.StructItem.uint64()</code></li>
+<li><code>ac.StructItem.boolean()</code></li>
+<li><code>ac.StructItem.char()</code> — Same as <code>ac.StructItem.int8()</code>.</li>
+<li><code>ac.StructItem.byte()</code> — Same as <code>ac.StructItem.uint8()</code>.</li>
+<li><code>ac.StructItem.int8()</code></li>
+<li><code>ac.StructItem.uint8()</code></li>
+<li><code>ac.StructItem.vec2()</code></li>
+<li><code>ac.StructItem.vec3()</code></li>
+<li><code>ac.StructItem.vec4()</code></li>
+<li><code>ac.StructItem.rgb()</code></li>
+<li><code>ac.StructItem.rgbm()</code></li>
+<li><code>ac.StructItem.hsv()</code></li>
+<li><code>ac.StructItem.quat()</code></li>
+<li><code>ac.StructItem.array(elementType, size)</code></li>
+<li><code>ac.StructItem.struct(fields)</code></li>
+<li><code>ac.StructItem.string(capacity)</code></li>
+<li><code>ac.StructItem.mat3x3()</code></li>
+<li><code>ac.StructItem.mat4x4()</code></li>
+<li><code>ac.StructItem.transform(compactPosition, compactRotation, rangeFrom, rangeTo)</code> — Matrix packed to 6, 9 or 12 bytes (depending on settings). Note: to update value you need to use assignment operator (<code>.field = newValue</code>), altering matrix of this proper</li>
+<li><code>ac.StructItem.build(layout)</code> — Simply create a new FFI structure with a given layout. Doesn’t connect to anything.</li>
+<li><code>ac.HashSpace(cellSize)</code></li>
+<li><code>ac.Lut(data, hsvColumns)</code></li>
+<li><code>ac.isTaggedAsFriend(driverName)</code> — Checks if a user is tagged as a friend. Uses CSP and CM databases. Deprecated, use <code>ac.DriverTags</code> instead.</li>
+<li><code>ac.tagAsFriend(driverName, isFriend)</code> — Tags user as a friend (or removes the tag if <code>false</code> is passed). Deprecated, use <code>ac.DriverTags</code> instead.</li>
+<li><code>ac.currentlyPlaying()</code> — Syncs information about currently playing music and returns a table with details. Takes data from Windows 10 Media API, or from other sources configured in Music module o</li>
+<li><code>ac.ConditionsSet()</code></li>
+<li><code>ac.HashSpace(cellSize)</code> — Simple structure meant to speed up collision detection by arranging items in a grid using hashmap. Cells are arranged horizontally.</li>
+<li><code>ac.isTaggedAsFriend(driverName)</code> — Checks if a user is tagged as a friend. Uses CSP and CM databases. Deprecated, use <code>ac.DriverTags</code> instead.</li>
+<li><code>ac.tagAsFriend(driverName, isFriend)</code> — Tags user as a friend (or removes the tag if <code>false</code> is passed). Deprecated, use <code>ac.DriverTags</code> instead.</li>
+<li><code>ac.VertexBuffer(size)</code> — Buffer with mesh vertices. Contains <code>ac.MeshVertex</code> items.</li>
+<li><code>ac.IndicesBuffer(size)</code> — Buffer with mesh indieces. Contains <code>integer</code> items (limited by 16 bits for AC to handle).</li>
+<li><code>ac.findAny(s)</code> — Creates a new scene reference containing objects (nodes, meshes, etc.) collected with a filter from root node associated with current script. For most scripts it would be</li>
+<li><code>ac.findByClass(objectClass, s)</code> — Creates a new scene reference containing objects of a certain class collected with a filter from root node associated with current script. For most scripts it would be an</li>
+<li><code>ac.GeometryShot(sceneReference, resolution, mips, withDepth, antialiasingMode, textureFormat, flags)</code></li>
+<li><code>ac.getFFBTweaksReport()</code> — FFB (phase 1), FFB (phase 2), damper.</li>
+<li><code>ac.setAppOpen(appID)</code> — Opens a main window of a Lua app (or, if opened, brings it to focus).</li>
+<li><code>ac.checkAdminPrivileges()</code> — Refreshes <code>ac.SimState.isAdmin</code> flag. Returns <code>false</code> if another check is already in progress.</li>
+<li><code>ac.recenterVR()</code></li>
+<li><code>ac.restartAssettoCorsa(raceIni)</code> — Restart Assetto Corsa (shut it down, but before that, add a flag to “race.ini” telling launcher to restart simulation).</li>
+<li><code>ac.shutdownAssettoCorsa()</code> — Shutdown Assetto Corsa. Not available to scripts without I/O access.</li>
+<li><code>ac.setBodyDirt(carIndex, dirt)</code></li>
+<li><code>ac.setReverbValue(reverbValue)</code></li>
+<li><code>ac.takeAStepBack(offset)</code> — Resets car back to the track and moves it a bit back. Available in few basic modes in offline only (such as practice with a single car), invalidates lap.</li>
+<li><code>ac.tryToStart(instant)</code> — Tries to start the race (pretty much, just to press Start button in pits menu).</li>
+<li><code>ac.tryToPause(active)</code> — Pauses or unpauses simulation (if possible; for example, it wouldn’t be paused online with moving car or when displaying results).</li>
+<li><code>ac.trySimKeyPressCommand(command, shift)</code> — Runs a sim command usually associated with AC hotkeys, such as “Ideal Line”. Original hotkey logic is applied: for example, most commands won’t work if the race is not st</li>
+<li><code>ac.setPhysicsDebugLines(mask, carsMask)</code> — Enables and disables physics debugging outlines. Pass <code>1</code> as <code>carsMask</code> to show lines for the first car only, <code>0</code> to show lines for all cars or set specific bits to 1 for</li>
+<li><code>ac.setExposureMultiplier(value)</code></li>
+<li><code>ac.disableFrameLimiter(disable)</code> — Pause frame limiter (both vertical syncing and regular frame limiter). Temporary change, rolls back when script is unloaded.</li>
+<li><code>ac.isPythonAppActive(appName)</code> — Checks if a Python app with given name (name of its folder) is currently loaded in-game.</li>
+<li><code>ac.setVAOMode(mode)</code> — Sets current VAO mode, meant to be used for debugging purposes only.</li>
+<li><code>ac.getVAOMode()</code> — Gets current VAO mode, meant to be used for debugging purposes only.  Use <code>ac.getSim().currentVAOMode</code> instead.</li>
+<li><code>ac.setWiperSpeed(carIndex, wiperSpeed)</code> — Use <code>ac.setWiperMode()</code> instead.</li>
+<li><code>ac.setHShifterActive(active)</code> — Toggle H-shifter to be active or not. Doesn’t have an effect if AC is not controlled by a wheel. Use <code>ac.getSim().controlsWithShifter</code> to check the current state.</li>
+<li><code>ac.refreshVideoSettings()</code></li>
+<li><code>ac.consoleExecute(command)</code> — Executes command in AC console.</li>
+<li><code>ac.simulateCustomHotkeyPress(key, frames)</code> — Simulate CSP hotkey (one of ones listed in Patch section of control settings in CM) press for the next few frames. Keep calling regularly if you need to hold down a butto</li>
+<li><code>ac.resetVRPose()</code></li>
+<li><code>ac.setFFBMultiplier(multiplier)</code> — Changes FFB gain. Unlike <code>ac.setCarFFB()</code> in Python apps, this one takes an absolute value, not a relative offset. To get current FFB multiplier, use `ac.getCar(0).ffbMul</li>
+<li><code>ac.setCurrentDesktop(desktop)</code></li>
+<li><code>ac.setVRSGazeForVR(fov, eyeL, eyeR)</code> — Returns <code>false</code> if gaze is not available.</li>
+<li><code>ac.setHeatShimmerIntensity(key, intensity)</code> — Sets intensity of a heat shimmer zone with a given key. Returns <code>false</code> if there is no zone with such key.</li>
+<li><code>ac.setScriptFlamesIntensity(intensity)</code> — Sets intensity of script flames. See docs for exhaust flames configuration on how to set them up.</li>
+<li><code>ac.getExtraSwitchName(index)</code> — Returns name of a switch, or <code>nil</code> if switch name is not available or not named.</li>
+<li><code>ac.setTurboWastegate(wastegate, turboIndex)</code> — Set a custom value for turbo wastegate. Accessible only if turbo is adjustable.</li>
+<li><code>ac.getRealMirrorCount()</code> — Get number of Real Mirror mirrors in a car (for car scripts, associated car, for apps and tools — player’s car). If Real Mirrors are disabled or not active for that car, </li>
+<li><code>ac.getRealMirrorAABB(mirrorIndex, min, max)</code></li>
+<li><code>ac.setRealMirrorParams(mirrorIndex, params, userDriven)</code> — Updates mirror settings for a given Real Mirror mirror (for car scripts, associated car, for apps and tools — player’s car). Easiest way is to use it in combination with </li>
+<li><code>ac.setABS(mode)</code></li>
+<li><code>ac.setTC(mode)</code></li>
+<li><code>ac.isTurboWastegateAdjustable(turboIndex)</code></li>
+<li><code>ac.setDRS(state)</code></li>
+<li><code>ac.setKERS(state)</code></li>
+<li><code>ac.setMGUHCharging(charging)</code></li>
+<li><code>ac.setMGUKDelivery(level)</code></li>
+<li><code>ac.setMGUKRecovery(level)</code></li>
+<li><code>ac.setWiperMode(wiperMode)</code> — Sets index of current wiper speed. To get current speed or number of available speeds, check <code>ac.StateCar</code>.</li>
+<li><code>ac.setHighBeams(active)</code> — Toggles high beams on and off. Note: the way lights work, this only changes if high beams are working with low beams or if low beams are alone (and, in reality, they actu</li>
+<li><code>ac.setExtraSwitch(index, value)</code> — Changes the state of an extra switch. Note: if switch is in hold mode, it’ll reset to its disabled state after a few frames.  This function ignores availability checks (b</li>
+<li><code>ac.isExtraSwitchAvailable(index, availableToCarControl)</code> — Checks if an extra switch is available.</li>
+<li><code>ac.iconColor()</code></li>
+<li><code>ac.noticeNewApp(appID)</code> — Loads a new app if it was just added. Usually file monitoring should take care of it as well, but in some cases (like with symlinks) it might malfunction.</li>
+<li><code>ac.uninstallApp(appID)</code> — Tries to unload an app and move its folder to the recycle bin. Use carefully.</li>
+<li><code>ac.forceFadingIn()</code> — Forces window with “FADING” flag to fade in even if it’s not currently hovered by a cursor or focused.</li>
+<li><code>ac.redirectVirtualMirror(active)</code></li>
+<li><code>ac.getCurrentVoteDetails()</code> — Returns information about the current vote, or <code>nil</code> if there is not any. Time is in seconds.</li>
+<li><code>ac.canCastVote(voteType)</code> — Returns <code>true</code> if <code>ac.castVote()</code> can be called now and it’s not an offline race or a cooldown.</li>
+<li><code>ac.castVote(voteType, vote, carIndex)</code> — Cast a vote online. Can be used to participate in an existing vote, or to start a new vote. Votes can only be cast once in awhile.</li>
+<li><code>ac.restartApp()</code> — Try and reload app a bit later (like, in the next frame). Might cause a lag, use only in response to user actions and not in background.</li>
+<li><code>ac.startBackgroundWorker(script, data, callback)</code> — Load a separate Lua script and run it in background. Script simply runs once and then the returned value (or an error message if any) will be passed to the callback. Load</li>
+<li><code>ac.collectKN5TextureNames(kn5Filename, filter)</code> — Collect list of textures in KN5 file.</li>
+<li><code>ac.collectKN5MaterialProperties(kn5Filename, filter)</code> — Collect list of material properties in KN5 file in a form of shader replacements config.</li>
+<li><code>ac.Particles.Flame(params)</code> — Flame emitter holding specialized settings. Set settings in a table when creating an emitter and/or change them later. Use <code>:emit(position, velocity, amount)</code> to actually</li>
+<li><code>ac.Particles.Sparks(params)</code> — Sparks emitter holding specialized settings. Set settings in a table when creating an emitter and/or change them later. Use <code>:emit(position, velocity, amount)</code> to actuall</li>
+<li><code>ac.Particles.Smoke(params)</code> — Smoke emitter holding specialized settings. Set settings in a table when creating an emitter and/or change them later. Use <code>:emit(position, velocity, amount)</code> to actually</li>
+<li><code>ac.Particles.Detractor(params)</code> — Particles detractor pushing smoke (and othe particles later) away. Move it somewhere, set radius and velocity and it would affect the smoke. Note: use carefully, smoke pa</li>
+<li><code>ac.SeatParams(position, pitch, yaw)</code> — Driver seat parameters.</li>
+<li><code>ac.getVRAMConsumption()</code> — Returns VRAM stats if available (older versions of Windows won’t provide access to this API). All sizes are in megabytes. Note: values provided are for a GPU in general, </li>
+<li><code>ac.RealMirrorParams()</code> — Stores Real Mirror parameters for a real view mirror.</li>
+<li><code>ac.getRealMirrorParams(mirrorIndex)</code> — Returns set of mirror settings for a given Real Mirror mirror (for car scripts, associated car, for apps and tools — player’s car).</li>
+<li><code>ac.accessExtraSwitchParams(index)</code></li>
+<li><code>ac.setColorCorrection(targetLDR, priority)</code> — YEBIS uses color matrices to quickly adjust HDR (input 0…∞ range) and LDR (output 0…1 range) color. Tweaks such as saturation, brightness and contrast configured in YEBIS</li>
+</ul>
+<h2>6. <code>render.*</code> — çizim (38)</h2>
+<ul>
+<li><code>render.isVisible(center, radius, gSpace, includeFarPlane)</code> — Can be called only within render context (otherwise returns <code>false</code>). Checks if given point is within current camera frustum. For checking if something is within the main</li>
+<li><code>render.setBlendMode(mode)</code></li>
+<li><code>render.setCullMode(mode)</code></li>
+<li><code>render.setDepthMode(mode)</code></li>
+<li><code>render.glSetColor(color)</code></li>
+<li><code>render.glBegin(primitiveType)</code></li>
+<li><code>render.glVertex(v)</code></li>
+<li><code>render.glVertexTextured(v, uv)</code></li>
+<li><code>render.glTexture(filename)</code></li>
+<li><code>render.glEnd()</code></li>
+<li><code>render.circle(pos, dir, radius, color, borderColor)</code> — Draws a simple circle othrogonal to <code>dir</code> direction using an optimized shader.</li>
+<li><code>render.rectangle(pos, dir, width, height, color)</code> — Draws a simple rectangle othrogonal to <code>dir</code> direction using an optimized shader.</li>
+<li><code>render.quad(p1, p2, p3, p4, color, texture)</code> — Draws a simple quad from four points.</li>
+<li><code>render.debugText(pos, text, color, scale, align)</code></li>
+<li><code>render.debugSphere(center, radius, color)</code></li>
+<li><code>render.debugCross(center, size, color)</code></li>
+<li><code>render.debugBox(center, size, color)</code></li>
+<li><code>render.debugPoint(center, size, color)</code></li>
+<li><code>render.debugPlane(center, dir, color, size)</code></li>
+<li><code>render.debugLine(from, to, color, colorEnd)</code></li>
+<li><code>render.debugArrow(from, to, size, color, colorEnd)</code></li>
+<li><code>render.getRenderTargetSize()</code></li>
+<li><code>render.backupRenderTarget()</code></li>
+<li><code>render.restoreRenderTarget()</code></li>
+<li><code>render.onSceneReady(callback)</code> — Called when shadow maps and reflection cubemap are updated, but main render has not started yet. Great time to render any scene-dependant geometry shots.</li>
+<li><code>render.on(eventName, callback)</code> — Called when AC is drawing something.  Special aspects:  - <code>main.hud.vr</code>: if first argument is <code>true</code>, HUD is rendered after post-processing (or post-processing is disable</li>
+<li><code>render.projectPoint(pos, faceID)</code> — Projects world point onto a screen (taking into account UV scale unless second argument is set to <code>false</code>).</li>
+<li><code>render.createRay(pos, dir, length)</code> — Create a ray going from a given position along given direction.</li>
+<li><code>render.createMouseRay()</code> — Create a ray going from camera in the direction of mouse position. Helpful if you want to do something like a mouse picker. Doesn’t have a length limit.</li>
+<li><code>render.createPointRay(onscreenPoint)</code> — Create a ray going from camera in the direction of an onscreen point. Doesn’t have a length limit.</li>
+<li><code>render.isPositioningHelperBusy()</code></li>
+<li><code>render.setTransform(pos, look, up, applySceneOriginOffset)</code> — Affects positioning of debug shapes or meshes drawn next.</li>
+<li><code>render.bindTexture(slot, texture)</code> — Bind texture to a certain slot directly. If you are going to use some shader call with the same texture a lot, it might be faster to simply add texture in there with some</li>
+<li><code>render.fullscreenPass(params)</code> — Draws a fullscreen pass with a custom shader. Shader is compiled at first run, which might take a few milliseconds. If you’re drawing things continuously, use <code>async</code> par</li>
+<li><code>render.shaderedQuad(params)</code> — Draws a 3D quad with a custom shader. Shader is compiled at first run, which might take a few milliseconds. If you’re drawing things continuously, use <code>async</code> parameter a</li>
+<li><code>render.mesh(params)</code> — Draws a 3D mesh with a custom shader. Shader is compiled at first run, which might take a few milliseconds. If you’re drawing things continuously, use <code>async</code> parameter a</li>
+<li><code>render.measure(key, drawFn)</code></li>
+<li><code>render.PositioningHelper(params)</code> — A helper for moving things around using mouse with XYZ arrows.</li>
+</ul>
+<h2>7. <code>web.*</code>, <code>io.*</code>, <code>os.*</code></h2>
+<ul>
+<li><code>web.timeouts(resolve, connect, send, receive)</code> — Configures timeouts in milliseconds for the following web requests. If you’re sure in your server, consider lowering timeouts so that in a case of a m</li>
+<li><code>web.get(url, headers, callback)</code> — Sends a GET HTTP or HTTPS request. Note: you can only have two requests running at once, mostly to make sure a faulty script wouldn’t spam a remote se</li>
+<li><code>web.post(url, headers, data, callback)</code> — Sends a POST HTTP or HTTPS request. Note: you can only have two requests running at once, mostly to make sure a faulty script wouldn’t spam a remote s</li>
+<li><code>web.request(method, url, headers, data, callback)</code> — Sends a custom HTTP or HTTPS request. Note: you can only have two requests running at once, mostly to make sure a faulty script wouldn’t spam a remote</li>
+<li><code>web.socket(url, headers, callback, params)</code> — Open a WebSocket connection.</li>
+<li><code>web.loadRemoteModel(source, callback)</code> — Loads a ZIP file from a given URL, unpacks first KN5 from it to a cache folder and returns its filename through a callback. If file is already in cach</li>
+<li><code>web.loadRemoteAnimation(source, callback)</code> — Loads a ZIP file from a given URL, unpacks first KsAnim from it to a cache folder and returns its filename through a callback. If file is already in c</li>
+<li><code>web.loadRemoteAssets(source, callback)</code> — Loads a ZIP file from a given URL, unpacks assets from it to a cache folder and returns path to the folder in a callback. If files are already in cach</li>
+<li><code>web.resolveDNS(url, callback)</code> — Resolve hostname, return IPv4 via a callback.</li>
+<li><code>web.encryptKey(key)</code></li>
+<li><code>io.scanDrives()</code> — Returns list of logical drives, each drive in “A:“ format. Not available to scripts without I/O access.</li>
+<li><code>io.getAttributes(filename)</code> — Gets file attributes.</li>
+<li><code>io.getMainExecutable()</code> — Gets full filename of the main AC executable (“…/acs.exe” for most cases). Not available to scripts without I/O access.</li>
+<li><code>io.load(filename, fallbackData)</code> — Reads file content into a string, if such file exists, otherwise returns fallback data or <code>nil</code>.</li>
+<li><code>io.loadAsync(filename, callback)</code> — Reads file content into a string, if such file exists, otherwise returns fallback data or <code>nil</code>. Asynchronous version.</li>
+<li><code>io.save(filename, data, ensure)</code> — Writes data into a file, returns <code>true</code> if operation was successful. Data string can contain zero bytes. Not available to scripts without I/O access.</li>
+<li><code>io.saveAsync(filename, data, callback, ensure)</code> — Writes data into a file from a different thread, returns <code>true</code> via callback if operation was successful. Data string can contain zero bytes. Not avai</li>
+<li><code>io.exists(filename)</code> — Checks if file or directory exists. If you need to know specifically if a file or directory exists, use <code>io.dirExists(filename)</code> or `io.fileExists(fil</li>
+<li><code>io.dirExists(filename)</code> — Checks if directory exists. If there is a file in its place, it would return <code>false</code>.</li>
+<li><code>io.fileExists(filename)</code> — Checks if file exists. If there is a directory in its place, it would return <code>false</code>.</li>
+<li><code>io.fileSize(filename)</code> — Calculates file size in bytes. Returns -1 if there was an error.</li>
+<li><code>io.creationTime(filename)</code> — Returns creation time as number of seconds since 1970, or -1 if there was an error.</li>
+<li><code>io.lastAccessTime(filename)</code> — Returns last access time as number of seconds since 1970, or -1 if there was an error.</li>
+<li><code>io.lastWriteTime(filename)</code> — Returns last write time as number of seconds since 1970, or -1 if there was an error.</li>
+<li><code>io.createDir(filename)</code> — Creates new directory, returns <code>true</code> if directory was created. If parent directories are missing, they’ll be created as well. Not available to script</li>
+<li><code>io.createFileDir(filename)</code> — Creates new directory for given filename (as in, take parent path and create directory with it). Returns <code>true</code> if directory was created. Not availabl</li>
+<li><code>io.getParentPath(filename, level)</code> — Returns parent path for given filename.</li>
+<li><code>io.getFileName(filename, noExtension)</code> — Returns file name path for given filename.</li>
+<li><code>io.isFileNameAcceptable(fileName)</code> — Checks if file name is acceptable, returns <code>true</code> if there are no prohibited symbols in it (unlike <code>io.isFileNameAcceptable()</code>, does not allow slashes</li>
+<li><code>io.isFilePathAcceptable(filename)</code> — Checks if full file name is acceptable, returns <code>true</code> if there are no prohibited symbols in it (unlike <code>io.isFileNameAcceptable()</code>, does allow slashe</li>
+<li><code>io.move(existingFilename, newFilename, replaceExisting)</code> — Moves a file or a directory with all of its contents to a new place, returns <code>true</code> if moved successfully. Can be used for moving or renaming things. </li>
+<li><code>io.findFile(filename)</code> — Given an absolute or a relative path, find an actual absolute path. If script doesn’t have I/O access to such file, returns <code>nil</code>.</li>
+<li><code>io.copyFile(existingFilename, newFilename, failIfExists)</code> — Copies a file to a new place, returns <code>true</code> if moved successfully. Not available to scripts without I/O access.</li>
+<li><code>io.deleteFile(filename)</code> — Deletes a file, returns <code>true</code> if file was deleted successfully. To delete empty directory, use <code>io.deleteDir()</code>. If you’re operating around important</li>
+<li><code>io.deleteDir(filename)</code> — Deletes an empty directory, returns <code>true</code> if directory was deleted successfully. To delete a file, use <code>io.deleteFile()</code>. Not available to scripts wi</li>
+<li><code>io.recycle(filename)</code> — Moves file to Windows Recycle Bin, returns <code>true</code> if file was moved successfully. Note: this operation is much slower than removing a file with `io.de</li>
+<li><code>io.saveToZip(zipFilename, entryFilename, data)</code> — Adds a new entry to a ZIP file. If there is no such ZIP file, new one will be created. If the ZIP file already has an entry with the same name, does n</li>
+<li><code>io.loadFromZip(zipFilename, entryFilename)</code> — Loads file from an archive as a string. Archive would remain open for some time to speed up consequent reads. If failed, returns <code>nil</code>. Alternatively,</li>
+<li><code>io.extractFromZipAsync(zipFilename, destination, filter, callback)</code> — Extract files from a ZIP file into a given directory. Creates directory if it’s missing. Not available to scripts without I/O access.</li>
+<li><code>io.checksumSHA256(filename, callback)</code> — Computes SHA-256 checksum of a given file, returns result in a callback.</li>
+<li><code>io.scanZip(zipFilename)</code> — Returns list of entry names from a ZIP-file.</li>
+<li><code>io.createZipAsync(filename, entries, callback)</code> — Not available to scripts without I/O access.</li>
+<li><code>io.arrtest1()</code> — Not available to scripts without I/O access.</li>
+<li><code>io.arrtest2()</code> — Not available to scripts without I/O access.</li>
+<li><code>io.relative(path)</code> — Resolves relative path to a file (relative to Lua file you’re running this function from) so it would be ready to be passed to <code>io</code> functions (returns</li>
+<li><code>io.scanDir(directory, mask, callback, callbackData)</code> — Scan directory and call callback function for each of files, passing file name (not full name, but only name of the file) and attributes. If callback </li>
+<li><code>os.preciseClock()</code> — Returns time in seconds from script start (with high precision).</li>
+<li><code>os.onURL(mask, callback, priority)</code> — Sets a callback which will be called when CSP itself or a CSP Lua script tries to open an URL. Return <code>true</code> if you’re handling URL, so the event woul</li>
+<li><code>os.execute(cmd, timeoutMs, windowless)</code> — Altered version of regular <code>os.execute()</code>: allows to specify timeout and doesn’t show a new window.  Note: please consider using `os.runConsoleProcess</li>
+<li><code>os.setCurrentFolder(filename)</code> — Changes current directory. Any argument <code>path</code>, when parsed and found not to be absolute, will be resolved against current directory. By default, uses</li>
+<li><code>os.dateGlobal(format, timestamp)</code> — Returns formatted date. Same as <code>os.date()</code>, but returned value does not include system timezome.</li>
+<li><code>os.addDLLDirectory(filename)</code> — Adds new directory to look for DLL files in. Warning: do not use this thing unless you really need to, and try to avoid adding LuaJIT extensions: LuaJ</li>
+<li><code>os.showMessage(msg, type)</code> — Show a popup message using good old MessageBox. Please do not use it for debugging, instead consider using <code>ac.log()</code> and <code>ac.debug(&#39;key&#39;, &#39;value&#39;)</code> w</li>
+<li><code>os.showInExplorer(filename)</code> — Shows file in Windows Explorer (opens folder with it and selects the file). Not available to scripts without I/O access.</li>
+<li><code>os.openInExplorer(directory)</code> — Opens file or directory in Windows Explorer. If it’s a file, associated program will be launched instead. Not available to scripts without I/O access.</li>
+<li><code>os.findAssociatedExecutable(filename)</code> — Tries to find a program associated with a filename. Returns path to it, or <code>nil</code> if nothing was found. Not available to scripts without I/O access.</li>
+<li><code>os.openTextFile(filename, line)</code> — Opens text file at given line in a default text editor. Supports VS Code, Notepad++, Sublime Text and Atom (they all use different arguments for line </li>
+<li><code>os.openURL(url, invokeListeners)</code> — Opens URL in default system browser.</li>
+<li><code>os.parseDate(date, format)</code> — Parse date and return a unix timestamp. Uses <code>std::get_time()</code> for actual parsing: <a href="https://en.cppreference.com/w/cpp/io/manip/get_time">https://en.cppreference.com/w/cpp/io/manip/get_time</a>.</li>
+<li><code>os.openFileDialog(params, callback)</code> — Opens regular Windows file opening dialog, calls callback with either an error or a path to a file selected by user (or nil if selection was cancelled</li>
+<li><code>os.saveFileDialog(params, callback)</code> — Opens regular Windows file saving dialog, calls callback with either an error or a path to a file selected by user (or nil if selection was cancelled)</li>
+<li><code>os.runConsoleProcess(params, callback)</code> — Run a console process in background with given arguments, return exit code and output in callback. Launched process will be tied to AC process to shut</li>
+</ul>
+<h2>8. <code>ui.*</code> — arayüz (389 fonksiyon)</h2>
+<p>ImGui tabanlı: pencere, buton, slider, giriş kutusu, tablo, çizim (<code>ui.drawLine/drawRect/drawImage...</code>), <code>ui.toast</code>, <code>ui.modalPopup</code>, medya oynatıcı, ekstra canvas. Tam liste için SDK dosyasına bak.</p>
+
+</article>
+</main>
+</div>
+<button id="top" type="button" aria-label="Sayfanın başına dön">↑ Başa dön</button>
+<script>
+(() => {
+  const doc = document.getElementById('document');
+  const toc = document.getElementById('toc');
+  const search = document.getElementById('search');
+  const results = document.getElementById('search-results');
+  const slug = text => text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  const headings = [...doc.querySelectorAll('h2,h3')];
+  headings.forEach((heading, i) => {
+    heading.id = heading.id || `${slug(heading.textContent)}-${i + 1}`;
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    if (heading.tagName === 'H3') link.className = 'toc-h3';
+    toc.append(link);
+  });
+  doc.querySelectorAll('table').forEach(table => { const wrap = document.createElement('div'); wrap.className = 'table-wrap'; table.before(wrap); wrap.append(table); });
+  const searchable = [...doc.querySelectorAll('h2,h3,p,li,pre,table')];
+  search.addEventListener('input', () => {
+    const term = search.value.trim().toLocaleLowerCase('tr'); results.replaceChildren();
+    if (!term) return;
+    const matches = searchable.filter(el => el.textContent.toLocaleLowerCase('tr').includes(term)).slice(0, 16);
+    if (!matches.length) { results.innerHTML = '<p class="no-results">Sonuç bulunamadı.</p>'; return; }
+    matches.forEach(el => {
+      const heading = el.matches('h2,h3') ? el : headings.filter(item => item.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING).at(-1) || headings[0];
+      const link = document.createElement('a'); link.className = 'result'; link.href = `#${(heading || el).id || ''}`;
+      link.textContent = el.textContent.trim().replace(/\s+/g,' ').slice(0, 135);
+      results.append(link);
+    });
+  });
+  const top = document.getElementById('top');
+  addEventListener('scroll', () => top.classList.toggle('visible', scrollY > 500), {passive:true});
+  top.addEventListener('click', () => scrollTo({top:0, behavior:'smooth'}));
+})();
+</script>
+</body>
+</html>
